@@ -15,23 +15,30 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const BASE_URI = 'https://www.ams.usda.gov/mnreports/';
+  const BASE_URI = `https://ag-market-news.herokuapp.com/report/`;
 
   async function getUri(slg: string) {
     setLoading(true)
     let tempUri: string = `${BASE_URI}${slg}.pdf`
+    try{
     const res = await fetch(tempUri)
     if (res.ok) {
+      // Alert.alert('Request okay for: ', tempUri)
       setUri(tempUri);
       setReportType('pdf');
       setLoading(false);
       setCurrentReportUrl(tempUri);
     } else {
+      // Alert.alert('Request not okay, setting to: ', `${BASE_URI}${slg}.txt`);
+      // Alert.alert(res.statusText);
+      setLoading(false);
       setUri(`${BASE_URI}${slg}.txt`);
       setReportType('txt');
-      setLoading(false);
       setCurrentReportUrl(`${BASE_URI}${slg}.txt`);
     }
+  }catch(e){
+    Alert.alert(e.message)
+  }
   }
 
 
@@ -40,13 +47,15 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
     getUri(slug_name);
   }, [slug_name])
 
-  if (loading) {
-    return <Loading />
-  }
 
-  if (reportType === 'txt') {
+  if(loading || uri === ''){
+    return <Loading/>
+  }
+  
+  if (reportType === 'txt' || error) {
     return (
       <WebView
+      style={{flex:1}}
         source={{ uri }}
       />
     )
@@ -61,13 +70,17 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
     }}>
       <PDF
         source={{
-          uri,
+          uri
         }}
+        trustAllCerts={true}
+        
         onError={(e) => {
           setLoading(false)
-          setError(e as any);
-          console.log(e);
+          setReportType('txt')
         }}
+
+        activityIndicator={<Loading/>}
+        onLoadComplete={()=>setLoading(false)}
         style={{
           flex: 1,
           width: Dimensions.get('window').width,
@@ -80,7 +93,7 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
 
 const Loading: React.FC<{}> = () => {
   return (
-    <View style={{ position: 'absolute', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%' }}>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#000"/>
       </View>

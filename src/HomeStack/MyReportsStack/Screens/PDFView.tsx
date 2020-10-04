@@ -6,48 +6,51 @@ import WebView from 'react-native-webview';
 
 
 export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
-  const {slug_name, report_title, report_url} = route.params.report;
+  const { slug_name, report_title, report_url } = route.params.report;
   const [error, setError] = useState<String | null>(null);
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const BASE_URI = 'https://www.ams.usda.gov/mnreports/';
+  const BASE_URI = 'https://ag-market-news.herokuapp.com/report/';
 
-  async function getUri(slg: string){
+  async function getUri(slg: string) {
     setLoading(true)
-    let tempUri:string = `${BASE_URI}${slg}.pdf`
+    let tempUri: string = `${BASE_URI}${slg}.pdf`
     const res = await fetch(tempUri)
-    if(res.ok){
-      setUri(tempUri);
-      setReportType('pdf');
-      setLoading(false);
-    }else{
-      setUri(`${BASE_URI}${slg}.txt`);
-      setReportType('txt');
-      setLoading(false);
+    try {
+      if (res.ok) {
+        setUri(tempUri);
+        setReportType('pdf');
+        setLoading(false);
+      } else {
+        setUri(`${BASE_URI}${slg}.txt`);
+        setReportType('txt');
+        setLoading(false);
+      }
+    } catch (e) {
+      Alert.alert(e.message)
     }
   }
 
   useEffect(() => {
-    if(report_url){
-      console.log(report_url)
+    if (report_url) {
       setUri(report_url);
-    }else{
+    } else {
       setUri('');
       getUri(slug_name);
     }
   }, [slug_name])
 
-  if(loading){
-    return <ActivityIndicator animating={true} size="large" color="#000ff"/>
+  if (loading || uri === '') {
+    return <Loading />
   }
 
-  if(reportType === 'txt'){
-    return ( 
-    <WebView
-      source={{uri}}
-    />
+  if (reportType === 'txt') {
+    return (
+      <WebView
+        source={{ uri }}
+      />
     )
   }
 
@@ -57,21 +60,24 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
       justifyContent: 'flex-start',
       alignItems: 'center',
       marginTop: 0,
-  }}>
-    <PDF
-      source={{
-        uri,
-        cache:false
-      }}
-      onError={(e)=>{
-        setLoading(false)
-        setError(e as any)
-        console.log(e);
-      }}
-      style={{flex:1,
-        width:Dimensions.get('window').width,
-        height:Dimensions.get('window').height,}}
-    />
+    }}>
+      <PDF
+        source={{
+          uri,
+          cache: false
+        }}
+        trustAllCerts={true}
+        activityIndicator={<Loading />}
+        onError={(e) => {
+          setLoading(false)
+          setError(e as any)
+        }}
+        style={{
+          flex: 1,
+          width: Dimensions.get('window').width,
+          height: Dimensions.get('window').height,
+        }}
+      />
     </View>
   )
 }
@@ -80,7 +86,7 @@ const Loading: React.FC<{}> = () => {
   return (
     <View style={{ position: 'absolute', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#000ff" animating={true} />
       </View>
     </View>
   )
