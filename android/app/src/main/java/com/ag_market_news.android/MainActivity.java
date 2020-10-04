@@ -19,6 +19,6 @@ public class MainActivity extends ReactActivity {
 
   @Override
   protected String getMainComponentName() {
-    return "USDA_BARE";
+    return "Ag Market News";
   }
 }
