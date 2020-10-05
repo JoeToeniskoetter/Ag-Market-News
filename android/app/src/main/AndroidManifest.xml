@@ -2,6 +2,7 @@
   package="com.ag_market_news.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    
 
     <application
       android:name=".MainApplication"
