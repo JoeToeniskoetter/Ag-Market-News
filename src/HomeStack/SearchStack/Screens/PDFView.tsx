@@ -15,7 +15,7 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const BASE_URI = `https://ag-market-news.herokuapp.com/report/`;
+  const BASE_URI = `https://joetoeniskoetter.com/api/ag-market-news/report/`;
 
   async function getUri(slg: string) {
     setLoading(true)

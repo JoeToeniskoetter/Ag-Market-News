@@ -12,7 +12,7 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const BASE_URI = 'https://ag-market-news.herokuapp.com/report/';
+  const BASE_URI = 'https://joetoeniskoetter.com/api/ag-market-news/report/';
 
   async function getUri(slg: string) {
     setLoading(true)
@@ -36,6 +36,9 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
   useEffect(() => {
     if (report_url) {
       setUri(report_url);
+      // let reportUrlSplit: string[] = report_url.split('.');
+      // setReportType(reportUrlSplit[reportUrlSplit.length]);
+      // setLoading(false);
     } else {
       setUri('');
       getUri(slug_name);
@@ -46,7 +49,7 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
     return <Loading />
   }
 
-  if (reportType === 'txt') {
+  if (reportType === 'txt' || error) {
     return (
       <WebView
         source={{ uri }}

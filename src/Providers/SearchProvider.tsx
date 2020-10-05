@@ -1,5 +1,6 @@
 import React, { createContext, useState, Dispatch, SetStateAction } from 'react';
 import { Alert } from 'react-native';
+import RNFetchBlob from 'rn-fetch-blob'
 
 export type Commodity = {
   commodity_name: String,
@@ -82,7 +83,11 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
 
-  let BASEURI:string = 'https://ag-market-news.herokuapp.com';
+  RNFetchBlob.config({
+    trusty:true
+  });
+
+  let BASEURI:string = 'https://joetoeniskoetter.com/api/ag-market-news';
 
 
   function addReportUrl(rpts:Report[]):Report[]{
@@ -92,15 +97,22 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   async function getCommodities() {
 
     setLoading(true);
+
     try {
-      const res = await fetch(`${BASEURI}/commodities`);
+      const res = await fetch(`${BASEURI}/commodities`, {
+        headers:{
+          accept: 'application/json'
+        },
+        body:null
+      });
       const json = await res.json();
+      console.log(res)
       setLoading(false);
       setCommodities(json);
     } catch (e) {
       console.log(e)
       setLoading(false)
-      Alert.alert("Network Error. Please try again later")
+      Alert.alert(e.message)
     }
   }
 
