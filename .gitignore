@@ -64,3 +64,4 @@ buck-out/
 
 #large java files
 *.hprof
+android/app/google-services.json
