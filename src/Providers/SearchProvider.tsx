@@ -27,7 +27,8 @@ export type Report = {
     offices: String[],
     sectionNames: String[],
     report_name: String,
-    report_url: string | undefined
+    report_url: string | undefined,
+    subscribed: boolean
   }
 
 type IGetReports = {
@@ -90,8 +91,8 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   let BASEURI:string = 'https://joetoeniskoetter.com/api/ag-market-news';
 
 
-  function addReportUrl(rpts:Report[]):Report[]{
-    return rpts.map((x:Report) => ({ ...x, report_url: '' }));
+  function addReportUrlAndSubscribedProp(rpts:Report[]):Report[]{
+    return rpts.map((x:Report) => ({ ...x, report_url: '', subscribed:false }));
   }
 
   async function getCommodities() {
@@ -173,7 +174,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
       const res = await fetch(`${BASEURI}/reports`);
       const json = await res.json();
       setLoading(false);
-      setReportsForSeach(addReportUrl(json));
+      setReportsForSeach(addReportUrlAndSubscribedProp(json));
     } catch (e) {
       console.log(e.message)
       Alert.alert("Network Error. Please try again later")
@@ -187,7 +188,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     try {
       const res = await fetch(uri as any);
       const json = await res.json();
-      setReports(addReportUrl(json.results));
+      setReports(addReportUrlAndSubscribedProp(json.results));
       setLoading(false);
     } catch (e) {
       setLoading(false);
