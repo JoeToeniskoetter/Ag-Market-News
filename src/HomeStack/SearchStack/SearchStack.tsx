@@ -1,6 +1,6 @@
 import { createStackNavigator, StackHeaderTitleProps } from '@react-navigation/stack';
 import React, { useContext } from 'react';
-import { Alert, Platform, StyleSheet } from 'react-native';
+import { Alert, Platform, StyleSheet, ToastAndroid } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import { MyReportsContext } from '../../../src/Providers/MyReportsProvider';
 import { SearchContext } from '../../Providers/SearchProvider';
@@ -81,7 +81,7 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
                   let curReport = route.params.report;
                   curReport.report_url = currentReportUrl;
                   await addReport(curReport);
-                  await Alert.alert(`${route.params.report.slug_name} Saved to Favorites`)
+                  await ToastAndroid.show(`${route.params.report.slug_name} Saved to Favorites`, 500)
                 }}
                 style={{ paddingRight: 20 }}
                 titleStyle={{ color: Platform.OS == 'ios' ? '#007aff' : 'black' }}

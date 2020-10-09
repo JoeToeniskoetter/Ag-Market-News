@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { SearchContext, Report } from '../../../Providers/SearchProvider';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
-import { View, ActivityIndicator, Platform, FlatList, Modal, Alert } from 'react-native';
+import { View, ActivityIndicator, Platform, FlatList, Modal, Alert, ToastAndroid } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -85,7 +85,7 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
               onSwipeableOpen={async () => {
                 row[index].close()
                 await addReport(item)
-                await Alert.alert('Saved to Favorites')
+                await ToastAndroid.show('Saved to Favorites', 500)
               }}
             >
               <ListItem bottomDivider
