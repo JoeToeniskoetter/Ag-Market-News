@@ -11,10 +11,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons';
 import SplashScreen from 'react-native-splash-screen';
-import messaging from '@react-native-firebase/messaging';
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
-
-
 
 
 const App = () => {
@@ -31,13 +29,6 @@ const App = () => {
   useEffect(() => {
     intitalize();
   }, [])
-
-useEffect(()=>{
-  const unsubscribe = messaging().onMessage(async remoteMessage => {
-    Alert.alert('A new FCM message has arrived!', JSON.stringify(remoteMessage))
-  });
-  return unsubscribe;
-})
 
 
   return (
