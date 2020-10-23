@@ -1,41 +1,41 @@
-import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { View, Text, Image } from 'react-native'; 
+import React, { useContext, useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, Text, Image } from 'react-native';
 import { HomeParamList } from "./HomeStackParams";
-import {SearchStack} from './SearchStack/SearchStack';
-import {MyReportsStack} from './MyReportsStack/MyReportsStack';
+import { SearchStack } from './SearchStack/SearchStack';
+import { MyReportsStack } from './MyReportsStack/MyReportsStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Badge } from 'react-native-elements';
+import { MyReportsContext } from '../Providers/MyReportsProvider';
 
-interface HomeStackProps {}
+interface HomeStackProps { }
 
 const Tabs = createBottomTabNavigator<HomeParamList>();
 
 export const HomeStack: React.FC<HomeStackProps> = () => {
+
   return (
     <Tabs.Navigator
-    initialRouteName={"Search"}
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+      initialRouteName={"Search"}
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-        if (route.name === "Search") {
-          iconName = "Search";
-          return <Icon name="search" size={24} color={color} />;
-        }else if (route.name === "MyReports") {
-          return <Icon name="file-text" size={24} color={color} />
+          if (route.name === "Search") {
+            iconName = "Search";
+            return <Icon name="search" size={24} color={color} />;
+          } else if (route.name === "MyReports") {
+            return <MyReportsTabIcon color={color}/>
+          }
         }
-        // else if (route.name === "Futures"){
-        //   return <FontAwesome name="line-chart" size={24} color={color}/>
-        // }
-      }
-    })}
+      })}
 
       tabBarOptions={{
         activeTintColor: "blue",
         inactiveTintColor: "gray"
       }}
     >
-      <Tabs.Screen 
+      <Tabs.Screen
         name="Search"
         component={SearchStack}
       />
@@ -43,16 +43,32 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
         name="MyReports"
         component={MyReportsStack}
       />
-      {/* <Tabs.Screen
-        name="Futures"
-        component={Futures}
-      /> */}
-      </Tabs.Navigator>
+    </Tabs.Navigator>
   );
 };
 
+interface IMyReportsTabIcon{
+  color:string
+}
 
-const Futures: React.FC<{}> = () => {
-  return <View><Text>Futures</Text></View>
+const MyReportsTabIcon:React.FC<IMyReportsTabIcon> = ({color}) => {
+
+  const { storedReports } = useContext(MyReportsContext);
+
+  if(storedReports.length < 1){
+    return (
+      <Icon name="file-text" size={24} color={color}/>
+    )
+  }
+
+  return (
+    <>
+      <Badge
+        value={storedReports.length}
+        status="error"
+      />
+    <Icon name="file-text" size={24} color={color}/>
+    </>
+  )
 }
 

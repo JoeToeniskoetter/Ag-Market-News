@@ -81,7 +81,11 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
                   let curReport = route.params.report;
                   curReport.report_url = currentReportUrl;
                   await addReport(curReport);
-                  await ToastAndroid.show(`${route.params.report.slug_name} Saved to Favorites`, 500)
+                  if (Platform.OS === "ios") {
+                    await Alert.alert(`${route.params.report.slug_name} Saved to Favorites`)
+                  } else {
+                    await ToastAndroid.show(`${route.params.report.slug_name} Saved to Favorites`, 500)
+                  }
                 }}
                 style={{ paddingRight: 20 }}
                 titleStyle={{ color: Platform.OS == 'ios' ? '#007aff' : 'black' }}

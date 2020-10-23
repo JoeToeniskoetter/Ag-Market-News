@@ -1,9 +1,9 @@
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
 import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View, Platform, ToastAndroid } from "react-native";
-import { BannerAd, BannerAdSize } from '@react-native-firebase/admob';
-import { ListItem, Text, SearchBar, Icon } from "react-native-elements";
+import { FlatList, StyleSheet, View, Platform, ToastAndroid, Alert } from "react-native";
+import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
+import { ListItem, Text, SearchBar, Icon, ButtonGroup, Badge } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 import { RemoveActionButton } from './components/RemoveActionButton';
@@ -13,13 +13,15 @@ import { Report } from '../../../Providers/SearchProvider';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { UnsubscribeButton } from './components/UnsubscribeButton';
+import { set } from 'react-native-reanimated';
 
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { getReports, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
+  const { getReports, subscribeToReport, unsubscribeToReport, storedReports } = useContext(MyReportsContext);
   const [savedReports, setSavedReports] = useState<Report[]>([])
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
+  const [buttonIndex, setButtonIndex] = useState<number>(0);
 
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
   const row: Array<any> = [];
@@ -29,23 +31,41 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
     await setSavedReports(rpts as any);
   }
 
-  async function changeSubscriptionStatus(savedReport: SavedReport){
+  function myReportsButton() {
+
+    return (
+      <Text style={{ color: buttonIndex == 0 ? 'white' : 'black' }}>
+        MyReports
+      </Text>
+    )
+  }
+  function newReportsButton() {
+    return (
+      <Text style={{ color: buttonIndex == 1 ? 'white' : 'black' }}>
+        New Reports 
+        {storedReports.length > 0 ? <Badge value={storedReports.length} status="warning" /> : null}
+      </Text>
+    )
+  }
+  const buttons = [{ element: myReportsButton }, { element: newReportsButton }];
+
+  async function changeSubscriptionStatus(savedReport: SavedReport) {
     let savedReportsCopy = savedReports.slice();
 
-    for(let i =0; i<savedReports.length; i++){
-      if((savedReports[i].slug_name === savedReport.slug_name)){
+    for (let i = 0; i < savedReports.length; i++) {
+      if ((savedReports[i].slug_name === savedReport.slug_name)) {
         //get current subscription status
         let curStatus = savedReports[i].subscribed;
         //setsubscription status to be the opposite of what is currently is
         savedReports[i].subscribed = !savedReports[i].subscribed
 
         //based on the status before changing it, call subscibe or unsubscribe
-        if(curStatus){
+        if (curStatus) {
           unsubscribeToReport(savedReport);
-        }else{
+        } else {
           subscribeToReport(savedReport);
         }
-      }  
+      }
     }
     setSavedReports(savedReportsCopy)
   }
@@ -75,8 +95,8 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   return (
     <>
       <View style={styles.container}>
-        <Text style={{ paddingBottom: '5%', paddingLeft: '5%' }} h2>My Reports</Text>
-        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', width: '100%', height: '20%' }}>
+        <Text style={{ paddingLeft: '5%' }} h2>My Reports</Text>
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
           <SearchBar
             placeholder="Search for report..."
             platform={Platform.OS == "ios" ? "ios" : "android"}
@@ -86,8 +106,17 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             onClear={() => { filterReports('') }}
             onCancel={() => { filterReports('') }}
           />
-        </View>
-        <View style={{ height: '75%' }}>
+          <ButtonGroup
+            onPress={(index) => setButtonIndex(index)}
+            selectedIndex={buttonIndex}
+            buttons={buttons}
+            selectedTextStyle={{ color: 'white' }}
+          >
+            <Badge
+              value={1}
+            />
+          </ButtonGroup>
+
           {savedReports.length === 0 ? <NoSavedReports /> :
             <FlatList
               data={filteredReports ? filteredReports : savedReports}
@@ -98,11 +127,19 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                   onSwipeableLeftOpen={async () => {
                     if (item.subscribed) {
                       await row[index].close()
-                      await ToastAndroid.show(`Unsubscribed to ${item.slug_name}`, 500)
+                      if (Platform.OS === "ios") {
+                        await Alert.alert(`Unsubscribed to ${item.slug_name}`)
+                      } else {
+                        await ToastAndroid.show(`Unsubscribed to ${item.slug_name}`, 500)
+                      }
                       await changeSubscriptionStatus(item);
                     } else {
                       await row[index].close()
-                      await ToastAndroid.show(`Subscribed to ${item.slug_name}`, 500)
+                      if(Platform.OS === "ios"){
+                        await Alert.alert(`Subscribed to ${item.slug_name}`)
+                      }else {
+                        await ToastAndroid.show(`Subscribed to ${item.slug_name}`, 500)
+                      }
                       await changeSubscriptionStatus(item);
                     }
                   }}
@@ -140,7 +177,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
       </View>
       <View style={{ backgroundColor: 'white' }}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={__DEV__ ? TestIds.BANNER : adUnitId}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
             requestNonPersonalizedAdsOnly: true,
