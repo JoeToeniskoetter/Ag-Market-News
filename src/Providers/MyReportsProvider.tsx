@@ -1,6 +1,7 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { MyReportsStack } from '../HomeStack/MyReportsStack/MyReportsStack';
-import { Alert, AsyncStorage } from 'react-native';
+import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Report } from './SearchProvider'
 import messaging from '@react-native-firebase/messaging';
 
@@ -38,6 +39,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
 
   const [reports, setReports] = useState<String[] | null>(null);
   const [storedReports, setStoredReports] = useState<Report[] | []>([]);
+  const [newReports, setNewReports] = useState<Report[] | []>([]);
 
   async function requestUserPermission() {
     const authorizationStatus = await messaging().requestPermission();

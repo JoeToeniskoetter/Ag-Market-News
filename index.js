@@ -6,7 +6,7 @@ import {AppRegistry} from 'react-native';
 import App from './App';
 import appName from './app.json';
 import messaging from '@react-native-firebase/messaging';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
   const stored = await AsyncStorage.getItem('newlyPublishedReports');
