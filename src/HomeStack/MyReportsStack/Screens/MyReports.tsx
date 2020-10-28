@@ -13,11 +13,11 @@ import { Report } from '../../../Providers/SearchProvider';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { UnsubscribeButton } from './components/UnsubscribeButton';
-import { set } from 'react-native-reanimated';
+import { SavedReports } from './components/SavedReports';
 
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { getReports, subscribeToReport, unsubscribeToReport, storedReports } = useContext(MyReportsContext);
+  const { getReports, subscribeToReport, unsubscribeToReport, storedReports, getNewlyPublishedReports } = useContext(MyReportsContext);
   const [savedReports, setSavedReports] = useState<Report[]>([])
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
@@ -32,7 +32,6 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   }
 
   function myReportsButton() {
-
     return (
       <Text style={{ color: buttonIndex == 0 ? 'white' : 'black' }}>
         MyReports
@@ -83,14 +82,38 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
     setFilteredReports(filtered);
   }
 
+  async function leftSwipeAction(item:Report, index:number){
+    if (item.subscribed) {
+      await row[index].close()
+      if (Platform.OS === "ios") {
+        await Alert.alert(`Unsubscribed to ${item.slug_name}`)
+      } else {
+        await ToastAndroid.show(`Unsubscribed to ${item.slug_name}`, 500)
+      }
+      await changeSubscriptionStatus(item);
+    } else {
+      await row[index].close()
+      if(Platform.OS === "ios"){
+        await Alert.alert(`Subscribed to ${item.slug_name}`)
+      }else {
+        await ToastAndroid.show(`Subscribed to ${item.slug_name}`, 500)
+      }
+      await changeSubscriptionStatus(item);
+    }
+  }
+
+  function getSelectedReportList(){
+   if(buttonIndex == 0){
+     return filteredReports ? filteredReports : savedReports
+   }
+   return storedReports
+  }
+
   const focused = useIsFocused();
 
   useEffect(() => {
     load()
-    // setTestDeviceIDAsync('test')
   }, [focused])
-
-  // if (!focused) return null;
 
   return (
     <>
@@ -111,38 +134,15 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             selectedIndex={buttonIndex}
             buttons={buttons}
             selectedTextStyle={{ color: 'white' }}
-          >
-            <Badge
-              value={1}
-            />
-          </ButtonGroup>
-
+          />
           {savedReports.length === 0 ? <NoSavedReports /> :
             <FlatList
-              data={filteredReports ? filteredReports : savedReports}
+              data={getSelectedReportList()}
               keyExtractor={item => item.slug_name}
               renderItem={({ item, index }) => (
                 <Swipeable
                   ref={ref => row[index] = ref}
-                  onSwipeableLeftOpen={async () => {
-                    if (item.subscribed) {
-                      await row[index].close()
-                      if (Platform.OS === "ios") {
-                        await Alert.alert(`Unsubscribed to ${item.slug_name}`)
-                      } else {
-                        await ToastAndroid.show(`Unsubscribed to ${item.slug_name}`, 500)
-                      }
-                      await changeSubscriptionStatus(item);
-                    } else {
-                      await row[index].close()
-                      if(Platform.OS === "ios"){
-                        await Alert.alert(`Subscribed to ${item.slug_name}`)
-                      }else {
-                        await ToastAndroid.show(`Subscribed to ${item.slug_name}`, 500)
-                      }
-                      await changeSubscriptionStatus(item);
-                    }
-                  }}
+                  onSwipeableLeftOpen={() => leftSwipeAction(item, index)}
                   renderRightActions={() => (
                     <RemoveActionButton
                       item={item}
@@ -153,22 +153,11 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                   renderLeftActions={() => (
                     item.subscribed ? <UnsubscribeButton /> : <SubscribeButton />
                   )}
-                >
-                  <ListItem bottomDivider
-                    onPress={() => {
-                      navigation.navigate("PDFView", { report: item })
-                    }}
-                  >
-                    {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
-                    }
-                    <ListItem.Content>
-                      {item.subscribed ? <Text style={{ fontSize: 9, color: 'green', alignSelf: 'flex-start' }}>Subscribed <AntDesign name="checkcircleo" size={9} /></Text> : null}
-                      <ListItem.Title>{item.report_title}</ListItem.Title>
-                      <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}
-                      </ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                  </ListItem>
+                > 
+                 <SavedReports
+                    item={item}
+                    navigation={navigation}
+                  />
                 </Swipeable>
               )}
             />
