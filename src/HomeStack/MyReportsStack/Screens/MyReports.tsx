@@ -106,7 +106,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
       </View>
         <View style={{backgroundColor:'white'}}>
           <BannerAd
-            unitId={adUnitId}
+            unitId={__DEV__ ? TestIds.BANNER : adUnitId}
             size={BannerAdSize.FULL_BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,
@@ -114,6 +114,10 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             onAdFailedToLoad={(e: any) =>{
               console.log(e)
             }}
+            onAdClosed={() => {}}
+            onAdLoaded={()=>{}}
+            onAdOpened={()=>{}}
+            onAdLeftApplication={()=>{}}
           />
         </View>
     </>

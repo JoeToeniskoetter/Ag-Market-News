@@ -95,14 +95,18 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
       </View>
       <View style={{backgroundColor:'white'}}>
         <BannerAd
-          unitId={adUnitId}
+          unitId={__DEV__ ? TestIds.BANNER: adUnitId}
           size={BannerAdSize.FULL_BANNER}
           requestOptions={{
-            requestNonPersonalizedAdsOnly: true,
+            requestNonPersonalizedAdsOnly: false,
           }}
           onAdFailedToLoad={(e: any) =>{
             console.log(e)
           }}
+          onAdClosed={() => {}}
+          onAdLoaded={()=>{}}
+          onAdOpened={()=>{}}
+          onAdLeftApplication={()=>{}}
         />
       </View>
     </>

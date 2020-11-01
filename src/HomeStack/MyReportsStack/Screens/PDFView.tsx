@@ -36,9 +36,6 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
   useEffect(() => {
     if (report_url) {
       setUri(report_url);
-      // let reportUrlSplit: string[] = report_url.split('.');
-      // setReportType(reportUrlSplit[reportUrlSplit.length]);
-      // setLoading(false);
     } else {
       setUri('');
       getUri(slug_name);
