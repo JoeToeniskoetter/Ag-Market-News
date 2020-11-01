@@ -1,6 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { MyReportsStack } from '../HomeStack/MyReportsStack/MyReportsStack';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Report} from './SearchProvider'
 
 export type SavedReport = {
