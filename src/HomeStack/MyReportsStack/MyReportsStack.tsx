@@ -43,14 +43,15 @@ export const MyReportsStack: React.FC<MyReportsStackProps> = () => {
         options={({ route }) => ({
           headerTitle: route.params.report.slug_name,
           headerRight: () => {
-            const reportUrl = `https://mymarketnews.ams.usda.gov/viewReport/${route.params.report.slug_id}`
+            //need to send the url from market news instead of proxy server
+            const reportUrl = `https://mymarketnews.ams.usda.gov/viewReport/${route.params.report.slug_id}${route.params.report}`
             return (
               <Icon
                 name={Platform.OS == "ios" ? "share-apple" : "share-google"}
                 color={Platform.OS == "ios" ? 'rgb(0, 122, 255)' : 'black'}
                 size={38}
                 style={{ paddingRight: 20 }}
-                onPress={() => sendShare('Check out this report!', route.params.report.report_url || reportUrl )}
+                onPress={() => sendShare('Check out this report!', reportUrl )}
               />
             )
           }
