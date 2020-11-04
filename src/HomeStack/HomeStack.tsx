@@ -1,6 +1,5 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { View, Text, Image } from 'react-native'; 
 import { HomeParamList } from "./HomeStackParams";
 import {SearchStack} from './SearchStack/SearchStack';
 import {MyReportsStack} from './MyReportsStack/MyReportsStack';
@@ -15,18 +14,12 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
     <Tabs.Navigator
     initialRouteName={"Search"}
     screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-
+      tabBarIcon: ({ color, size }) => {
         if (route.name === "Search") {
-          iconName = "Search";
-          return <Icon name="search" size={24} color={color} />;
+          return <Icon name="search" size={size} color={color} />;
         }else if (route.name === "MyReports") {
-          return <Icon name="file-text" size={24} color={color} />
+          return <Icon name="file-text" size={size} color={color} />
         }
-        // else if (route.name === "Futures"){
-        //   return <FontAwesome name="line-chart" size={24} color={color}/>
-        // }
       }
     })}
 
@@ -42,17 +35,11 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
       <Tabs.Screen
         name="MyReports"
         component={MyReportsStack}
+        options={{
+          title:"My Reports"
+        }}
       />
-      {/* <Tabs.Screen
-        name="Futures"
-        component={Futures}
-      /> */}
       </Tabs.Navigator>
   );
 };
-
-
-const Futures: React.FC<{}> = () => {
-  return <View><Text>Futures</Text></View>
-}
 
