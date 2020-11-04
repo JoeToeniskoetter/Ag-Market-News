@@ -1,32 +1,45 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { MyReportsStack } from '../HomeStack/MyReportsStack/MyReportsStack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Report} from './SearchProvider'
+import { Report } from './SearchProvider'
+import { getReportType } from '../shared/util';
+import { Alert } from 'react-native';
 
 export type SavedReport = {
   slug_name: string;
-  report_title:string;
+  report_title: string;
 }
 
 interface IMyReportsContext {
   reports: String[] | null;
-  addReport: (rpt:Report) => void;
+  
+  addReport: (rpt: Report) => void;
   removeReport: (slug_name: string) => void;
   getReports: () => void;
 }
 
 export const MyReportsContext = createContext<IMyReportsContext>({
   reports: null,
-  addReport: async (rpt:SavedReport) => { },
+  addReport: async (rpt: SavedReport) => { },
   removeReport: async (slug_name: string) => { },
-  getReports: async () => {}
+  getReports: async () => { }
 });
 
 export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
 
   const [reports, setReports] = useState<String[] | null>(null);
 
-  async function addReport(rpt:Report) {
+  async function addReport(rpt: Report) {
+
+    if (!rpt.report_url) {
+      try {
+        const res = await getReportType(rpt);
+        rpt.report_url = res.url;
+      } catch (e) {
+        return Alert.alert(e.message)
+      }
+    }
+
     const stored = await AsyncStorage.getItem("reports");
 
     if (!stored) {
@@ -37,10 +50,10 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
 
       let storedToJson: SavedReport[] = await JSON.parse(stored as any);
 
-      if(!storedToJson.some(x=>x.slug_name === rpt.slug_name)){
+      if (!storedToJson.some(x => x.slug_name === rpt.slug_name)) {
         storedToJson.push(rpt)
-      AsyncStorage.setItem("reports", JSON.stringify(storedToJson))
-      }else{
+        AsyncStorage.setItem("reports", JSON.stringify(storedToJson))
+      } else {
         return;
       }
     }
@@ -58,11 +71,11 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
 
   }
 
-  async function getReports():Promise<String[]>{
+  async function getReports(): Promise<String[]> {
     const reports = await AsyncStorage.getItem("reports");
-    if(!reports){
+    if (!reports) {
       return []
-    }else{
+    } else {
       return JSON.parse(reports);
     }
   }
