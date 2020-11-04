@@ -1,3 +1,4 @@
+import Share from 'react-native-share';
 import {Report} from '../Providers/SearchProvider';
 const BASE_URI = 'https://joetoeniskoetter.com/api/ag-market-news/report/';
 
@@ -41,4 +42,15 @@ export async function getReportUrl(rptSlug: string): Promise<ReportTypeCheck> {
       type: ReportTypes.TXT,
     };
   }
+}
+
+export async function sendShare(msg: string, url: string) {
+  Share.open({
+    message: msg,
+    url,
+  })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((e) => console.log(e));
 }
