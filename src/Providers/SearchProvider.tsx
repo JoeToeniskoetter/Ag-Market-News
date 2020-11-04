@@ -145,7 +145,6 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   const buildUri = (igr:IGetReports): String => {
-
     let uri: String;
   
     switch (igr.from) {
@@ -159,7 +158,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
         uri = `${BASEURI}/market-types/${igr.reportId}`
         break;
       default:
-        uri = '';
+        uri = `${BASEURI}/reports`;
         break;
     }
   
