@@ -35,6 +35,7 @@ export function PDFView({ navigation, route }: MyReportsNavProps<"PDFView">) {
 
   useEffect(() => {
     if (report_url) {
+      console.log(report_url)
       setUri(report_url);
     } else {
       setUri('');
