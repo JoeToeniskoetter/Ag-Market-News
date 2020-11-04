@@ -22,7 +22,23 @@ export async function getReportType(rpt: Report): Promise<ReportTypeCheck> {
   } else {
     return {
       url: `${BASE_URI}${rpt.slug_name}.txt`,
-      type: ReportTypes.TXT
-    }
+      type: ReportTypes.TXT,
+    };
+  }
+}
+
+export async function getReportUrl(rptSlug: string): Promise<ReportTypeCheck> {
+  let tempUri: string = `${BASE_URI}${rptSlug}.pdf`;
+  const res = await fetch(tempUri);
+  if (res.ok) {
+    return {
+      url: tempUri,
+      type: ReportTypes.PDF,
+    };
+  } else {
+    return {
+      url: `${BASE_URI}${rptSlug}.txt`,
+      type: ReportTypes.TXT,
+    };
   }
 }
