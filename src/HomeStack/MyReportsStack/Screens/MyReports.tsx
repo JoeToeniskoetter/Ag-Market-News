@@ -13,17 +13,12 @@ import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { getReports, removeReport } = useContext(MyReportsContext);
-  const [savedReports, setSavedReports] = useState<Report[]>([])
+  const { reports, removeReport } = useContext(MyReportsContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
 
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
-  async function load() {
-    let rpts = await getReports();
-    await setSavedReports(rpts as any);
-  }
 
   function filterReports(text: string) {
     setSearchText(text)
@@ -31,22 +26,12 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
     if (text === '' || undefined) {
       return setFilteredReports(null)
     }
-    const filtered = savedReports.filter((report: Report) => {
+    const filtered = reports?.filter((report: Report) => {
       return report.report_title.toLowerCase().includes(searchText.toLowerCase()) || report.slug_name.toLowerCase().includes(searchText.toLowerCase())
     });
 
     setFilteredReports(filtered);
   }
-
-  const focused = useIsFocused();
-
-  useEffect(() => {
-    load()
-    // setTestDeviceIDAsync('test')
-  }, [focused])
-
-
-  if (!focused) return null;
 
   return (
     <>
@@ -64,19 +49,15 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           />
         </View>
         <View style={{ height: '75%' }}>
-          {savedReports.length === 0 ? <NoSavedReports /> :
+          {reports?.length === 0 ? <NoSavedReports /> :
             <FlatList
-              data={filteredReports ? filteredReports : savedReports}
+              data={filteredReports ? filteredReports : reports}
               keyExtractor={item => item.slug_name}
               renderItem={({ item }) => (
                 <Swipeable renderRightActions={() => (
                   <TouchableOpacity
                     onPress={async () => {
-                      let filteredReports = savedReports.filter((x: Report) => {
-                        return x.slug_name !== item.slug_name
-                      });
                       await removeReport(item.slug_name);
-                      await setSavedReports(filteredReports);
                     }}
                   >
                     <View style={styles.rightButton}>
