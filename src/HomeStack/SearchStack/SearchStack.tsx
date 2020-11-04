@@ -1,9 +1,6 @@
 import { createStackNavigator, StackHeaderTitleProps } from '@react-navigation/stack';
-import React, { useContext } from 'react';
-import { Alert, Platform, StyleSheet } from 'react-native';
-import { Button, Text } from 'react-native-elements';
-import { MyReportsContext } from '../../../src/Providers/MyReportsProvider';
-import { SearchContext } from '../../Providers/SearchProvider';
+import React from 'react';
+import { Text } from 'react-native-elements';
 import { CommoditySearchScreen } from './Screens/CommoditySearch';
 import { MarketTypeSearch } from './Screens/MarketTypeSearch';
 import { OfficeSearchScreen } from './Screens/OfficeSearch';
@@ -12,6 +9,7 @@ import { ReportSearchScreen } from './Screens/ReportNameSearch';
 import { ReportScreen } from "./Screens/Reports";
 import { SearchScreen } from './Screens/SearchScreen';
 import { SearchParamList } from './SearchStackParams';
+import { FavOrShareButton } from './Screens/components/FavOrShareButton';
 
 
 interface SearchStackProps { }
@@ -19,10 +17,6 @@ interface SearchStackProps { }
 const Stack = createStackNavigator<SearchParamList>();
 
 export const SearchStack: React.FC<SearchStackProps> = () => {
-
-  const { addReport } = useContext(MyReportsContext);
-  const { currentReportUrl } = useContext(SearchContext);
-
 
   return (
     <Stack.Navigator>
@@ -63,7 +57,6 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
       <Stack.Screen
         name="PDFView"
         component={PDFView}
-        //ts-ignore
         options={({ route }) => ({
           headerTitle: (props: StackHeaderTitleProps) => {
             return (
@@ -73,20 +66,7 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
             )
           },
           headerRight: () => {
-            return (
-              <Button
-                title="Favorite"
-                type='clear'
-                onPress={async () => {
-                  let curReport = route.params.report;
-                  curReport.report_url = currentReportUrl;
-                  await addReport(curReport);
-                  await Alert.alert(`${route.params.report.slug_name} Saved to Favorites`)
-                }}
-                style={{ paddingRight: 20 }}
-                titleStyle={{ color: Platform.OS == 'ios' ? '#007aff' : 'black' }}
-              />
-            )
+            return <FavOrShareButton report={route.params.report}/>
           }
         })
         }

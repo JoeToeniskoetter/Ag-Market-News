@@ -3,28 +3,15 @@ import { MyReportsParamList } from './MyReportsStackParams';
 import { createStackNavigator } from '@react-navigation/stack';
 import { PDFView } from './Screens/PDFView';
 import { ReportsScreen } from './Screens/MyReports';
-import { Alert } from 'react-native';
-import Share from 'react-native-share';
-
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { Platform } from 'react-native'
+import { sendShare } from '../../shared/util';
 
 interface MyReportsStackProps { }
 
 const Stack = createStackNavigator<MyReportsParamList>();
 
 export const MyReportsStack: React.FC<MyReportsStackProps> = () => {
-
-  async function sendShare(msg: string, url:string){
-    Share.open({
-        message: msg, 
-        url, 
-        })
-        .then(res => {
-          console.log(res)
-        })
-        .catch(e => console.log(e))
-  }
   
 
 
