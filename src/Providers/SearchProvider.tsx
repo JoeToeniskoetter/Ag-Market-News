@@ -145,7 +145,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   const buildUri = (igr:IGetReports): String => {
-    //let baseUri: String = 'https://mymarketnews.ams.usda.gov/public_data/';
+
     let uri: String;
   
     switch (igr.from) {
