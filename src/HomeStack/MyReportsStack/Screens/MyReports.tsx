@@ -2,7 +2,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
 import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Dimensions } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Dimensions, Alert } from "react-native";
 import { ListItem, Text, SearchBar } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from "../../../Providers/MyReportsProvider";
@@ -16,6 +16,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   const { reports, removeReport } = useContext(MyReportsContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
+  const [showAdd, setShowAdd] = useState<boolean>(true);
 
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
@@ -85,6 +86,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           }
         </View>
       </View>
+      {showAdd ? 
         <View style={{backgroundColor:'white'}}>
           <BannerAd
             unitId={__DEV__ ? TestIds.BANNER : adUnitId}
@@ -93,14 +95,17 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
               requestNonPersonalizedAdsOnly: true,
             }}
             onAdFailedToLoad={(e: any) =>{
-              console.log(e)
+              setShowAdd(false)
             }}
             onAdClosed={() => {}}
-            onAdLoaded={()=>{}}
+            onAdLoaded={()=>{ 
+              setShowAdd(true)
+            }}
             onAdOpened={()=>{}}
             onAdLeftApplication={()=>{}}
           />
         </View>
+        : null}
     </>
   )
 }

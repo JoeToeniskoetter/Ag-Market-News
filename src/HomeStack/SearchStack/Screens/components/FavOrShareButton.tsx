@@ -11,6 +11,7 @@ interface IFavOrShareProps{
 }
 
 export const FavOrShareButton:React.FC<IFavOrShareProps> = ({report}) => {
+  console.log('FAV OR SHARE BTN: ',report)
   const { addReport, reports } = useContext(MyReportsContext);
   const { currentReportUrl } = useContext(SearchContext);
 

@@ -9,7 +9,8 @@ export type Commodity = {
 
 export type ReportForSeach = {
   slug_name: string,
-  report_title: string
+  report_title: string,
+  published_date:Date
 }
 
 export type MarketType = {
@@ -171,6 +172,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     try {
       const res = await fetch(`${BASEURI}/reports`);
       const json = await res.json();
+      console.log(json)
       setLoading(false);
       setReportsForSeach(addReportUrl(json));
     } catch (e) {
