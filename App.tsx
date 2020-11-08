@@ -32,7 +32,7 @@ const App = () => {
     SimpleIcons.loadFont();
     Ionicons.loadFont();
     SplashScreen.hide();
-
+    setUpMessaging();
     return unsubscribe;
   }, [])
 
