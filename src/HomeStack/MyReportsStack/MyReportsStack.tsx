@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { PDFView } from './Screens/PDFView';
 import { ReportsScreen } from './Screens/MyReports';
 import Icon from 'react-native-vector-icons/EvilIcons'
-import { Platform } from 'react-native'
+import { Platform, AppState } from 'react-native'
 import { sendShare } from '../../shared/util';
 
 interface MyReportsStackProps { }
@@ -12,8 +12,6 @@ interface MyReportsStackProps { }
 const Stack = createStackNavigator<MyReportsParamList>();
 
 export const MyReportsStack: React.FC<MyReportsStackProps> = () => {
-  
-
 
   return (
     <Stack.Navigator>

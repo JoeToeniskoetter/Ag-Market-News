@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { SearchNavProps } from '../SearchStackParams';
 import { View, TouchableOpacity, StyleSheet, Image, Dimensions, Platform } from 'react-native';
 import { Text } from 'react-native-elements';
@@ -7,7 +7,7 @@ import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 
 
 export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
-
+  const [showAd, setShowAd] = useState<boolean>(true)
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
   return (
@@ -93,22 +93,27 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{backgroundColor:'white'}}>
-        <BannerAd
-          unitId={__DEV__ ? TestIds.BANNER: adUnitId}
-          size={BannerAdSize.FULL_BANNER}
-          requestOptions={{
-            requestNonPersonalizedAdsOnly: false,
-          }}
-          onAdFailedToLoad={(e: any) =>{
-            console.log(e)
-          }}
-          onAdClosed={() => {}}
-          onAdLoaded={()=>{}}
-          onAdOpened={()=>{}}
-          onAdLeftApplication={()=>{}}
-        />
-      </View>
+      {showAd ?
+        <View style={{ backgroundColor: 'white' }}>
+          <BannerAd
+            unitId={__DEV__ ? TestIds.BANNER : adUnitId}
+            size={BannerAdSize.FULL_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: false,
+            }}
+            onAdFailedToLoad={(e: any) => {
+              console.log(e)
+              setShowAd(false);
+            }}
+            onAdClosed={() => { }}
+            onAdLoaded={() => {
+              setShowAd(true)
+             }}
+            onAdOpened={() => { }}
+            onAdLeftApplication={() => { }}
+          />
+        </View>
+        : null}
     </>
   )
 }
