@@ -2,22 +2,78 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useIsFocused } from "@react-navigation/native";
 import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Dimensions } from "react-native";
-import { ListItem, Text, SearchBar } from "react-native-elements";
+import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Dimensions, Alert } from "react-native";
+import { ListItem, Text, SearchBar, ButtonGroup, Badge } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from "../../../Providers/MyReportsProvider";
 import { Report } from '../../../Providers/SearchProvider';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
+import { SubscriptionContext } from '../../../Providers/SubscriptionProvider';
 
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { reports, removeReport } = useContext(MyReportsContext);
+  const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
+  const { newReports, newReportViewed } = useContext(SubscriptionContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
-
+  const [showAdd, setShowAdd] = useState<boolean>(true);
+  const [buttonIndex, setButtonIndex] = useState<number>(0);
+  const row: Array<any> = [];
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
+
+  const NewReportsButton: React.FC<{}> = () => {
+    return (
+      <Text style={{ color: buttonIndex == 1 ? 'white' : 'black' }}>New Reports  {newReports.length > 0 ? <Badge value={newReports.length} badgeStyle={{ backgroundColor: 'orange' }} /> : null}
+      </Text>
+    )
+  };
+
+  const MyReportButton: React.FC<{}> = () => {
+    return (
+      <Text style={{ color: buttonIndex == 0 ? 'white' : 'black' }}>My Reports</Text>
+    )
+  }
+  const buttons = [{ element: MyReportButton }, { element: NewReportsButton }]
+
+  const LeftActionButton: React.FC<{ item: Report }> = ({ item }) => {
+    return (
+      <TouchableOpacity
+        onPress={async () => {
+          await removeReport(item.slug_name);
+        }}
+      >
+        <View style={styles.rightButton}>
+          <FontAwesome name="trash" size={24} color="white" />
+          <Text style={styles.actionText}>Remove</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
+  const RightActionButton: React.FC<{ item: Report }> = ({ item }) => {
+
+    if (item.subscribed) {
+      return (
+        <TouchableOpacity>
+          <View style={styles.unSubscribeButton}>
+            <AntDesign name="closecircleo" size={22} color="white" />
+            <Text style={styles.actionText}>Unsubscribe</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+
+    return (
+      <TouchableOpacity>
+        <View style={styles.leftButton}>
+          <AntDesign name="checkcircleo" size={22} color="white" />
+          <Text style={styles.actionText}>Subscribe</Text>
+        </View>
+      </TouchableOpacity>
+    )
+  }
 
 
   function filterReports(text: string) {
@@ -36,36 +92,63 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   return (
     <>
       <View style={styles.container}>
-        <Text style={{ paddingBottom: '5%', paddingLeft: '5%' }} h2>My Reports</Text>
-        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', width: '100%', height: '20%' }}>
-          <SearchBar
-            placeholder="Search for report..."
-            platform={Platform.OS == "ios" ? "ios" : "android"}
-            clearIcon
-            onChangeText={(text: string) => { filterReports(text) }}
-            value={searchText}
-            onClear={() => { filterReports('') }}
-            onCancel={() => { filterReports('') }}
+        <Text style={{ paddingLeft: '5%' }} h2>My Reports</Text>
+        <SearchBar
+          placeholder="Search for report..."
+          platform={Platform.OS == "ios" ? "ios" : "android"}
+          clearIcon
+          onChangeText={(text: string) => { filterReports(text) }}
+          value={searchText}
+          onClear={() => { filterReports('') }}
+          onCancel={() => { filterReports('') }}
+          style={{ marginBottom: 0 }}
+        />
+        <ButtonGroup
+          buttons={buttons}
+          selectedIndex={buttonIndex}
+          onPress={(index) => setButtonIndex(index)}
+        />
+        {reports?.length === 0 ? <NoSavedReports /> :
+          buttonIndex == 1 ? <FlatList
+            data={newReports}
+            keyExtractor={item => item.slug_name}
+            renderItem={({ item }) => (
+              <ListItem bottomDivider
+                onPress={() => {
+                  newReportViewed(item)
+                }}
+              >
+                {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
+                }
+                <ListItem.Content>
+                  {item.subscribed ? <SubscribedText /> : null}
+                  <ListItem.Title>{item.report_title}</ListItem.Title>
+                  <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
+                </ListItem.Content>
+                <ListItem.Chevron />
+              </ListItem>
+            )
+            }
           />
-        </View>
-        <View style={{ height: '75%' }}>
-          {reports?.length === 0 ? <NoSavedReports /> :
-            <FlatList
+            : <FlatList
               data={filteredReports ? filteredReports : reports}
               keyExtractor={item => item.slug_name}
-              renderItem={({ item }) => (
-                <Swipeable renderRightActions={() => (
-                  <TouchableOpacity
-                    onPress={async () => {
-                      await removeReport(item.slug_name);
-                    }}
-                  >
-                    <View style={styles.rightButton}>
-                      <FontAwesome name="trash" size={24} color="white" />
-                      <Text style={styles.actionText}>Remove</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}>
+              renderItem={({ item, index }) => (
+                <Swipeable
+                  onSwipeableLeftOpen={async () => {
+                    row[index].close()
+                    if (item.subscribed) {
+                      await unsubscribeToReport(item)
+                      //await Alert.alert(`Unsubscribed to ${item.slug_name}`)
+                    } else {
+                      await subscribeToReport(item)
+                      await Alert.alert(`Subscribed to ${item.slug_name}`)
+                    }
+                  }}
+                  ref={ref => row[index] = ref}
+                  renderRightActions={() => <LeftActionButton item={item} />}
+                  renderLeftActions={() => <RightActionButton item={item} />}
+                >
                   <ListItem bottomDivider
                     onPress={() => {
                       navigation.navigate("PDFView", { report: item })
@@ -74,6 +157,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                     {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
                     }
                     <ListItem.Content>
+                      {item.subscribed ? <SubscribedText /> : null}
                       <ListItem.Title>{item.report_title}</ListItem.Title>
                       <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
                     </ListItem.Content>
@@ -82,31 +166,60 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                 </Swipeable>
               )}
             />
-          }
-        </View>
+        }
       </View>
-        <View style={{backgroundColor:'white'}}>
+      {showAdd ?
+        <View style={{ backgroundColor: 'white' }}>
           <BannerAd
             unitId={__DEV__ ? TestIds.BANNER : adUnitId}
             size={BannerAdSize.FULL_BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,
             }}
-            onAdFailedToLoad={(e: any) =>{
-              console.log(e)
+            onAdFailedToLoad={(e: any) => {
+              setShowAdd(false)
             }}
-            onAdClosed={() => {}}
-            onAdLoaded={()=>{}}
-            onAdOpened={()=>{}}
-            onAdLeftApplication={()=>{}}
+            onAdClosed={() => { }}
+            onAdLoaded={() => {
+              setShowAdd(true)
+            }}
+            onAdOpened={() => { }}
+            onAdLeftApplication={() => { }}
           />
         </View>
+        : null}
     </>
+  )
+}
+
+const SubscribedText: React.FC<{}> = () => {
+  return (
+    <Text style={styles.subscribedText}>Subscribed <AntDesign name="checkcircleo" color="green" style={{ paddingRight: 3 }} />
+    </Text>
   )
 }
 
 
 const styles = StyleSheet.create({
+  leftButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    height: '100%',
+    padding: 20
+  },
+  unSubscribeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#d2d6d3',
+    height: '100%',
+    padding: 20
+  },
+  subscribedText: {
+    fontSize: 12,
+    color: 'green',
+    paddingRight: 2
+  },
   card: {
     height: '20%',
     width: '100%',
@@ -131,7 +244,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     paddingTop: '15%',
     backgroundColor: 'white'
   },
