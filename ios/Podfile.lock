@@ -390,16 +390,16 @@ PODS:
     - React
   - RNCMaskedView (0.1.10):
     - React
-  - RNFBAdMob (7.6.10):
-    - Firebase/AdMob (~> 6.34.0)
+  - RNFBAdMob (7.6.12):
+    - Firebase/AdMob (= 6.34.0)
     - PersonalizedAdConsent (~> 1.0.4)
     - React-Core
     - RNFBApp
-  - RNFBApp (8.4.7):
-    - Firebase/CoreOnly (~> 6.34.0)
+  - RNFBApp (9.0.0):
+    - Firebase/CoreOnly (= 6.34.0)
     - React-Core
-  - RNFBMessaging (7.9.2):
-    - Firebase/Messaging (~> 6.34.0)
+  - RNFBMessaging (8.0.1):
+    - Firebase/Messaging (= 6.34.0)
     - React-Core
     - RNFBApp
   - RNGestureHandler (1.8.0):
@@ -665,9 +665,9 @@ SPEC CHECKSUMS:
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
   RNCAsyncStorage: 43b0cd421ea28a0f342e026366d4b58d817feb27
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
-  RNFBAdMob: c41a03521c83454c4eb9ea810c2d6957ba768523
-  RNFBApp: 804b98033f45c3a3e35b56de8c894f85ef5e4388
-  RNFBMessaging: 9287cbf850ed3524c9f915f5b3daaf1cfaabbf06
+  RNFBAdMob: e5a61acbc2763cd5e98b53ceb28c1994ee292c1e
+  RNFBApp: 4fab20822a1cd738177d64b317fe624589956a90
+  RNFBMessaging: 0d3459ab7e86c6ee5b09e0b30e3b0f09a6043ac5
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
@@ -676,6 +676,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 3756acae1b164c35f4155ba2334a204fe04c202c
+PODFILE CHECKSUM: b7e581477bb527a11804ad2ee885e8310220ca48
 
 COCOAPODS: 1.9.3
