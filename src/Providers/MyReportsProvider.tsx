@@ -13,7 +13,7 @@ export type SavedReport = {
 interface IMyReportsContext {
   reports: Report[] | [];
   addReport: (rpt: Report) => void;
-  removeReport: (slug_name: string) => void;
+  removeReport: (rpt: Report) => void;
   getReports: () => void;
   subscribeToReport: (rpt: Report) => void;
   unsubscribeToReport: (rpt: Report) => void;
@@ -22,7 +22,7 @@ interface IMyReportsContext {
 export const MyReportsContext = createContext<IMyReportsContext>({
   reports: [],
   addReport: async (rpt: Report) => { },
-  removeReport: async (slug_name: string) => { },
+  removeReport: async (rpt: Report) => { },
   getReports: async () => { },
   subscribeToReport: async (rpt: Report) => { },
   unsubscribeToReport: async (rpt: Report) => { }
@@ -75,7 +75,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
       });
       setReports(newReportList)
       await AsyncStorage.setItem('reports', JSON.stringify(newReportList))
-      await messaging().subscribeToTopic(rpt.slug_name)
+      messaging().subscribeToTopic(rpt.slug_name)
     } else {
       askToChangePermissions();
     }
@@ -126,16 +126,16 @@ async function addReport(rpt: Report) {
   setReports(rpts)
 }
 
-async function removeReport(reportId: string) {
+async function removeReport(rpt: Report) {
   let stored = await AsyncStorage.getItem("reports");
   let storedToJson: Report[] = await JSON.parse(stored as any);
 
   const filtered = storedToJson.filter((x) => {
-    return x.slug_name !== reportId;
+    return x.slug_name !== rpt.slug_name;
   });
 
+  messaging().unsubscribeFromTopic(rpt.slug_name);
   await AsyncStorage.setItem('reports', JSON.stringify(filtered));
-
   setReports(filtered);
 }
 
