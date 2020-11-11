@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchNavProps } from '../SearchStackParams';
-import { View, TouchableOpacity, StyleSheet, Image, Dimensions, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image, Dimensions, Platform, Alert } from 'react-native';
 import { Text } from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
-
+import messaging from '@react-native-firebase/messaging';
+import { Report } from '../../../Providers/SearchProvider';
 
 export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
   const [showAd, setShowAd] = useState<boolean>(true)
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
+
+
+  useEffect(()=>{
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      if(!remoteMessage.data ||!remoteMessage.data.report){
+        return;
+      }else {
+        let report:Report = JSON.parse(remoteMessage.data.report)
+        Alert.alert("New Report Available!", `${report.report_title}`, [
+          {text:'Open Report', onPress: () => navigation.navigate("PDFView",{report})},
+          {text:'Cancel', onPress:()=>{}, style:'cancel'}
+        ],
+        {cancelable:true}
+        )
+      }
+    })
+    return unsubscribe;
+  },[])
 
   return (
     <>
