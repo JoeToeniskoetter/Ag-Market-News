@@ -1,6 +1,5 @@
 import React, { createContext, useState, Dispatch, SetStateAction } from 'react';
 import { Alert } from 'react-native';
-import RNFetchBlob from 'rn-fetch-blob'
 
 export type Commodity = {
   commodity_name: String,
@@ -85,12 +84,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
 
-  RNFetchBlob.config({
-    trusty:true
-  });
-
   let BASEURI:string = 'https://joetoeniskoetter.com/api/ag-market-news';
-
 
   function addReportUrlAndSubscription(rpts:Report[]):Report[]{
     return rpts.map((x:Report) => ({ ...x, report_url: '', subscribed: false }));
@@ -173,9 +167,9 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     try {
       const res = await fetch(`${BASEURI}/reports`);
       const json = await res.json();
-      console.log(json)
       setLoading(false);
       setReportsForSeach(addReportUrlAndSubscription(json));
+
     } catch (e) {
       console.log(e.message)
       Alert.alert("Network Error. Please try again later")

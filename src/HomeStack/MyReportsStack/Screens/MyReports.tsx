@@ -1,8 +1,7 @@
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import { useIsFocused } from "@react-navigation/native";
 import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Dimensions, Alert } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Alert } from "react-native";
 import { ListItem, Text, SearchBar, ButtonGroup, Badge } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from "../../../Providers/MyReportsProvider";
@@ -10,12 +9,9 @@ import { Report } from '../../../Providers/SearchProvider';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
-import { SubscriptionContext } from '../../../Providers/SubscriptionProvider';
-
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
   const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
-  const { newReports, newReportViewed } = useContext(SubscriptionContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
@@ -23,25 +19,12 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   const row: Array<any> = [];
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
-  const NewReportsButton: React.FC<{}> = () => {
-    return (
-      <Text style={{ color: buttonIndex == 1 ? 'white' : 'black' }}>New Reports  {newReports.length > 0 ? <Badge value={newReports.length} badgeStyle={{ backgroundColor: 'orange' }} /> : null}
-      </Text>
-    )
-  };
-
-  const MyReportButton: React.FC<{}> = () => {
-    return (
-      <Text style={{ color: buttonIndex == 0 ? 'white' : 'black' }}>My Reports</Text>
-    )
-  }
-  const buttons = [{ element: MyReportButton }, { element: NewReportsButton }]
 
   const LeftActionButton: React.FC<{ item: Report }> = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={async () => {
-          await removeReport(item.slug_name);
+          await removeReport(item);
         }}
       >
         <View style={styles.rightButton}>
@@ -103,34 +86,8 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           onCancel={() => { filterReports('') }}
           style={{ marginBottom: 0 }}
         />
-        <ButtonGroup
-          buttons={buttons}
-          selectedIndex={buttonIndex}
-          onPress={(index) => setButtonIndex(index)}
-        />
         {reports?.length === 0 ? <NoSavedReports /> :
-          buttonIndex == 1 ? <FlatList
-            data={newReports}
-            keyExtractor={item => item.slug_name}
-            renderItem={({ item }) => (
-              <ListItem bottomDivider
-                onPress={() => {
-                  newReportViewed(item)
-                }}
-              >
-                {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
-                }
-                <ListItem.Content>
-                  {item.subscribed ? <SubscribedText /> : null}
-                  <ListItem.Title>{item.report_title}</ListItem.Title>
-                  <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
-                </ListItem.Content>
-                <ListItem.Chevron />
-              </ListItem>
-            )
-            }
-          />
-            : <FlatList
+           <FlatList
               data={filteredReports ? filteredReports : reports}
               keyExtractor={item => item.slug_name}
               renderItem={({ item, index }) => (
@@ -139,7 +96,6 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                     row[index].close()
                     if (item.subscribed) {
                       await unsubscribeToReport(item)
-                      //await Alert.alert(`Unsubscribed to ${item.slug_name}`)
                     } else {
                       await subscribeToReport(item)
                       await Alert.alert(`Subscribed to ${item.slug_name}`)

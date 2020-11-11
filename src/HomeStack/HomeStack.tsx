@@ -1,11 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeParamList } from "./HomeStackParams";
 import { SearchStack } from './SearchStack/SearchStack';
 import { MyReportsStack } from './MyReportsStack/MyReportsStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SubscriptionContext } from '../Providers/SubscriptionProvider';
-import { Badge } from 'react-native-elements';
 
 interface HomeStackProps { }
 
@@ -47,11 +45,7 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
 
 
 const MyReportsTab: React.FC<{ size: number, color: string }> = ({ color, size }) => {
-  const {newReports } = useContext(SubscriptionContext)
   return (
-    <>
-      {newReports.length > 0 ? <Badge value={newReports.length} badgeStyle={{backgroundColor:'red'}} /> : null}
       <Icon name="file-text" size={size} color={color}/>
-    </>
   )
 }

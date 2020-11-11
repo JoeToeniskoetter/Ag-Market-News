@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect} from 'react';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { HomeStack } from './src/HomeStack/HomeStack';
@@ -11,10 +11,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SplashScreen from 'react-native-splash-screen';
 import { SubscriptionProvider } from './src/Providers/SubscriptionProvider';
-import { AppState } from 'react-native';
 
 const App = () => {
-  
 
   useEffect(() => {
     FontAwesome.loadFont();
