@@ -98,7 +98,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                       await unsubscribeToReport(item)
                     } else {
                       await subscribeToReport(item)
-                      await Alert.alert(`Subscribed to ${item.slug_name}`)
+                      Alert.alert(`Subscribed to ${item.slug_name}`)
                     }
                   }}
                   ref={ref => row[index] = ref}
