@@ -10,7 +10,7 @@ import SimpleIcons from 'react-native-vector-icons/SimpleLineIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import SplashScreen from 'react-native-splash-screen';
-import { SubscriptionProvider } from './src/Providers/SubscriptionProvider';
+
 
 const App = () => {
 
@@ -26,13 +26,11 @@ const App = () => {
 
   return (
     <NavigationContainer>
-      <SubscriptionProvider>
         <MyReportsContextProvider>
           <SearchProvider>
             <HomeStack />
           </SearchProvider>
         </MyReportsContextProvider>
-      </SubscriptionProvider>
     </NavigationContainer>
   )
 };
