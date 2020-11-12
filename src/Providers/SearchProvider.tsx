@@ -84,7 +84,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
 
-  let BASEURI:string = 'https://joetoeniskoetter.com/api/ag-market-news';
+  let BASEURI:string = __DEV__ ? 'http://192.168.1.13:5000/api/ag-market-news':'https://joetoeniskoetter.com/api/ag-market-news';
 
   function addReportUrlAndSubscription(rpts:Report[]):Report[]{
     return rpts.map((x:Report) => ({ ...x, report_url: '', subscribed: false }));
