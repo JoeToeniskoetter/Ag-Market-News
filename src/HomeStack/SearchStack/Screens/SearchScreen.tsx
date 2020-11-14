@@ -29,6 +29,19 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
     return unsubscribe;
   },[])
 
+  useEffect(()=>{
+    const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage)=>{
+      console.log('notification opened app')
+      if(!remoteMessage.data || !remoteMessage.data.report){
+        return;
+      }
+      navigation.navigate("PDFView",{report: JSON.parse(remoteMessage.data.report)})
+    })
+
+    return unsubscribe;
+  },[])
+
+
   return (
     <>
       <View style={styles.container}>
