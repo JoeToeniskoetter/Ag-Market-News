@@ -35,7 +35,7 @@ export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigati
     setFilteredCommodities(filtered);
   }
 
-  if (loading) {
+  if (loading && !commodities) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Commodity Search</Text>

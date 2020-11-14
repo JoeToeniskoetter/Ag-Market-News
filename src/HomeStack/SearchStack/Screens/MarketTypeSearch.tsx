@@ -32,7 +32,7 @@ export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports"
     setFilteredMarketTypes(filtered);
   }
 
-  if (loading) {
+  if (loading && !marketTypes) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Market Type Search</Text>

@@ -47,7 +47,7 @@ export function ReportSearchScreen({ navigation, route }: SearchNavProps<"Report
     setFilteredReports(filtered);
   }
 
-  if (loading) {
+  if (loading && !reportsForSearch) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Report Name Search</Text>

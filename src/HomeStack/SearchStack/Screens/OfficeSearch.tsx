@@ -36,7 +36,7 @@ export function OfficeSearchScreen({ navigation, route }: SearchNavProps<"Report
     setFilteredOffices(filtered);
   }
 
-  if (loading) {
+  if (loading && !offices) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Office Search</Text>
