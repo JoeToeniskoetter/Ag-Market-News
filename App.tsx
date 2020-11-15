@@ -9,7 +9,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import SimpleIcons from 'react-native-vector-icons/SimpleLineIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import SplashScreen from 'react-native-splash-screen';
+import RNBootSplash from "react-native-bootsplash";
 
 
 const App = () => {
@@ -20,7 +20,7 @@ const App = () => {
     EvilIcons.loadFont();
     SimpleIcons.loadFont();
     Ionicons.loadFont();
-    SplashScreen.hide();
+    RNBootSplash.hide();
   }, [])
 
 
