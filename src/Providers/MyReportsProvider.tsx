@@ -1,14 +1,11 @@
 import React, { useState, createContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Report } from './SearchProvider'
+import {Report} from '../shared/types';
 import { getReportType } from '../shared/util';
 import { Alert, Linking } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
+import {StorageReference} from '../shared/StorageReference'
 
-export type SavedReport = {
-  slug_name: string;
-  report_title: string;
-}
 
 interface IMyReportsContext {
   reports: Report[] | [];
@@ -74,7 +71,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
         }
       });
       setReports(newReportList)
-      await AsyncStorage.setItem('reports', JSON.stringify(newReportList))
+      await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
       messaging().subscribeToTopic(rpt.slug_name)
     } else {
       askToChangePermissions();
@@ -89,7 +86,7 @@ async function unsubscribeToReport(rpt: Report) {
     }
   });
   setReports(newReportList)
-  await AsyncStorage.setItem('reports', JSON.stringify(newReportList))
+  await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
   await messaging().unsubscribeFromTopic(rpt.slug_name)
 }
 
@@ -105,20 +102,20 @@ async function addReport(rpt: Report) {
     }
   }
 
-  const stored = await AsyncStorage.getItem("reports");
+  const stored = await AsyncStorage.getItem(StorageReference.REPORTS);
 
   let rpts: Report[] = [];
 
   if (!stored) {
     rpts.push(rpt);
-    await AsyncStorage.setItem("reports", JSON.stringify(rpts))
+    await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
   } else {
 
     rpts = await JSON.parse(stored as any);
 
     if (!rpts.some(x => x.slug_name === rpt.slug_name)) {
       rpts.push(rpt)
-      await AsyncStorage.setItem("reports", JSON.stringify(rpts))
+      await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
     } else {
       return;
     }
@@ -127,7 +124,7 @@ async function addReport(rpt: Report) {
 }
 
 async function removeReport(rpt: Report) {
-  let stored = await AsyncStorage.getItem("reports");
+  let stored = await AsyncStorage.getItem(StorageReference.REPORTS);
   let storedToJson: Report[] = await JSON.parse(stored as any);
 
   const filtered = storedToJson.filter((x) => {
@@ -140,7 +137,7 @@ async function removeReport(rpt: Report) {
 }
 
 async function getReports() {
-  const reports = await AsyncStorage.getItem("reports");
+  const reports = await AsyncStorage.getItem(StorageReference.REPORTS);
   if (!reports) {
     return []
   } else {
