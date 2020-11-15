@@ -12,34 +12,45 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
 
-  useEffect(()=>{
+  const goToReportOnNotification = async () => {
+    const notif = await messaging().getInitialNotification()
+    if (notif && notif.data && notif.data.report) {
+      navigation.navigate("PDFView", { report: JSON.parse(notif.data.report) })
+    }
+  }
+
+  useEffect(() => {
+    goToReportOnNotification()
+  }, [])
+
+  useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      if(!remoteMessage.data ||!remoteMessage.data.report){
+      if (!remoteMessage.data || !remoteMessage.data.report) {
         return;
-      }else {
-        let report:Report = JSON.parse(remoteMessage.data.report)
+      } else {
+        let report: Report = JSON.parse(remoteMessage.data.report)
         Alert.alert("New Report Available!", `${report.report_title}`, [
-          {text:'Open Report', onPress: () => navigation.navigate("PDFView",{report})},
-          {text:'Cancel', onPress:()=>{}, style:'cancel'}
+          { text: 'Open Report', onPress: () => navigation.navigate("PDFView", { report }) },
+          { text: 'Cancel', onPress: () => { }, style: 'cancel' }
         ],
-        {cancelable:true}
+          { cancelable: true }
         )
       }
     })
     return unsubscribe;
-  },[])
+  }, [])
 
-  useEffect(()=>{
-    const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage)=>{
-      console.log('notification opened app')
-      if(!remoteMessage.data || !remoteMessage.data.report){
+  useEffect(() => {
+    const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log('notification opened app', remoteMessage)
+      if (!remoteMessage.data || !remoteMessage.data.report) {
         return;
       }
-      navigation.navigate("PDFView",{report: JSON.parse(remoteMessage.data.report)})
+      navigation.navigate("PDFView", { report: JSON.parse(remoteMessage.data.report) })
     })
 
     return unsubscribe;
-  },[])
+  }, [])
 
 
   return (
@@ -140,7 +151,7 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
             onAdClosed={() => { }}
             onAdLoaded={() => {
               setShowAd(true)
-             }}
+            }}
             onAdOpened={() => { }}
             onAdLeftApplication={() => { }}
           />
