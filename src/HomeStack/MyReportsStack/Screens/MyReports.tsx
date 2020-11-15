@@ -5,7 +5,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Alert } from "r
 import { ListItem, Text, SearchBar, ButtonGroup, Badge } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from "../../../Providers/MyReportsProvider";
-import { Report } from '../../../Providers/SearchProvider';
+import { Report } from '../../../shared/types';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';

@@ -5,7 +5,7 @@ import { Text } from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient';
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 import messaging from '@react-native-firebase/messaging';
-import { Report } from '../../../Providers/SearchProvider';
+import { Report } from '../../../shared/types';
 
 export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
   const [showAd, setShowAd] = useState<boolean>(true)

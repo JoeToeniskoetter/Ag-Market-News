@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext, MarketType } from '../../../Providers/SearchProvider';
+import { SearchContext } from '../../../Providers/SearchProvider';
+import { MarketType } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';

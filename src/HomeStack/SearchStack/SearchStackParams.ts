@@ -1,6 +1,6 @@
-import { RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import {Report} from '../../Providers/SearchProvider'
+import {RouteProp} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {Report} from '../../shared/types';
 
 export type SearchParamList = {
   SearchType: undefined;
@@ -8,8 +8,8 @@ export type SearchParamList = {
   MartketTypeSearch: undefined;
   OfficeSearch: undefined;
   ReportNameSearch: undefined;
-  Reports: {reportId:string,from:String};
-  PDFView: {report:Report};
+  Reports: {reportId: string; from: String};
+  PDFView: {report: Report};
   MyReports: undefined;
 };
 

@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, ActivityIndicator, Platform, FlatList, Alert } from 'react-native';
 import { Text } from 'react-native-elements';
 
-import { SearchContext, Report } from '../../../Providers/SearchProvider';
+import { SearchContext } from '../../../Providers/SearchProvider';
 import { SearchBar, ListItem } from 'react-native-elements';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
@@ -10,6 +10,7 @@ import { NoResults } from './components/NoResults';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from '../../../Providers/MyReportsProvider';
+import { Report } from '../../../shared/types';
 
 interface ReportSearchProps { }
 

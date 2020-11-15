@@ -3,7 +3,8 @@ import { Alert,Platform } from 'react-native';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { MyReportsContext } from '../../../../Providers/MyReportsProvider';
-import { Report, SearchContext } from '../../../../Providers/SearchProvider';
+import {SearchContext } from '../../../../Providers/SearchProvider';
+import { Report } from '../../../../shared/types';
 import { sendShare } from '../../../../shared/util';
 
 interface IFavOrShareProps{
