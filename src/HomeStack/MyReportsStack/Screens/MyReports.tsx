@@ -51,8 +51,8 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
     return (
       <TouchableOpacity>
         <View style={styles.leftButton}>
-          <AntDesign name="checkcircleo" size={22} color="white" />
-          <Text style={styles.actionText}>Subscribe</Text>
+          <AntDesign name="checkcircleo" size={22} color="black" />
+          <Text style={styles.actionTextDark}>Subscribe</Text>
         </View>
       </TouchableOpacity>
     )
@@ -87,41 +87,41 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           style={{ marginBottom: 0 }}
         />
         {reports?.length === 0 ? <NoSavedReports /> :
-           <FlatList
-              data={filteredReports ? filteredReports : reports}
-              keyExtractor={item => item.slug_name}
-              renderItem={({ item, index }) => (
-                <Swipeable
-                  onSwipeableLeftOpen={async () => {
-                    row[index].close()
-                    if (item.subscribed) {
-                      await unsubscribeToReport(item)
-                    } else {
-                      await subscribeToReport(item)
-                      Alert.alert(`Subscribed to ${item.slug_name}`)
-                    }
+          <FlatList
+            data={filteredReports ? filteredReports : reports}
+            keyExtractor={item => item.slug_name}
+            renderItem={({ item, index }) => (
+              <Swipeable
+                onSwipeableLeftOpen={async () => {
+                  row[index].close()
+                  if (item.subscribed) {
+                    await unsubscribeToReport(item)
+                  } else {
+                    await subscribeToReport(item)
+                    Alert.alert(`Subscribed to ${item.slug_name}`)
+                  }
+                }}
+                ref={ref => row[index] = ref}
+                renderRightActions={() => <LeftActionButton item={item} />}
+                renderLeftActions={() => <RightActionButton item={item} />}
+              >
+                <ListItem bottomDivider
+                  onPress={() => {
+                    navigation.navigate("PDFView", { report: item })
                   }}
-                  ref={ref => row[index] = ref}
-                  renderRightActions={() => <LeftActionButton item={item} />}
-                  renderLeftActions={() => <RightActionButton item={item} />}
                 >
-                  <ListItem bottomDivider
-                    onPress={() => {
-                      navigation.navigate("PDFView", { report: item })
-                    }}
-                  >
-                    {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
-                    }
-                    <ListItem.Content>
-                      {item.subscribed ? <SubscribedText /> : null}
-                      <ListItem.Title>{item.report_title}</ListItem.Title>
-                      <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                  </ListItem>
-                </Swipeable>
-              )}
-            />
+                  {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
+                  }
+                  <ListItem.Content>
+                    {item.subscribed ? <SubscribedText /> : null}
+                    <ListItem.Title>{item.report_title}</ListItem.Title>
+                    <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              </Swipeable>
+            )}
+          />
         }
       </View>
       {/* {showAdd ?
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   leftButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#39bd28',
     height: '100%',
     padding: 20
   },
@@ -214,5 +214,9 @@ const styles = StyleSheet.create({
   actionText: {
     fontWeight: '600',
     color: '#fff',
+  },
+  actionTextDark: {
+    fontWeight: '600',
+    color: 'black'
   }
 })
