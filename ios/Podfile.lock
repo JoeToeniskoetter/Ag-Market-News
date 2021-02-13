@@ -312,6 +312,8 @@ PODS:
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
   - React-jsinspector (0.63.2)
+  - react-native-in-app-review (2.1.8):
+    - React
   - react-native-pdf (6.2.1):
     - React
   - react-native-progress-bar-android (1.0.3):
@@ -454,6 +456,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-in-app-review (from `../node_modules/react-native-in-app-review`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - "react-native-progress-bar-android (from `../node_modules/@react-native-community/progress-bar-android`)"
   - "react-native-progress-view (from `../node_modules/@react-native-community/progress-view`)"
@@ -546,6 +549,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-in-app-review:
+    :path: "../node_modules/react-native-in-app-review"
   react-native-pdf:
     :path: "../node_modules/react-native-pdf"
   react-native-progress-bar-android:
@@ -646,6 +651,7 @@ SPEC CHECKSUMS:
   React-jsi: 54245e1d5f4b690dec614a73a3795964eeef13a8
   React-jsiexecutor: 8ca588cc921e70590820ce72b8789b02c67cce38
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
+  react-native-in-app-review: 3d6d73b840bdb94ecf83f22e5fee74ee255829d0
   react-native-pdf: 2fc624841b3628db8df318c803874152b33580f5
   react-native-progress-bar-android: d1b109b86c699d36f6a7099dab1a117dc1d66d3c
   react-native-progress-view: 7dada4b26e6996935a9dde876eb4ba49c0cb49bc
