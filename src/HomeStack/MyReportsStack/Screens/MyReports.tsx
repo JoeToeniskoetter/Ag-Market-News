@@ -124,7 +124,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           />
         }
       </View>
-      {/* {showAdd ?
+      {showAdd ?
         <View style={{ backgroundColor: 'white' }}>
           <BannerAd
             unitId={__DEV__ ? TestIds.BANNER : adUnitId}
@@ -143,7 +143,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             onAdLeftApplication={() => { }}
           />
         </View>
-        : null} */}
+        : null}
     </>
   )
 }
