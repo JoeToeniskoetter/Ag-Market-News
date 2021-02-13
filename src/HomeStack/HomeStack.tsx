@@ -4,6 +4,7 @@ import { HomeParamList } from "./HomeStackParams";
 import { SearchStack } from './SearchStack/SearchStack';
 import { MyReportsStack } from './MyReportsStack/MyReportsStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Settings } from '../Settings/Settings';
 
 interface HomeStackProps { }
 
@@ -19,6 +20,8 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
             return <Icon name="search" size={size} color={color} />;
           } else if (route.name === "MyReports") {
             return <MyReportsTab color={color} size={size} />
+          } else if (route.name === "Settings") {
+            return <Icon name="gears" size={size} color={color} />
           }
         }
       })}
@@ -39,6 +42,10 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
           title: "My Reports"
         }}
       />
+      <Tabs.Screen
+        name="Settings"
+        component={Settings}
+      />
     </Tabs.Navigator>
   );
 };
@@ -46,6 +53,6 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
 
 const MyReportsTab: React.FC<{ size: number, color: string }> = ({ color, size }) => {
   return (
-      <Icon name="file-text" size={size} color={color}/>
+    <Icon name="file-text" size={size} color={color} />
   )
 }
