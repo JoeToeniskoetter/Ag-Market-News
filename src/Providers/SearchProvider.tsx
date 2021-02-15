@@ -1,6 +1,7 @@
-import React, { createContext, useState, Dispatch, SetStateAction } from 'react';
+import React, { createContext, useState, Dispatch, SetStateAction, useContext } from 'react';
 import { Alert } from 'react-native';
 import { Office, Commodity, MarketType, Report } from '../shared/types';
+import { FirebaseAuthProvider, FirebaseAuthProviderContext } from './FirebaseAuthProvider';
 
 
 type IGetReports = {
@@ -11,7 +12,7 @@ type IGetReports = {
 interface ISearchProvder {
   getCommodities: () => void;
   getReports: (igr: IGetReports) => void;
-  getOffices:() => void;
+  getOffices: () => void;
   getMarketTypes: () => void;
   getReportsForSearch: () => void;
   setCurrentReportUrl: Dispatch<SetStateAction<string | undefined>>;
@@ -26,11 +27,11 @@ interface ISearchProvder {
 
 export const SearchContext = createContext<ISearchProvder>({
   getCommodities: async () => { },
-  getOffices: async () => {},
+  getOffices: async () => { },
   getReports: async (igr: IGetReports) => { },
-  getMarketTypes: async () => {},
-  getReportsForSearch: async () => {},
-  setCurrentReportUrl: () => {},
+  getMarketTypes: async () => { },
+  getReportsForSearch: async () => { },
+  setCurrentReportUrl: () => { },
   currentReportUrl: undefined,
   reportsForSearch: null,
   commodities: null,
@@ -51,31 +52,38 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
 
-  let BASEURI:string = __DEV__ ? 'http://192.168.1.13:5000/api/ag-market-news':'https://joetoeniskoetter.com/api/ag-market-news';
+  const { state: { user } } = useContext(FirebaseAuthProviderContext);
 
-  function addReportUrlAndSubscription(rpts:Report[]):Report[]{
-    return rpts.map((x:Report) => ({ ...x, report_url: '', subscribed: false }));
+  const fetchOptions = {
+    headers: {
+      Authorization: `Bearer  ${user?.getIdToken()}`
+    }
+  }
+
+  let BASEURI = 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api'
+
+  // let BASEURI: string = __DEV__ ? 'https://joetoeniskoetter.com/api/ag-market-news' : 'http://192.168.1.13:5000/api/ag-market-news';
+
+  function addReportUrlAndSubscription(rpts: Report[]): Report[] {
+    return rpts.map((x: Report) => ({ ...x, report_url: '', subscribed: false }));
   }
 
   async function getCommodities() {
 
     setLoading(true);
-
-    try {
-      const res = await fetch(`${BASEURI}/commodities`, {
-        headers:{
-          accept: 'application/json'
-        },
-        body:null
-      });
-      const json = await res.json();
-      console.log(res)
-      setLoading(false);
-      setCommodities(json);
-    } catch (e) {
-      console.log(e)
-      setLoading(false)
-      Alert.alert(e.message)
+    if (user) {
+      const token = await user.getIdToken()
+      try {
+        const res = await fetch(`${BASEURI}/commodities`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
+        const json = await res.json();
+        console.log(res)
+        setLoading(false);
+        setCommodities(json);
+      } catch (e) {
+        console.log(e)
+        setLoading(false)
+        Alert.alert(e.message)
+      }
     }
   }
 
@@ -83,7 +91,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
     setLoading(true);
     try {
-      const res = await fetch(`${BASEURI}/offices`);
+      const res = await fetch(`${BASEURI}/offices`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       const json = await res.json();
       setLoading(false);
       setOffices(json);
@@ -97,7 +105,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const getMarketTypes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${BASEURI}/market-types`);
+      const res = await fetch(`${BASEURI}/markets`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       const json = await res.json();
       setLoading(false);
       setMarketTypes(json);
@@ -107,32 +115,33 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-  const buildUri = (igr:IGetReports): String => {
+  const buildUri = (igr: IGetReports): String => {
     let uri: String;
-  
+
     switch (igr.from) {
       case "COMMODITY":
-        uri = `${BASEURI}/commodities/${igr.reportId}`;
+        uri = `${BASEURI}/commodities?id=${igr.reportId}`;
+        console.log(uri)
         break;
       case "OFFICE":
-        uri = `${BASEURI}/offices/${igr.reportId}`;
+        uri = `${BASEURI}/offices?id=${igr.reportId}`;
         break;
       case "MARKET_TYPE":
-        uri = `${BASEURI}/market-types/${igr.reportId}`
+        uri = `${BASEURI}/markets?id=${igr.reportId}`
         break;
       default:
         uri = `${BASEURI}/reports`;
         break;
     }
-  
+
     return uri;
 
   }
-  
-  async function getReportsForSearch(){
+
+  async function getReportsForSearch() {
     setLoading(true);
     try {
-      const res = await fetch(`${BASEURI}/reports`);
+      const res = await fetch(`${BASEURI}/reports`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       const json = await res.json();
       setLoading(false);
       setReportsForSeach(addReportUrlAndSubscription(json));
@@ -145,10 +154,10 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   async function getReports(igr: IGetReports) {
-    const uri:String = buildUri(igr);
+    const uri: String = buildUri(igr);
     setLoading(true);
     try {
-      const res = await fetch(uri as any);
+      const res = await fetch(uri as any, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       const json = await res.json();
       setReports(addReportUrlAndSubscription(json.results));
       setLoading(false);
@@ -159,21 +168,21 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   return (
-    <SearchContext.Provider value={{ 
+    <SearchContext.Provider value={{
       getCommodities,
-      getReports, 
+      getReports,
       getOffices,
-      getMarketTypes, 
+      getMarketTypes,
       getReportsForSearch,
       setCurrentReportUrl,
       currentReportUrl,
       reportsForSearch,
-      offices, 
+      offices,
       marketTypes,
-      commodities, 
-      reports, 
-      loading 
-      }}>
+      commodities,
+      reports,
+      loading
+    }}>
       {children}
     </SearchContext.Provider>
   )
