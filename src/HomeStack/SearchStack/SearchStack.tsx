@@ -67,7 +67,7 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
           },
           headerRight: () => {
             console.log(route.params.report)
-            return <FavOrShareButton report={route.params.report}/>
+            return <FavOrShareButton report={route.params.report} />
           }
         })
         }
