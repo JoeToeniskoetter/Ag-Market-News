@@ -12,6 +12,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import RNBootSplash from "react-native-bootsplash";
 import { InstructionsScreen } from './src/HomeStack/InstructionsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FirebaseAuthProvider } from './src/Providers/FirebaseAuthProvider';
 
 const App = () => {
 
@@ -47,11 +48,13 @@ const App = () => {
   if (instructionsSeen) {
     return (
       <NavigationContainer>
-        <MyReportsContextProvider>
-          <SearchProvider>
-            <HomeStack />
-          </SearchProvider>
-        </MyReportsContextProvider>
+        <FirebaseAuthProvider>
+          <MyReportsContextProvider>
+            <SearchProvider>
+              <HomeStack />
+            </SearchProvider>
+          </MyReportsContextProvider>
+        </FirebaseAuthProvider>
       </NavigationContainer>
     )
   }
