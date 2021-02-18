@@ -15,6 +15,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		253745DD2558B3BE003142F8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 253745DC2558B3BE003142F8 /* GoogleService-Info.plist */; };
 		258893EC2560B67000C0E58D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 258893EB2560B67000C0E58D /* BootSplash.storyboard */; };
+		25C506F325DB495B008B7472 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25C506F225DB495B008B7472 /* StoreKit.framework */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -56,6 +57,7 @@
 		253745E22558B88F003142F8 /* USDA_BAREDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = USDA_BAREDebug.entitlements; path = USDA_BARE/USDA_BAREDebug.entitlements; sourceTree = "<group>"; };
 		258893EB2560B67000C0E58D /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = USDA_BARE/BootSplash.storyboard; sourceTree = "<group>"; };
 		25BB4F9E255A11CE0041B555 /* USDA_BARERelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = USDA_BARERelease.entitlements; path = USDA_BARE/USDA_BARERelease.entitlements; sourceTree = "<group>"; };
+		25C506F225DB495B008B7472 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		261430FED884BB02DFD66152 /* libPods-USDA_BARE-USDA_BARETests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-USDA_BARE-USDA_BARETests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		291F7F7014434B70A6E1C0DF /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		2C4D51CCFD2BEF1E485B47E1 /* Pods-USDA_BARE-USDA_BARETests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-USDA_BARETests.release.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-USDA_BARETests/Pods-USDA_BARE-USDA_BARETests.release.xcconfig"; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E81BC13235D63E7C4DC572A7 /* libPods-USDA_BARE.a in Frameworks */,
+				25C506F325DB495B008B7472 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,6 +164,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				25C506F225DB495B008B7472 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				ABBDE25291080B9804A06066 /* libPods-USDA_BARE.a */,
