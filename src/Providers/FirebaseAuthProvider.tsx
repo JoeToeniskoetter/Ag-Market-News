@@ -54,7 +54,7 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
 
   const onAuthStateChanged = (user: any) => {
     dispatch({ type: ACTION_TYPES.SIGNIN, user });
-    console.log(user)
+    // console.log(user)
     if (state.initializing) dispatch({ type: ACTION_TYPES.DONE_INITIALIZING });
   }
 
@@ -62,7 +62,7 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     auth()
       .signInAnonymously()
       .then(() => {
-        console.log('User signed in anonymously');
+        // console.log('User signed in anonymously');
       })
       .catch(error => {
         if (error.code === 'auth/operation-not-allowed') {
