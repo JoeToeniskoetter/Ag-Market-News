@@ -10,22 +10,49 @@ import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 import InAppReview from "react-native-in-app-review";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Cache } from '../../../shared/Cache';
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
   const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
+  const [cache, setCache] = useState<Cache>();
   const row: Array<any> = [];
   const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
 
-  useEffect(() => {
-    if (reports.length > 0) {
+
+
+
+  const reviewExpired = (review: { reviewed: number, initDate: Date }) => {
+    const cachedItemTime = new Date(review.initDate);
+    return (
+      Math.abs((cachedItemTime.getTime() - new Date().getTime()) / 1000) >
+      1209600
+    );
+  }
+
+  const checkLastReviewRequest = async () => {
+    if (__DEV__) await AsyncStorage.removeItem('lastReview');
+    const newReviewEntry = {
+      reviewed: 1,
+      initDate: new Date()
+    };
+    const review = await AsyncStorage.getItem('lastReivew');
+    if ((!review || (review && reviewExpired(JSON.parse(review)))) && reports.length > 0) {
       if (InAppReview.isAvailable()) {
-        InAppReview.RequestInAppReview()
+        InAppReview.RequestInAppReview();
+        await AsyncStorage.setItem('lastReivew', JSON.stringify(newReviewEntry))
       }
     }
+
+  };
+
+
+  useEffect(() => {
+    checkLastReviewRequest()
   }, [])
 
 
