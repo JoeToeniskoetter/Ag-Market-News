@@ -39,8 +39,9 @@ const App = () => {
     EvilIcons.loadFont();
     SimpleIcons.loadFont();
     Ionicons.loadFont();
-    checkInstructionsSeen()
-    RNBootSplash.hide();
+    checkInstructionsSeen().then(() => {
+      RNBootSplash.hide();
+    })
   }, [])
 
   if (instructionsSeen) {
