@@ -20,13 +20,11 @@ const App = () => {
 
 
   const checkInstructionsSeen = async () => {
-    if (!__DEV__) {
-      const seen = await AsyncStorage.getItem('instructionsSeen');
-      if (!seen) {
-        return
-      }
-      return setInstructionsSeen(true);
+    const seen = await AsyncStorage.getItem('instructionsSeen');
+    if (!seen) {
+      return
     }
+    return setInstructionsSeen(true);
   }
 
   const onInstructionsSeen = async () => {
