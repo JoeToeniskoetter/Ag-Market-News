@@ -42,7 +42,7 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
 
   useEffect(() => {
     const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log('notification opened app', remoteMessage)
+      // console.log('notification opened app', remoteMessage)
       if (!remoteMessage.data || !remoteMessage.data.report) {
         return;
       }
