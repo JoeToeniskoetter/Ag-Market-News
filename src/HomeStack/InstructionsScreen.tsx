@@ -20,7 +20,7 @@ const steps = [
   },
   {
     id: 3,
-    title: 'Select a Report',
+    title: 'Select a report',
     image: require('../../assets/instructions/select-report.png')
   },
   {
@@ -30,7 +30,7 @@ const steps = [
   },
   {
     id: 5,
-    title: `Subscribe and be notified when a new report is available`,
+    title: `Swipe right to Subscribe and be notified when a new report is available`,
     image: require('../../assets/instructions/subscribe.png')
   },
   {
