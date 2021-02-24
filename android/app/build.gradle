@@ -146,8 +146,8 @@ android {
         applicationId "com.ag_market_news.android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "1.6.1"
+        versionCode 10
+        versionName "1.6.2"
         multiDexEnabled true
     }
     signingConfigs {
