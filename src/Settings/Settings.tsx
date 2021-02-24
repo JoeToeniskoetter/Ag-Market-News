@@ -8,6 +8,7 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import { Product } from 'react-native-iap';
 import { ActivityIndicator } from 'react-native';
 import { Dimensions, ScrollView } from 'react-native';
+import { InstructionsScreen } from '../HomeStack/InstructionsScreen';
 
 const GOOGLE_PLAY_URL: string = 'https://play.google.com/store/apps/details?id=com.ag_market_news.android';
 const APP_STORE_URL: string = 'https://apps.apple.com/us/app/ag-market-news/id1538518553';
@@ -98,6 +99,7 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
   const [iapError, setIapError] = useState<string>();
   const [purchaseListener, setPurchaseListener] = useState<EmitterSubscription>();
   const [purchaseErrorListener, setPurchaseErrorListener] = useState<EmitterSubscription>();
+  const [seeInstructions, setSeeInstructions] = useState<boolean>(false);
   const sheetRef = React.useRef<BottomSheet>(null);
   const bgBlur = React.useRef(new Animated.Value(1)).current;
   const { height, width } = Dimensions.get('screen');
@@ -229,6 +231,14 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
       iconType: 'antdesign',
       color: "black",
       onPress: openEmail,
+    },
+    {
+      key: 5,
+      title: 'How to use this app',
+      iconName: 'question-circle-o',
+      iconType: 'fontawesome',
+      color: "black",
+      onPress: () => { setSeeInstructions(true) }
     }
   ];
 
@@ -276,6 +286,7 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
     }
 
 
+
     return (
       <ScrollView
         style={{
@@ -315,6 +326,10 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
         </View>
       </ScrollView >
     )
+  }
+
+  if (seeInstructions) {
+    return <InstructionsScreen onInstructionsSeen={() => setSeeInstructions(false)} />
   }
 
   return (
