@@ -1,10 +1,10 @@
 import React, { useState, createContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Report} from '../shared/types';
+import { Report } from '../shared/types';
 import { getReportType } from '../shared/util';
 import { Alert, Linking } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import {StorageReference} from '../shared/StorageReference'
+import { StorageReference } from '../shared/StorageReference'
 
 
 interface IMyReportsContext {
@@ -34,7 +34,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     getReports();
   }, [])
 
-  function askToChangePermissions(){
+  function askToChangePermissions() {
 
     Alert.alert(
       "Enable Notifications",
@@ -45,13 +45,15 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
           onPress: () => console.log("Cancel Pressed"),
           style: "cancel"
         },
-        { text: "Settings", onPress: () => {
-          Linking.canOpenURL('app-settings:').then(supported => {
-            if(supported){
-              Linking.openSettings()
-            }
-          })
-        }}
+        {
+          text: "Settings", onPress: () => {
+            Linking.canOpenURL('app-settings:').then(supported => {
+              if (supported) {
+                Linking.openSettings()
+              }
+            })
+          }
+        }
       ],
       { cancelable: true }
     );
@@ -78,84 +80,84 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
-async function unsubscribeToReport(rpt: Report) {
-  let newReportList: Report[] = reports.slice(0);
-  newReportList.forEach((report: Report) => {
-    if (report.slug_name === rpt.slug_name) {
-      report.subscribed = false
-    }
-  });
-  setReports(newReportList)
-  await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
-  await messaging().unsubscribeFromTopic(rpt.slug_name)
-}
-
-
-
-async function addReport(rpt: Report) {
-  if (!rpt.report_url) {
-    try {
-      const res = await getReportType(rpt);
-      rpt.report_url = res.url;
-    } catch (e) {
-      return Alert.alert(e.message)
-    }
+  async function unsubscribeToReport(rpt: Report) {
+    let newReportList: Report[] = reports.slice(0);
+    newReportList.forEach((report: Report) => {
+      if (report.slug_name === rpt.slug_name) {
+        report.subscribed = false
+      }
+    });
+    setReports(newReportList)
+    await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
+    await messaging().unsubscribeFromTopic(rpt.slug_name)
   }
 
-  const stored = await AsyncStorage.getItem(StorageReference.REPORTS);
 
-  let rpts: Report[] = [];
 
-  if (!stored) {
-    rpts.push(rpt);
-    await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
-  } else {
+  async function addReport(rpt: Report) {
+    if (!rpt.report_url) {
+      try {
+        const res = await getReportType(rpt);
+        rpt.report_url = res.url;
+      } catch (e) {
+        return Alert.alert(e.message)
+      }
+    }
 
-    rpts = await JSON.parse(stored as any);
+    const stored = await AsyncStorage.getItem(StorageReference.REPORTS);
 
-    if (!rpts.some(x => x.slug_name === rpt.slug_name)) {
-      rpts.push(rpt)
+    let rpts: Report[] = [];
+
+    if (!stored) {
+      rpts.push(rpt);
       await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
     } else {
-      return;
+
+      rpts = await JSON.parse(stored as any);
+
+      if (!rpts.some(x => x.slug_name === rpt.slug_name)) {
+        rpts.push(rpt)
+        await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
+      } else {
+        return;
+      }
     }
-  }
-  setReports(rpts)
-}
-
-async function removeReport(rpt: Report) {
-  let stored = await AsyncStorage.getItem(StorageReference.REPORTS);
-  let storedToJson: Report[] = await JSON.parse(stored as any);
-
-  const filtered = storedToJson.filter((x) => {
-    return x.slug_name !== rpt.slug_name;
-  });
-
-  messaging().unsubscribeFromTopic(rpt.slug_name);
-  await AsyncStorage.setItem('reports', JSON.stringify(filtered));
-  setReports(filtered);
-}
-
-async function getReports() {
-  const reports = await AsyncStorage.getItem(StorageReference.REPORTS);
-  if (!reports) {
-    return []
-  } else {
-    let rpts = JSON.parse(reports);
     setReports(rpts)
   }
-}
 
-return (
-  <MyReportsContext.Provider value={{
-    reports,
-    addReport,
-    removeReport,
-    getReports,
-    subscribeToReport,
-    unsubscribeToReport
-  }}>
-    {children}
-  </MyReportsContext.Provider>
-)
+  async function removeReport(rpt: Report) {
+    let stored = await AsyncStorage.getItem(StorageReference.REPORTS);
+    let storedToJson: Report[] = await JSON.parse(stored as any);
+
+    const filtered = storedToJson.filter((x) => {
+      return x.slug_name !== rpt.slug_name;
+    });
+
+    messaging().unsubscribeFromTopic(rpt.slug_name);
+    await AsyncStorage.setItem('reports', JSON.stringify(filtered));
+    setReports(filtered);
+  }
+
+  async function getReports() {
+    const reports = await AsyncStorage.getItem(StorageReference.REPORTS);
+    if (!reports) {
+      return []
+    } else {
+      let rpts = JSON.parse(reports);
+      setReports(rpts)
+    }
+  }
+
+  return (
+    <MyReportsContext.Provider value={{
+      reports,
+      addReport,
+      removeReport,
+      getReports,
+      subscribeToReport,
+      unsubscribeToReport
+    }}>
+      {children}
+    </MyReportsContext.Provider>
+  )
 }

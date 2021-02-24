@@ -24,7 +24,7 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
   useEffect(() => {
     const { from, reportId } = route.params;
     getReports({ from, reportId })
-    
+
   }, []);
 
   const row: Array<any> = [];
