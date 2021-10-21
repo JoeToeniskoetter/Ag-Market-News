@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext, Office } from '../../../Providers/SearchProvider';
+import { SearchContext } from '../../../Providers/SearchProvider';
+import { Office } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
@@ -36,7 +37,7 @@ export function OfficeSearchScreen({ navigation, route }: SearchNavProps<"Report
     setFilteredOffices(filtered);
   }
 
-  if (loading) {
+  if (loading && !offices) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Office Search</Text>

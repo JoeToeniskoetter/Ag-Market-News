@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { SearchContext, Report } from '../../../Providers/SearchProvider';
+import { SearchContext } from '../../../Providers/SearchProvider';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 import { View, ActivityIndicator, Platform, FlatList, Modal, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -9,6 +9,7 @@ import { Center } from './components/Center';
 import { SearchNavProps } from '../SearchStackParams';
 import { MyReportsContext } from '../../../Providers/MyReportsProvider';
 import { NoResults } from './components/NoResults';
+import { Report } from '../../../shared/types';
 
 interface IReportsScreen {
 }
@@ -23,7 +24,7 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
   useEffect(() => {
     const { from, reportId } = route.params;
     getReports({ from, reportId })
-    
+
   }, []);
 
   const row: Array<any> = [];

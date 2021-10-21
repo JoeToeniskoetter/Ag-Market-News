@@ -16,11 +16,19 @@ PODS:
   - Firebase/AdMob (7.6.0):
     - Firebase/CoreOnly
     - Google-Mobile-Ads-SDK (~> 7.66)
+  - Firebase/Auth (7.6.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 7.6.0)
   - Firebase/CoreOnly (7.6.0):
     - FirebaseCore (= 7.6.0)
   - Firebase/Messaging (7.6.0):
     - Firebase/CoreOnly
     - FirebaseMessaging (~> 7.6.0)
+  - FirebaseAuth (7.6.0):
+    - FirebaseCore (~> 7.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
+    - GoogleUtilities/Environment (~> 7.0)
+    - GTMSessionFetcher/Core (~> 1.4)
   - FirebaseCore (7.6.0):
     - FirebaseCoreDiagnostics (~> 7.4)
     - GoogleUtilities/Environment (~> 7.0)
@@ -131,9 +139,16 @@ PODS:
     - GoogleUtilities/Reachability
   - "GoogleUtilities/NSData+zlib (7.2.2)"
   - GoogleUtilities/Reachability (7.2.2):
+<<<<<<< HEAD
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.2.2):
     - GoogleUtilities/Logger
+=======
+    - GoogleUtilities/Logger
+  - GoogleUtilities/UserDefaults (7.2.2):
+    - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (1.5.0)
+>>>>>>> new-firebase-additions
   - nanopb (2.30907.0):
     - nanopb/decode (= 2.30907.0)
     - nanopb/encode (= 2.30907.0)
@@ -310,6 +325,8 @@ PODS:
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
   - React-jsinspector (0.63.2)
+  - react-native-in-app-review (2.1.8):
+    - React
   - react-native-pdf (6.2.1):
     - React
   - react-native-progress-bar-android (1.0.3):
@@ -318,8 +335,6 @@ PODS:
     - React
   - react-native-safe-area-context (3.1.8):
     - React-Core
-  - react-native-splash-screen (3.2.0):
-    - React
   - react-native-webview (10.9.1):
     - React-Core
   - React-RCTActionSheet (0.63.2):
@@ -384,24 +399,45 @@ PODS:
     - React-jsi (= 0.63.2)
   - rn-fetch-blob (0.12.0):
     - React-Core
+  - RNBootSplash (3.0.0):
+    - React-Core
   - RNCAsyncStorage (1.13.1):
     - React
   - RNCMaskedView (0.1.10):
     - React
+<<<<<<< HEAD
   - RNFBAdMob (10.7.0):
+=======
+  - RNFBAdMob (10.8.0):
+>>>>>>> new-firebase-additions
     - Firebase/AdMob (~> 7.6.0)
     - PersonalizedAdConsent (~> 1.0.4)
     - React-Core
     - RNFBApp
+<<<<<<< HEAD
   - RNFBApp (10.7.0):
     - Firebase/CoreOnly (~> 7.6.0)
     - React-Core
   - RNFBMessaging (10.7.0):
     - Firebase/Messaging (~> 7.6.0)
     - React-Core
+=======
+  - RNFBApp (10.8.0):
+    - Firebase/CoreOnly (~> 7.6.0)
+    - React-Core
+  - RNFBAuth (10.8.0):
+    - Firebase/Auth (~> 7.6.0)
+    - React-Core
+    - RNFBApp
+  - RNFBMessaging (10.8.0):
+    - Firebase/Messaging (~> 7.6.0)
+    - React-Core
+>>>>>>> new-firebase-additions
     - RNFBApp
   - RNGestureHandler (1.8.0):
     - React
+  - RNIap (5.2.7):
+    - React-Core
   - RNReanimated (1.13.1):
     - React
   - RNScreens (2.11.0):
@@ -452,11 +488,11 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-in-app-review (from `../node_modules/react-native-in-app-review`)
   - react-native-pdf (from `../node_modules/react-native-pdf`)
   - "react-native-progress-bar-android (from `../node_modules/@react-native-community/progress-bar-android`)"
   - "react-native-progress-view (from `../node_modules/@react-native-community/progress-view`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
-  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -469,12 +505,18 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - rn-fetch-blob (from `../node_modules/rn-fetch-blob`)
+  - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNFBAdMob (from `../node_modules/@react-native-firebase/admob`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+<<<<<<< HEAD
+=======
+  - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
+>>>>>>> new-firebase-additions
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNIap (from `../node_modules/react-native-iap`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
@@ -487,6 +529,7 @@ SPEC REPOS:
     - CocoaAsyncSocket
     - CocoaLibEvent
     - Firebase
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseInstallations
@@ -504,6 +547,7 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUserMessagingPlatform
     - GoogleUtilities
+    - GTMSessionFetcher
     - nanopb
     - OpenSSL-Universal
     - PersonalizedAdConsent
@@ -543,6 +587,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-in-app-review:
+    :path: "../node_modules/react-native-in-app-review"
   react-native-pdf:
     :path: "../node_modules/react-native-pdf"
   react-native-progress-bar-android:
@@ -551,8 +597,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/progress-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
-  react-native-splash-screen:
-    :path: "../node_modules/react-native-splash-screen"
   react-native-webview:
     :path: "../node_modules/react-native-webview"
   React-RCTActionSheet:
@@ -577,6 +621,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   rn-fetch-blob:
     :path: "../node_modules/rn-fetch-blob"
+  RNBootSplash:
+    :path: "../node_modules/react-native-bootsplash"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
@@ -585,10 +631,17 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/admob"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
+<<<<<<< HEAD
+=======
+  RNFBAuth:
+    :path: "../node_modules/@react-native-firebase/auth"
+>>>>>>> new-firebase-additions
   RNFBMessaging:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -609,6 +662,10 @@ SPEC CHECKSUMS:
   FBLazyVector: 3ef4a7f62e7db01092f9d517d2ebc0d0677c4a37
   FBReactNativeSpec: dc7fa9088f0f2a998503a352b0554d69a4391c5a
   Firebase: e1e089d9aac215a52442583f818ab61de3c4581b
+<<<<<<< HEAD
+=======
+  FirebaseAuth: 0a1df88dc32569db509e6269c3e4bf2a168e8ae8
+>>>>>>> new-firebase-additions
   FirebaseCore: 0a43b7f1c5b36f3358cd703011ca4c7e0df55870
   FirebaseCoreDiagnostics: ee1184d51da3293335b83355aad20f537acc24cf
   FirebaseInstallations: 6e4e77396559bc2ae0504823837ed737b1c7e47f
@@ -628,6 +685,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 1024b1a4dfbd7a0e92cb20d7e0a6f1fb66b449a4
   GoogleUserMessagingPlatform: b168e8c46cd8f92aa3e34b584c4ca78a411ce367
   GoogleUtilities: 31c5b01f978a70c6cff2afc6272b3f1921614b43
+<<<<<<< HEAD
+=======
+  GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+>>>>>>> new-firebase-additions
   nanopb: 59221d7f958fb711001e6a449489542d92ae113e
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   PersonalizedAdConsent: dbecabb3467df967c16d9cebc2ef4a8890e4bbd8
@@ -642,11 +703,11 @@ SPEC CHECKSUMS:
   React-jsi: 54245e1d5f4b690dec614a73a3795964eeef13a8
   React-jsiexecutor: 8ca588cc921e70590820ce72b8789b02c67cce38
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
+  react-native-in-app-review: 3d6d73b840bdb94ecf83f22e5fee74ee255829d0
   react-native-pdf: 2fc624841b3628db8df318c803874152b33580f5
   react-native-progress-bar-android: d1b109b86c699d36f6a7099dab1a117dc1d66d3c
   react-native-progress-view: 7dada4b26e6996935a9dde876eb4ba49c0cb49bc
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
-  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-webview: 33f7a5ed311808ae42518c3722c9cc48513fa597
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
   React-RCTAnimation: 9a883bbe1e9d2e158d4fb53765ed64c8dc2200c6
@@ -659,12 +720,21 @@ SPEC CHECKSUMS:
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
   rn-fetch-blob: f065bb7ab7fb48dd002629f8bdcb0336602d3cba
+  RNBootSplash: 985bad91cdc317424f0d4265a56ebe96861d7ce4
   RNCAsyncStorage: 43b0cd421ea28a0f342e026366d4b58d817feb27
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+<<<<<<< HEAD
   RNFBAdMob: 73e0055083097e5f4cd9ecdc6cb657c914dbf517
   RNFBApp: d75aa9756bca20df2c902a3f7e11bc276f03c65b
   RNFBMessaging: f44e16c7bef577cd9803d53fdce4656280b1ccc4
+=======
+  RNFBAdMob: 67ba1fca47ea74bb7356b58584bfb27af96665b4
+  RNFBApp: 97b618641633d6d23187a9d0537c3893482c483f
+  RNFBAuth: 7c6c9e7289d98709cd5d1333d829925f81823375
+  RNFBMessaging: 9eae1103b79d94c6baa5bc43dabc9aba49dfb9da
+>>>>>>> new-firebase-additions
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
+  RNIap: 5e4603c32ca6ebc1209e12a625c7bc44e119fe2e
   RNReanimated: dd8c286ab5dd4ba36d3a7fef8bff7e08711b5476
   RNScreens: 0e91da98ab26d5d04c7b59a9b6bd694124caf88c
   RNShare: 7fb06e9dc9dab68854eb99041aaca080ca3fde10
@@ -672,6 +742,6 @@ SPEC CHECKSUMS:
   Yoga: 7740b94929bbacbddda59bf115b5317e9a161598
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 3756acae1b164c35f4155ba2334a204fe04c202c
+PODFILE CHECKSUM: 7c39a03663c711e74c4b8f3bbcfb2b3672edb988
 
 COCOAPODS: 1.10.1

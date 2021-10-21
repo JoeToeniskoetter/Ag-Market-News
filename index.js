@@ -1,9 +1,13 @@
-/**
- * @format
- */
-
 import {AppRegistry} from 'react-native';
 import App from './App';
-import appName from './app.json';
+import React from 'react';
 
-AppRegistry.registerComponent('Ag Market News', () => App);
+function checkHeadLess({isHeadless}) {
+  if (isHeadless) {
+    return null;
+  } else {
+    return <App />;
+  }
+}
+
+AppRegistry.registerComponent('Ag Market News', () => checkHeadLess);

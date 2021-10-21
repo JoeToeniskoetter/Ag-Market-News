@@ -1,27 +1,28 @@
 import React, { useState, createContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Report } from './SearchProvider'
+import { Report } from '../shared/types';
 import { getReportType } from '../shared/util';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import { StorageReference } from '../shared/StorageReference'
 
-export type SavedReport = {
-  slug_name: string;
-  report_title: string;
-}
 
 interface IMyReportsContext {
   reports: Report[] | [];
-  
   addReport: (rpt: Report) => void;
-  removeReport: (slug_name: string) => void;
+  removeReport: (rpt: Report) => void;
   getReports: () => void;
+  subscribeToReport: (rpt: Report) => void;
+  unsubscribeToReport: (rpt: Report) => void;
 }
 
 export const MyReportsContext = createContext<IMyReportsContext>({
   reports: [],
   addReport: async (rpt: Report) => { },
-  removeReport: async (slug_name: string) => { },
-  getReports: async () => { }
+  removeReport: async (rpt: Report) => { },
+  getReports: async () => { },
+  subscribeToReport: async (rpt: Report) => { },
+  unsubscribeToReport: async (rpt: Report) => { }
 });
 
 
@@ -29,9 +30,68 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
   const [reports, setReports] = useState<Report[] | []>([]);
 
 
-  useEffect(()=>{
+  useEffect(() => {
     getReports();
   }, [])
+
+  function askToChangePermissions() {
+
+    Alert.alert(
+      "Enable Notifications",
+      "To subscribe to reports you must enable notifications",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        {
+          text: "Settings", onPress: () => {
+            Linking.canOpenURL('app-settings:').then(supported => {
+              if (supported) {
+                Linking.openSettings()
+              }
+            })
+          }
+        }
+      ],
+      { cancelable: true }
+    );
+
+  }
+
+  async function subscribeToReport(rpt: Report) {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    if (enabled) {
+      let newReportList: Report[] = reports.slice(0);
+      newReportList.forEach((report: Report) => {
+        if (report.slug_name === rpt.slug_name) {
+          report.subscribed = true
+        }
+      });
+      setReports(newReportList)
+      await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
+      messaging().subscribeToTopic(rpt.slug_name)
+    } else {
+      askToChangePermissions();
+    }
+  }
+
+  async function unsubscribeToReport(rpt: Report) {
+    let newReportList: Report[] = reports.slice(0);
+    newReportList.forEach((report: Report) => {
+      if (report.slug_name === rpt.slug_name) {
+        report.subscribed = false
+      }
+    });
+    setReports(newReportList)
+    await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
+    await messaging().unsubscribeFromTopic(rpt.slug_name)
+  }
+
 
 
   async function addReport(rpt: Report) {
@@ -44,20 +104,20 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
       }
     }
 
-    const stored = await AsyncStorage.getItem("reports");
+    const stored = await AsyncStorage.getItem(StorageReference.REPORTS);
 
-    let rpts:Report[] = [];
+    let rpts: Report[] = [];
 
     if (!stored) {
       rpts.push(rpt);
-      await AsyncStorage.setItem("reports", JSON.stringify(rpts))
+      await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
     } else {
 
       rpts = await JSON.parse(stored as any);
 
       if (!rpts.some(x => x.slug_name === rpt.slug_name)) {
         rpts.push(rpt)
-        await AsyncStorage.setItem("reports", JSON.stringify(rpts))
+        await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(rpts))
       } else {
         return;
       }
@@ -65,21 +125,21 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     setReports(rpts)
   }
 
-  async function removeReport(reportId: string) {
-    let stored = await AsyncStorage.getItem("reports");
+  async function removeReport(rpt: Report) {
+    let stored = await AsyncStorage.getItem(StorageReference.REPORTS);
     let storedToJson: Report[] = await JSON.parse(stored as any);
 
     const filtered = storedToJson.filter((x) => {
-      return x.slug_name !== reportId;
+      return x.slug_name !== rpt.slug_name;
     });
 
+    messaging().unsubscribeFromTopic(rpt.slug_name);
     await AsyncStorage.setItem('reports', JSON.stringify(filtered));
-
     setReports(filtered);
   }
 
   async function getReports() {
-    const reports = await AsyncStorage.getItem("reports");
+    const reports = await AsyncStorage.getItem(StorageReference.REPORTS);
     if (!reports) {
       return []
     } else {
@@ -93,7 +153,9 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
       reports,
       addReport,
       removeReport,
-      getReports
+      getReports,
+      subscribeToReport,
+      unsubscribeToReport
     }}>
       {children}
     </MyReportsContext.Provider>

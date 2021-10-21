@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 import com.android.build.OutputFile
 project.ext.vectoricons = [
@@ -145,8 +146,8 @@ android {
         applicationId "com.ag_market_news.android"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.3"
+        versionCode 10
+        versionName "1.6.2"
         multiDexEnabled true
     }
     signingConfigs {

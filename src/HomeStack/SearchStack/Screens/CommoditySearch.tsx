@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext, Commodity } from '../../../Providers/SearchProvider';
+import { SearchContext } from '../../../Providers/SearchProvider';
+import {Commodity} from '../../../shared/types';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
 
@@ -35,7 +36,7 @@ export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigati
     setFilteredCommodities(filtered);
   }
 
-  if (loading) {
+  if (loading && !commodities) {
     return (
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Commodity Search</Text>

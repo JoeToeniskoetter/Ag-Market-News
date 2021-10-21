@@ -1,6 +1,8 @@
-import { RouteProp } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
-import {Report} from '../../Providers/SearchProvider'
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {CompositeNavigationProp, RouteProp} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {Report} from '../../shared/types';
+import {HomeNavProps} from '../HomeStackParams';
 
 export type SearchParamList = {
   SearchType: undefined;
@@ -8,10 +10,15 @@ export type SearchParamList = {
   MartketTypeSearch: undefined;
   OfficeSearch: undefined;
   ReportNameSearch: undefined;
-  Reports: {reportId:string,from:String};
-  PDFView: {report:Report};
+  Reports: {reportId: string; from: String};
+  PDFView: {report: Report};
   MyReports: undefined;
 };
+
+export type SearchStackNavProps = CompositeNavigationProp<
+  StackNavigationProp<SearchParamList, 'SearchType'>,
+  BottomTabNavigationProp<HomeNavProps<'MyReports'>>
+>;
 
 export type SearchNavProps<T extends keyof SearchParamList> = {
   navigation: StackNavigationProp<SearchParamList, T>;
