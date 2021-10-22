@@ -6,10 +6,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 import messaging from '@react-native-firebase/messaging';
 import { Report } from '../../../shared/types';
+import analytics from '@react-native-firebase/analytics';
+import { AD_UNIT_ID, AnalyticEvents } from '../../../shared/util';
 
 export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
   const [showAd, setShowAd] = useState<boolean>(true)
-  const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
 
 
   const goToReportOnNotification = async () => {
@@ -60,8 +61,9 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly', width: '100%' }}>
           <TouchableOpacity
             style={[styles.card, { backgroundColor: '#FFCC00' }]}
-            onPress={() => {
+            onPress={async () => {
               navigation.navigate("CommoditySearch")
+              await analytics().logEvent(AnalyticEvents.commodity_search)
             }}
           >
             <LinearGradient
@@ -79,8 +81,9 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.card}
-            onPress={() => {
+            onPress={async () => {
               navigation.navigate("OfficeSearch")
+              await analytics().logEvent(AnalyticEvents.office_search)
             }}
 
           >
@@ -99,7 +102,10 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.card}
-            onPress={() => navigation.navigate("MartketTypeSearch")}
+            onPress={async () => {
+              navigation.navigate("MartketTypeSearch")
+              await analytics().logEvent(AnalyticEvents.market_type_search)
+            }}
           >
             <LinearGradient
               colors={['#47B702', '#92DD91']}
@@ -118,6 +124,7 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
             style={[styles.card, { backgroundColor: '#EB5959' }]}
             onPress={async () => {
               navigation.navigate('ReportNameSearch')
+              await analytics().logEvent(AnalyticEvents.report_name_search)
             }}
 
           >
@@ -139,7 +146,7 @@ export function SearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
       {showAd ?
         <View style={{ backgroundColor: 'white' }}>
           <BannerAd
-            unitId={__DEV__ ? TestIds.BANNER : adUnitId}
+            unitId={__DEV__ ? TestIds.BANNER : AD_UNIT_ID}
             size={BannerAdSize.FULL_BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: false,

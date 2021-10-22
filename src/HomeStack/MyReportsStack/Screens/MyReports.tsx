@@ -2,7 +2,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Alert } from "react-native";
-import { ListItem, Text, SearchBar, ButtonGroup, Badge } from "react-native-elements";
+import { ListItem, Text, SearchBar } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext } from "../../../Providers/MyReportsProvider";
 import { Report } from '../../../shared/types';
@@ -12,18 +12,15 @@ import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
 import InAppReview from "react-native-in-app-review";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Cache } from '../../../shared/Cache';
+import analytics from '@react-native-firebase/analytics';
+import { AD_UNIT_ID, AnalyticEvents } from '../../../shared/util';
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
   const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
-  const [cache, setCache] = useState<Cache>();
   const row: Array<any> = [];
-  const adUnitId = Platform.OS == 'ios' ? 'ca-app-pub-8015316806136807/9105033552' : 'ca-app-pub-8015316806136807/4483084657';
-
-
-
 
 
   const reviewExpired = (review: { reviewed: number, initDate: Date }) => {
@@ -131,8 +128,10 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                 onSwipeableLeftOpen={async () => {
                   row[index].close()
                   if (item.subscribed) {
+                    await analytics().logEvent(AnalyticEvents.report_unsubscribed, { slug: item.slug_name, title: item.report_title })
                     await unsubscribeToReport(item)
                   } else {
+                    await analytics().logEvent(AnalyticEvents.report_subscribed, { slug: item.slug_name, title: item.report_title })
                     await subscribeToReport(item)
                     Alert.alert(`Subscribed to ${item.slug_name}`)
                   }
@@ -142,7 +141,8 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
                 renderLeftActions={() => <RightActionButton item={item} />}
               >
                 <ListItem bottomDivider
-                  onPress={() => {
+                  onPress={async () => {
+                    await analytics().logSelectContent({ content_type: AnalyticEvents.myReports, item_id: item.slug_name })
                     navigation.navigate("PDFView", { report: item })
                   }}
                 >
@@ -163,7 +163,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
       {showAdd ?
         <View style={{ backgroundColor: 'white' }}>
           <BannerAd
-            unitId={__DEV__ ? TestIds.BANNER : adUnitId}
+            unitId={__DEV__ ? TestIds.BANNER : AD_UNIT_ID}
             size={BannerAdSize.FULL_BANNER}
             requestOptions={{
               requestNonPersonalizedAdsOnly: true,

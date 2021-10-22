@@ -1,5 +1,6 @@
+import {Platform} from 'react-native';
 import Share from 'react-native-share';
-import {Report} from '../Providers/SearchProvider';
+import {Report} from './types';
 const BASE_URI = 'https://joetoeniskoetter.com/api/ag-market-news/report/';
 
 enum ReportTypes {
@@ -54,3 +55,36 @@ export async function sendShare(msg: string, url: string) {
     })
     .catch((e) => console.log(e));
 }
+
+export const AnalyticEvents = {
+  ...(__DEV__ ? {myReports: 'DEV_myReports'} : {myReports: 'myReports'}),
+  ...(__DEV__
+    ? {commodity_search: 'DEV_commodity_search'}
+    : {commodity_search: 'commodity_search'}),
+  ...(__DEV__
+    ? {office_search: 'DEV_office_search'}
+    : {office_search: 'office_search'}),
+  ...(__DEV__
+    ? {market_type_search: 'DEV_market_type_search'}
+    : {market_type_search: 'market_type_search'}),
+  ...(__DEV__
+    ? {report_name_search: 'DEV_report_name_search'}
+    : {report_name_search: 'report_name_search'}),
+  ...(__DEV__
+    ? {report_favorited: 'DEV_report_favorited'}
+    : {report_favorited: 'report_favorited'}),
+  ...(__DEV__
+    ? {report_selected: 'DEV_report_selected'}
+    : {report_selected: 'report_selected'}),
+  ...(__DEV__
+    ? {report_subscribed: 'DEV_report_subscribed'}
+    : {report_subscribed: 'report_subscribed'}),
+  ...(__DEV__
+    ? {report_unsubscribed: 'DEV_report_unsubscribed'}
+    : {report_unsubscribed: 'report_unsubscribed'}),
+};
+
+export const AD_UNIT_ID =
+  Platform.OS == 'ios'
+    ? 'ca-app-pub-8015316806136807/9105033552'
+    : 'ca-app-pub-8015316806136807/4483084657';

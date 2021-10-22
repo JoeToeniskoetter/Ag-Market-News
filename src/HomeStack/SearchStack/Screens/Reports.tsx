@@ -10,6 +10,8 @@ import { SearchNavProps } from '../SearchStackParams';
 import { MyReportsContext } from '../../../Providers/MyReportsProvider';
 import { NoResults } from './components/NoResults';
 import { Report } from '../../../shared/types';
+import analytics from '@react-native-firebase/analytics';
+import { AnalyticEvents } from '../../../shared/util';
 
 interface IReportsScreen {
 }
@@ -87,11 +89,13 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
                 row[index].close()
                 await addReport(item)
                 await Alert.alert('Saved to Favorites')
+                await analytics().logEvent(AnalyticEvents.report_favorited, { slug: item.slug_name, title: item.report_title })
               }}
             >
               <ListItem bottomDivider
-                onPress={() => {
+                onPress={async () => {
                   navigation.navigate("PDFView", { report: item })
+                  await analytics().logEvent(AnalyticEvents.report_selected, { slug: item.slug_name, title: item.report_title })
                 }}
               >
 

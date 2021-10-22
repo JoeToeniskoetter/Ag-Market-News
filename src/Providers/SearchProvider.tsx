@@ -55,9 +55,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
   const { state: { user } } = useContext(FirebaseAuthProviderContext);
 
-  let BASEURI = 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api'
-
-  // let BASEURI: string = __DEV__ ? 'https://joetoeniskoetter.com/api/ag-market-news' : 'http://192.168.1.13:5000/api/ag-market-news';
+  let BASEURI: string = __DEV__ ? 'http://localhost:5001/ag-market-news-74525/us-central1/api' : 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
 
   useEffect(() => {
     if (!cache) {
