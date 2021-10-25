@@ -5,6 +5,7 @@ import PDF from 'react-native-pdf';
 import WebView from 'react-native-webview';
 import { SearchContext } from '../../../Providers/SearchProvider';
 import { FirebaseAuthProviderContext } from '../../../Providers/FirebaseAuthProvider';
+import { BASE_URI } from '../../../shared/util';
 
 interface IPDFView { }
 
@@ -16,10 +17,6 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
-
-  // const BASE_URI = `https://joetoeniskoetter.com/api/ag-market-news/report/`;
-  let BASE_URI = 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api'
-
 
   async function getUri(slg: Number) {
     setLoading(true)
@@ -33,7 +30,6 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
       console.log(res.status)
       if (res.ok) {
         const json = await res.json();
-        console.log(json)
         if (json.link) {
           setUri(json.link);
           setReportType(String(json.link).includes('.pdf') ? 'pdf' : 'txt');
@@ -41,13 +37,8 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
           setCurrentReportUrl(json.link);
         }
       } else {
-        // Alert.alert('Request not okay, setting to: ', `${BASE_URI}${slg}.txt`);
-        // Alert.alert(res.statusText);
         setLoading(false);
         console.log(res.status)
-        // setUri(`${BASE_URI}${slg}.txt`);
-        // setReportType('txt');
-        // setCurrentReportUrl(`${BASE_URI}${slg}.txt`);
       }
     } catch (e) {
       Alert.alert(e.message)

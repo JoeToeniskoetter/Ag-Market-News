@@ -1,8 +1,9 @@
 import React, { createContext, useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { Office, Commodity, MarketType, Report } from '../shared/types';
-import { FirebaseAuthProvider, FirebaseAuthProviderContext } from './FirebaseAuthProvider';
+import { FirebaseAuthProviderContext } from './FirebaseAuthProvider';
 import { Cache } from '../shared/Cache';
+import { BASE_URI } from '../shared/util';
 
 type IGetReports = {
   from: String,
@@ -55,11 +56,15 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
   const { state: { user } } = useContext(FirebaseAuthProviderContext);
 
-  let BASEURI: string = __DEV__ ? 'http://localhost:5001/ag-market-news-74525/us-central1/api' : 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
+
 
   useEffect(() => {
     if (!cache) {
       setCache(new Cache(21600, 'cache'))
+    } else {
+      if (__DEV__) {
+        cache.clear();
+      }
     }
   }, [])
 
@@ -67,67 +72,67 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     return rpts.map((x: Report) => ({ ...x, report_url: '', subscribed: false }));
   }
 
-  async function getCommodities() {
+  async function makeApiRequest(path: string, cacheKey?: string) {
+    console.log('MAKING REQUEST TO: ', path)
     setLoading(true);
-    const savedResult = await cache?.get("commodities");
-    if (savedResult) {
-      setCommodities(JSON.parse(savedResult.val));
-      setLoading(false);
-      return
-    }
-    if (user) {
-      const token = await user.getIdToken()
-      try {
-        const res = await fetch(`${BASEURI}/commodities`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
-        const json = await res.json();
-        setLoading(false);
-        setCommodities(json);
-        cache?.set("commodities", JSON.stringify(json))
-      } catch (e) {
-        console.log(e)
-        setLoading(false)
-        Alert.alert(e.message)
+    try {
+      if (!user) {
+        console.log('no user')
+        return
+      };
+
+      if (cacheKey) {
+        const savedResult = await cache?.get(cacheKey);
+        if (savedResult) {
+          setLoading(false)
+          return savedResult.val;
+        }
       }
+
+      const res = await fetch(`${BASE_URI}${path}`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
+      if (!res.ok) {
+        throw new Error('Not Found');
+      }
+      const json = await res.json();
+
+      if (cacheKey) {
+        cache?.set(cacheKey, JSON.stringify(json))
+      }
+
+      setLoading(false);
+      return json;
+    }
+    catch (e) {
+      console.log(e)
+      setLoading(false)
+      throw new Error(e);
+    }
+  }
+
+  async function getCommodities() {
+    try {
+      const commodities = await makeApiRequest('/commodities', 'commodities');
+      setCommodities(commodities);
+    } catch (e) {
+      setLoading(false)
+      Alert.alert(e.message)
     }
   }
 
   const getOffices = async () => {
-    setLoading(true);
-    const savedResult = await cache?.get("offices");
-    if (savedResult) {
-      setOffices(JSON.parse(savedResult.val));
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await fetch(`${BASEURI}/offices`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
-      const json = await res.json();
-      setLoading(false);
-      setOffices(json);
-      cache?.set("offices", JSON.stringify(json));
+      const offices = await makeApiRequest('/offices', 'offices');
+      setOffices(offices)
     } catch (e) {
       setLoading(false)
       Alert.alert("Network Error. Please try again later")
-      console.log(e)
     }
   }
 
   const getMarketTypes = async () => {
-    setLoading(true);
-
-    const savedResult = await cache?.get("markets");
-    if (savedResult) {
-      setLoading(false);
-      setMarketTypes(JSON.parse(savedResult.val))
-      return
-    }
-
     try {
-      const res = await fetch(`${BASEURI}/markets`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
-      const json = await res.json();
-      setLoading(false);
-      setMarketTypes(json);
+      const marketTypes = await makeApiRequest('/markets', 'markets');
+      setMarketTypes(marketTypes);
     } catch (e) {
       setLoading(false)
       Alert.alert("Network Error. Please try again later")
@@ -139,16 +144,16 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
     switch (igr.from) {
       case "COMMODITY":
-        uri = `${BASEURI}/commodities?id=${igr.reportId}`;
+        uri = `/commodities?id=${igr.reportId}`;
         break;
       case "OFFICE":
-        uri = `${BASEURI}/offices?id=${igr.reportId}`;
+        uri = `/offices?id=${igr.reportId}`;
         break;
       case "MARKET_TYPE":
-        uri = `${BASEURI}/markets?id=${igr.reportId}`
+        uri = `/markets?id=${igr.reportId}`
         break;
       default:
-        uri = `${BASEURI}/reports`;
+        uri = `/reports`;
         break;
     }
 
@@ -157,53 +162,42 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   async function getReportsForSearch() {
-    setLoading(true);
-
-    const savedResult = await cache?.get("reportsForSearch");
-
-    if (savedResult) {
-      setReportsForSeach(JSON.parse(savedResult.val))
-      setLoading(false);
-      return
-    }
 
     try {
-      const res = await fetch(`${BASEURI}/reports`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
-      const json = await res.json();
-      setLoading(false);
-      setReportsForSeach(addReportUrlAndSubscription(json));
-      cache?.set("reportsForSearch", JSON.stringify(json))
+      console.log('making api request')
+      const reports = await makeApiRequest('/reports', 'reportsForSearch');
+      setReportsForSeach(reports);
+
     } catch (e) {
       console.log(e.message)
       Alert.alert("Network Error. Please try again later")
-      setLoading(false)
     }
+
   }
 
   async function getReports(igr: IGetReports) {
     const uri: string = buildUri(igr);
-
-    setLoading(true);
     const cacheKey = `${igr.from}${igr.reportId}`;
-    const savedResult = await cache?.get(cacheKey);
-    if (savedResult) {
-      setReports(JSON.parse(savedResult.val))
-      setLoading(false);
-      return
-    }
-
     try {
-      const res = await fetch(uri as any, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
-      const json = await res.json();
-      const reportsWithAdditionalFields = addReportUrlAndSubscription(json.results);
+      const res = await makeApiRequest(uri, cacheKey);
+      const reportsWithAdditionalFields = addReportUrlAndSubscription(res.results);
       setReports(reportsWithAdditionalFields);
-      setLoading(false);
-      cache?.set(cacheKey, JSON.stringify(reportsWithAdditionalFields));
     } catch (e) {
       setLoading(false);
       Alert.alert("Network Error. Please try again later")
     }
   }
+
+  async function getUri(slg: number) {
+    let tempUri: string = `/reportLink?id=_${slg}`
+    try {
+      const res = await makeApiRequest(tempUri);
+      return res.link;
+    } catch (e) {
+      return false
+    }
+  }
+
 
   return (
     <SearchContext.Provider value={{

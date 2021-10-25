@@ -3,7 +3,7 @@ import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
 import { SearchContext } from '../../../Providers/SearchProvider';
-import {Commodity} from '../../../shared/types';
+import { Commodity } from '../../../shared/types';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
 
@@ -59,25 +59,25 @@ export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigati
         onClear={() => updateList('')}
         onCancel={() => updateList('')}
       />
-      {!loading && commodities?.length === 0 ? <NoResults/> : 
-      <FlatList
-        keyExtractor={(item: any) => item.commodity_lov_id}
-        data={filteredCommodities ? filteredCommodities : commodities}
-        renderItem={({ item }) => <ListItem bottomDivider
-          onPress={() => {
-            navigation.navigate("Reports",
-              { from: "COMMODITY", reportId: item.commodity_lov_id }
-            )
-          }}
-          
-        >
-          <ListItem.Content>
-            <ListItem.Title>{item.commodity_name}</ListItem.Title>
-          </ListItem.Content>
-          <ListItem.Chevron />
-        </ListItem>
-        }
-      />
+      {!loading && commodities?.length === 0 ? <NoResults /> :
+        <FlatList
+          keyExtractor={(item: any) => item.commodity_lov_id}
+          data={filteredCommodities ? filteredCommodities : commodities}
+          renderItem={({ item }) => <ListItem bottomDivider
+            onPress={() => {
+              navigation.navigate("Reports",
+                { from: "COMMODITY", reportId: item.commodity_lov_id }
+              )
+            }}
+
+          >
+            <ListItem.Content>
+              <ListItem.Title>{item.commodity_name}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+          </ListItem>
+          }
+        />
       }
     </View>
   );

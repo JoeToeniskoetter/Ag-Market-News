@@ -1,7 +1,6 @@
 import {Platform} from 'react-native';
 import Share from 'react-native-share';
 import {Report} from './types';
-const BASE_URI = 'https://joetoeniskoetter.com/api/ag-market-news/report/';
 
 enum ReportTypes {
   PDF = 'pdf',
@@ -12,6 +11,10 @@ type ReportTypeCheck = {
   url: string;
   type: ReportTypes;
 };
+
+export const BASE_URI: string = __DEV__
+  ? 'http://localhost:5001/ag-market-news-74525/us-central1/api'
+  : 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
 
 export async function getReportType(rpt: Report): Promise<ReportTypeCheck> {
   let tempUri: string = `${BASE_URI}${rpt.slug_name}.pdf`;
