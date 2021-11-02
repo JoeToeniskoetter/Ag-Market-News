@@ -4,7 +4,7 @@ export type Office = {
 };
 
 export type Report = {
-  slug_id: Number;
+  slug_id: number;
   slug_name: string;
   report_title: string;
   published_date: Date;
@@ -36,4 +36,16 @@ export type MarketType = {
 export type SavedReport = {
   slug_name: string;
   report_title: string;
+};
+
+export type ReportSummary = {
+  description: string;
+  previousReleases: [
+    {
+      year: string;
+      months: string[];
+    },
+  ];
+  synopsis: string;
+  title: string;
 };

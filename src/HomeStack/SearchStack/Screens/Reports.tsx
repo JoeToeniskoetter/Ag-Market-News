@@ -94,7 +94,8 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
             >
               <ListItem bottomDivider
                 onPress={async () => {
-                  navigation.navigate("PDFView", { report: item })
+                  navigation.navigate("Summary", { report: item })
+                  // navigation.navigate("PDFView", { report: item })
                   await analytics().logEvent(AnalyticEvents.report_selected, { slug: item.slug_name, title: item.report_title })
                 }}
               >

@@ -10,6 +10,7 @@ import { ReportScreen } from "./Screens/Reports";
 import { SearchScreen } from './Screens/SearchScreen';
 import { SearchParamList } from './SearchStackParams';
 import { FavOrShareButton } from './Screens/components/FavOrShareButton';
+import { SummaryScreen } from './Screens/SummaryScreen';
 
 
 interface SearchStackProps { }
@@ -94,6 +95,10 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
           headerTintColor: '#000'
         }}
 
+      />
+      <Stack.Screen
+        name="Summary"
+        component={SummaryScreen}
       />
     </Stack.Navigator>
   )

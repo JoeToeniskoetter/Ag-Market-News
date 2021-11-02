@@ -1,6 +1,6 @@
 import React, { createContext, useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
-import { Office, Commodity, MarketType, Report } from '../shared/types';
+import { Office, Commodity, MarketType, Report, ReportSummary } from '../shared/types';
 import { FirebaseAuthProviderContext } from './FirebaseAuthProvider';
 import { Cache } from '../shared/Cache';
 import { BASE_URI } from '../shared/util';
@@ -16,6 +16,8 @@ interface ISearchProvder {
   getOffices: () => void;
   getMarketTypes: () => void;
   getReportsForSearch: () => void;
+  fetchSummary: (slg: number) => void;
+  reportSummary: ReportSummary | null;
   setCurrentReportUrl: Dispatch<SetStateAction<string | undefined>>;
   currentReportUrl: string | undefined;
   reportsForSearch: Report[] | null;
@@ -33,6 +35,8 @@ export const SearchContext = createContext<ISearchProvder>({
   getMarketTypes: async () => { },
   getReportsForSearch: async () => { },
   setCurrentReportUrl: () => { },
+  fetchSummary: (slg: number) => { },
+  reportSummary: null,
   currentReportUrl: undefined,
   reportsForSearch: null,
   commodities: null,
@@ -53,19 +57,20 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
   const [cache, setCache] = useState<Cache>();
+  const [reportSummary, setSummary] = useState(null);
 
   const { state: { user } } = useContext(FirebaseAuthProviderContext);
 
 
 
   useEffect(() => {
-    if (!cache) {
-      setCache(new Cache(21600, 'cache'))
-    } else {
-      if (__DEV__) {
-        cache.clear();
-      }
-    }
+    // if (!cache) {
+    // setCache(new Cache(21600, 'cache'))
+    // } else {
+    // if (__DEV__) {
+    cache?.clear();
+    // }
+    // }
   }, [])
 
   function addReportUrlAndSubscription(rpts: Report[]): Report[] {
@@ -73,7 +78,6 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   }
 
   async function makeApiRequest(path: string, cacheKey?: string) {
-    console.log('MAKING REQUEST TO: ', path)
     setLoading(true);
     try {
       if (!user) {
@@ -89,6 +93,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
         }
       }
 
+      console.log('MAKING REQUEST TO: ', path)
       const res = await fetch(`${BASE_URI}${path}`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       if (!res.ok) {
         throw new Error('Not Found');
@@ -198,6 +203,16 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     }
   }
 
+  async function fetchSummary(slg: number) {
+    try {
+      const summary = await makeApiRequest(`/report/summary/${slg}`)
+      setSummary(summary)
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
+
 
   return (
     <SearchContext.Provider value={{
@@ -207,6 +222,8 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
       getMarketTypes,
       getReportsForSearch,
       setCurrentReportUrl,
+      fetchSummary,
+      reportSummary,
       currentReportUrl,
       reportsForSearch,
       offices,

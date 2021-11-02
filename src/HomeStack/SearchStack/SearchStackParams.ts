@@ -10,6 +10,7 @@ export type SearchParamList = {
   MartketTypeSearch: undefined;
   OfficeSearch: undefined;
   ReportNameSearch: undefined;
+  Summary: {report: Report};
   Reports: {reportId: string; from: String};
   PDFView: {report: Report};
   MyReports: undefined;
