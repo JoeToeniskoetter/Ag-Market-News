@@ -11,6 +11,7 @@ import { SearchScreen } from './Screens/SearchScreen';
 import { SearchParamList } from './SearchStackParams';
 import { FavOrShareButton } from './Screens/components/FavOrShareButton';
 import { SummaryScreen } from './Screens/SummaryScreen';
+import { PreviousReportsScreen } from './Screens/PreviousReportsScreen';
 
 
 interface SearchStackProps { }
@@ -99,6 +100,16 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
       <Stack.Screen
         name="Summary"
         component={SummaryScreen}
+      />
+
+      <Stack.Screen
+        name="PreviousReports"
+        component={PreviousReportsScreen}
+        options={() => {
+          return {
+            title: "Previous Reports"
+          }
+        }}
       />
     </Stack.Navigator>
   )

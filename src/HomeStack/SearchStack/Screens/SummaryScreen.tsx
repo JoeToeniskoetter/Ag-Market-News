@@ -1,6 +1,8 @@
 import React from 'react'
 import { ActivityIndicator, Picker, SectionList, StatusBar, StyleSheet, Text, View } from 'react-native';
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { Button } from 'react-native-elements';
+import { ScrollView } from 'react-native-gesture-handler';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Report } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
 
@@ -13,45 +15,49 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 ];
 
 export function SummaryScreen({ navigation, route }: SearchNavProps<"Summary">) {
-  const { reportSummary, fetchSummary, loading } = React.useContext(SearchContext);
+  const { reportSummary, fetchSummary, loading } = useSearch();
   const { report } = route.params;
 
   React.useEffect(() => {
     fetchSummary(route.params.report.slug_id);
   }, [route.params.report.slug_id])
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="black" />
+  const onCurrentReportPressed = () => {
+    navigation.navigate("PDFView", { report: route.params.report })
   }
 
-  const Item: React.FC<{ item: string }> = ({ item }) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{monthNames[Number(item) - 1]}</Text>
-    </View>
-  );
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    )
+  }
 
   if (reportSummary) {
-    const buildData = () => {
-      return reportSummary?.previousReleases.map(i => ({
-        title: i.year,
-        data: i.months
-      }))
-    }
     return (
-      <>
-        <Text>{report.report_title}</Text>
-        <Text>{report.market_types}</Text>
-        <Text>{reportSummary.description}</Text>
-        <Text>{reportSummary.synopsis}</Text>
-        <SectionList
-          sections={buildData()}
-          keyExtractor={(item, index) => item + index}
-          renderItem={({ item }) => <Item item={item} />}
-          renderSectionHeader={({ section: { title } }) => (
-            <Text style={styles.header}>{title}</Text>
-          )}
-        />
-      </>
+      <ScrollView style={styles.summaryContainer} contentContainerStyle={{ marginTop: 10, height: '110%' }}>
+        <Text style={styles.title}>{report.report_title}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingVertical: 5 }}>
+          <Button title="View Current Report" buttonStyle={styles.currentReportButton} onPress={onCurrentReportPressed} />
+          <Button title="See Previous Reports" buttonStyle={styles.previousReportsButton} onPress={() => navigation.navigate("PreviousReports", { report, summary: reportSummary })} />
+        </View>
+        <Text style={styles.sectionHeader}>Market Type</Text>
+        <Text style={styles.section}>{report.market_types}</Text>
+        {reportSummary.description ?
+          (<>
+            <Text style={styles.sectionHeader}>Description</Text>
+            <Text style={styles.section}>{reportSummary.description}</Text>
+            <Text style={styles.sectionHeader}>Synopsis</Text>
+            <Text style={styles.section}>{reportSummary.synopsis}</Text>
+          </>)
+          : (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.sectionHeader}>No Description Available</Text>
+            </View>
+          )
+        }
+      </ScrollView>
     )
   }
 
@@ -60,12 +66,16 @@ export function SummaryScreen({ navigation, route }: SearchNavProps<"Summary">) 
 
 
 const styles = StyleSheet.create({
+  summaryContainer: {
+    padding: 10,
+    flex: 1,
+    backgroundColor: 'white'
+  },
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
     marginHorizontal: 16,
     backgroundColor: "#fff"
-
   },
   item: {
     padding: 20,
@@ -75,9 +85,30 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 32,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   title: {
-    fontSize: 24
+    fontSize: 24,
+    color: 'green',
+    fontWeight: 'bold',
+    paddingBottom: 10
+  },
+  sectionHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'green',
+    marginTop: 15
+  },
+  section: {
+    fontSize: 16
+  },
+  currentReportButton: {
+    backgroundColor: 'green',
+    borderRadius: 10,
+    padding: 10
+  },
+  previousReportsButton: {
+    borderRadius: 10,
+    padding: 10
   }
 });

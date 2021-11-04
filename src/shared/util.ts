@@ -2,7 +2,7 @@ import {Platform} from 'react-native';
 import Share from 'react-native-share';
 import {Report} from './types';
 
-enum ReportTypes {
+export enum ReportTypes {
   PDF = 'pdf',
   TXT = 'txt',
 }

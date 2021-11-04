@@ -3,15 +3,15 @@ import { View, ActivityIndicator, Text, Alert, Dimensions } from 'react-native';
 import { SearchNavProps } from '../SearchStackParams';
 import PDF from 'react-native-pdf';
 import WebView from 'react-native-webview';
-import { SearchContext } from '../../../Providers/SearchProvider';
-import { FirebaseAuthProviderContext } from '../../../Providers/FirebaseAuthProvider';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
+import { FirebaseAuthProviderContext, useFirebaseAuth } from '../../../Providers/FirebaseAuthProvider';
 import { BASE_URI } from '../../../shared/util';
 
 interface IPDFView { }
 
 export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
-  const { setCurrentReportUrl } = useContext(SearchContext);
-  const { state: { user } } = useContext(FirebaseAuthProviderContext);
+  const { setCurrentReportUrl } = useSearch();
+  const { state: { user } } = useFirebaseAuth();
   const { slug_name, slug_id } = route.params.report
   const [error, setError] = useState<String | null>(null);
   const [uri, setUri] = useState<string>('');

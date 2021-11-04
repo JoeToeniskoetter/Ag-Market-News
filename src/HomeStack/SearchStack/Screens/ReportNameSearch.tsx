@@ -2,21 +2,21 @@ import React, { useContext, useState, useEffect } from 'react';
 import { View, ActivityIndicator, Platform, FlatList, Alert } from 'react-native';
 import { Text } from 'react-native-elements';
 
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { SearchBar, ListItem } from 'react-native-elements';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { MyReportsContext } from '../../../Providers/MyReportsProvider';
+import { MyReportsContext, useMyReports } from '../../../Providers/MyReportsProvider';
 import { Report } from '../../../shared/types';
 
 interface ReportSearchProps { }
 
 export function ReportSearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
-  const { reportsForSearch, getReportsForSearch, loading } = useContext(SearchContext);
-  const { addReport } = useContext(MyReportsContext);
+  const { reportsForSearch, getReportsForSearch, loading } = useSearch();
+  const { addReport } = useMyReports();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();;
   const row: Array<any> = [];

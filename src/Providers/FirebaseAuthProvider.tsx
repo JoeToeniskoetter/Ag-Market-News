@@ -90,3 +90,5 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     </FirebaseAuthProviderContext.Provider>
   );
 }
+
+export const useFirebaseAuth = () => React.useContext(FirebaseAuthProviderContext);

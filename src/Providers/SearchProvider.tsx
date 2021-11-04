@@ -1,7 +1,7 @@
 import React, { createContext, useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { Office, Commodity, MarketType, Report, ReportSummary } from '../shared/types';
-import { FirebaseAuthProviderContext } from './FirebaseAuthProvider';
+import { FirebaseAuthProviderContext, useFirebaseAuth } from './FirebaseAuthProvider';
 import { Cache } from '../shared/Cache';
 import { BASE_URI } from '../shared/util';
 
@@ -59,8 +59,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [cache, setCache] = useState<Cache>();
   const [reportSummary, setSummary] = useState(null);
 
-  const { state: { user } } = useContext(FirebaseAuthProviderContext);
-
+  const { state: { user } } = useFirebaseAuth();
 
 
   useEffect(() => {
@@ -93,7 +92,6 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
         }
       }
 
-      console.log('MAKING REQUEST TO: ', path)
       const res = await fetch(`${BASE_URI}${path}`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
       if (!res.ok) {
         throw new Error('Not Found');
@@ -236,3 +234,5 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     </SearchContext.Provider>
   )
 }
+
+export const useSearch = () => React.useContext(SearchContext);

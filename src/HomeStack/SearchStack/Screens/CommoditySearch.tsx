@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Commodity } from '../../../shared/types';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
@@ -13,7 +13,7 @@ interface CommoditySearchProps {
 
 export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigation }) => {
 
-  const { commodities, getCommodities, loading } = useContext(SearchContext);
+  const { commodities, getCommodities, loading } = useSearch();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredCommodities, setFilteredCommodities] = useState<Commodity[] | null>();
 

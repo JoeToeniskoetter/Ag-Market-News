@@ -161,3 +161,5 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     </MyReportsContext.Provider>
   )
 }
+
+export const useMyReports = () => React.useContext(MyReportsContext);

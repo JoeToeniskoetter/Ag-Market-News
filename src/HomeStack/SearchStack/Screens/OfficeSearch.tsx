@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Office } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
@@ -14,7 +14,7 @@ interface CommoditySearchProps {
 
 export function OfficeSearchScreen({ navigation, route }: SearchNavProps<"Reports">) {
 
-  const { offices, getOffices, loading } = useContext(SearchContext);
+  const { offices, getOffices, loading } = useSearch();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredOffices, setFilteredOffices] = useState<Office[] | null>();;
 

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 import { View, ActivityIndicator, Platform, FlatList, Modal, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
@@ -7,7 +7,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import { Center } from './components/Center';
 import { SearchNavProps } from '../SearchStackParams';
-import { MyReportsContext } from '../../../Providers/MyReportsProvider';
+import { MyReportsContext, useMyReports } from '../../../Providers/MyReportsProvider';
 import { NoResults } from './components/NoResults';
 import { Report } from '../../../shared/types';
 import analytics from '@react-native-firebase/analytics';
@@ -17,8 +17,8 @@ interface IReportsScreen {
 }
 
 export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
-  const { loading, reports, getReports } = useContext(SearchContext);
-  const { addReport } = useContext(MyReportsContext)
+  const { loading, reports, getReports } = useSearch();
+  const { addReport } = useMyReports();
   const [searchText, setSearchText] = useState<string | undefined>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | undefined>(undefined);
 

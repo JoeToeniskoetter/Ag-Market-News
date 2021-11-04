@@ -49,3 +49,17 @@ export type ReportSummary = {
   synopsis: string;
   title: string;
 };
+
+export interface PreviousReportsData {
+  data?: PreviousReports[] | null;
+}
+
+export interface PreviousReports {
+  title: string;
+  document_date: string;
+  file_extension: string;
+  document_url: string;
+  report_date: string;
+  slug_id: string;
+  report_end_date: string;
+}

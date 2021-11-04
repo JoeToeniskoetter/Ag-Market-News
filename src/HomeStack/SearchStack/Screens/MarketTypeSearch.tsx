@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
 
-import { SearchContext } from '../../../Providers/SearchProvider';
+import { useSearch } from '../../../Providers/SearchProvider';
 import { MarketType } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
@@ -10,7 +10,7 @@ import { NoResults } from './components/NoResults';
 
 export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports">) {
 
-  const { marketTypes, getMarketTypes, loading } = useContext(SearchContext);
+  const { marketTypes, getMarketTypes, loading } = useSearch();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredMarketTypes, setFilteredMarketTypes] = useState<MarketType[] | null>();;
 
@@ -38,7 +38,7 @@ export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports"
       <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
         <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Market Type Search</Text>
         <Center>
-          <ActivityIndicator size="large" color="#000"/>
+          <ActivityIndicator size="large" color="#000" />
         </Center>
       </View>
     )

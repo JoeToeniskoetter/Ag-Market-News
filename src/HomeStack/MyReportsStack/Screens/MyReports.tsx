@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Alert } from "react-native";
 import { ListItem, Text, SearchBar } from "react-native-elements";
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { MyReportsContext } from "../../../Providers/MyReportsProvider";
+import { MyReportsContext, useMyReports } from "../../../Providers/MyReportsProvider";
 import { Report } from '../../../shared/types';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
@@ -16,7 +16,7 @@ import analytics from '@react-native-firebase/analytics';
 import { AD_UNIT_ID, AnalyticEvents } from '../../../shared/util';
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useContext(MyReportsContext);
+  const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useMyReports();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
