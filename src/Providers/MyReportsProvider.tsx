@@ -60,6 +60,10 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
 
   }
 
+  const createTopic = (rpt: Report): string => {
+    return __DEV__ ? `DEV_${rpt.slug_name}` : rpt.slug_name;
+  }
+
   async function subscribeToReport(rpt: Report) {
     const authStatus = await messaging().requestPermission();
     const enabled =
@@ -74,7 +78,8 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
       });
       setReports(newReportList)
       await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
-      messaging().subscribeToTopic(rpt.slug_name)
+      console.log(createTopic(rpt))
+      messaging().subscribeToTopic(createTopic(rpt));
     } else {
       askToChangePermissions();
     }
@@ -89,7 +94,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     });
     setReports(newReportList)
     await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(newReportList))
-    await messaging().unsubscribeFromTopic(rpt.slug_name)
+    await messaging().unsubscribeFromTopic(createTopic(rpt));
   }
 
 
@@ -134,7 +139,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({ children }) => {
     });
 
     messaging().unsubscribeFromTopic(rpt.slug_name);
-    await AsyncStorage.setItem('reports', JSON.stringify(filtered));
+    await AsyncStorage.setItem(StorageReference.REPORTS, JSON.stringify(filtered));
     setReports(filtered);
   }
 

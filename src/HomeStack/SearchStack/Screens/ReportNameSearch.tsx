@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, ActivityIndicator, Platform, FlatList, Alert } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Icon, Text } from 'react-native-elements';
 
 import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { SearchBar, ListItem } from 'react-native-elements';
@@ -11,6 +11,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { MyReportsContext, useMyReports } from '../../../Providers/MyReportsProvider';
 import { Report } from '../../../shared/types';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 
 interface ReportSearchProps { }
 
@@ -50,12 +51,7 @@ export function ReportSearchScreen({ navigation, route }: SearchNavProps<"Report
 
   if (loading && !reportsForSearch) {
     return (
-      <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
-        <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Report Name Search</Text>
-        <Center>
-          <ActivityIndicator size="large" color="#000" />
-        </Center>
-      </View>
+      <LoadingSpinner />
     )
   }
 
@@ -89,6 +85,7 @@ export function ReportSearchScreen({ navigation, route }: SearchNavProps<"Report
                 navigation.navigate("PDFView", { report: item })
               }}
             >
+              <Icon name="file-text" type="feather" size={24} />
               <ListItem.Content>
                 <ListItem.Title style={{ fontWeight: 'bold' }}>
                   {item.report_title}

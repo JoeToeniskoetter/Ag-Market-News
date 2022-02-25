@@ -12,6 +12,7 @@ import { SearchParamList } from './SearchStackParams';
 import { FavOrShareButton } from './Screens/components/FavOrShareButton';
 import { SummaryScreen } from './Screens/SummaryScreen';
 import { PreviousReportsScreen } from './Screens/PreviousReportsScreen';
+import { RecentReports } from './Screens/RecentReports';
 
 
 interface SearchStackProps { }
@@ -62,15 +63,15 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
         options={({ route }) => ({
           headerTitle: (props: StackHeaderTitleProps) => {
             return (
-              <Text style={[{ fontWeight: 'bold', fontSize: 18 }]}>
+              <Text dataDetectorType={undefined} style={[{ fontWeight: 'bold', fontSize: 18 }]}>
                 {route.params.report.slug_name}
               </Text>
             )
           },
           headerRight: () => {
-            console.log(route.params.report)
             return <FavOrShareButton report={route.params.report} />
-          }
+          },
+          headerBackTitle: null
         })
         }
       />
@@ -108,6 +109,16 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
         options={() => {
           return {
             title: "Previous Reports"
+          }
+        }}
+      />
+
+      <Stack.Screen
+        name="RecentReports"
+        component={RecentReports}
+        options={() => {
+          return {
+            title: "Recent Reports"
           }
         }}
       />

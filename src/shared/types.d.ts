@@ -1,3 +1,7 @@
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
+
 export type Office = {
   office_name: string;
   office_code: string;
@@ -7,12 +11,13 @@ export type Report = {
   slug_id: number;
   slug_name: string;
   report_title: string;
-  published_date: Date;
-  markets: String[];
-  market_types: String[];
-  offices: String[];
-  sectionNames: String[];
-  report_name: String;
+  published_date: string,
+  timestamp:FirebaseFirestoreTypes.Timestamp,
+  markets: string[];
+  market_types: string[];
+  offices: string[];
+  sectionNames: string[];
+  report_name: string;
   report_url: string | undefined;
   subscribed: boolean;
 };
@@ -51,7 +56,7 @@ export type ReportSummary = {
 };
 
 export interface PreviousReportsData {
-  data?: PreviousReports[] | null;
+  data: PreviousReports[];
 }
 
 export interface PreviousReports {
@@ -59,7 +64,7 @@ export interface PreviousReports {
   document_date: string;
   file_extension: string;
   document_url: string;
-  report_date: string;
+  report_date: Date;
   slug_id: string;
   report_end_date: string;
 }

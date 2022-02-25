@@ -23,14 +23,13 @@ const useReportUrl = (slg: Number) => {
           Authorization: `Bearer ${await user?.getIdToken()}`,
         },
       });
-      console.log(res.status);
       if (res.ok) {
         const json = await res.json();
         if (json.link) {
           let res = {
             link: json.link,
           };
-          setReportType(String(json.link).includes('.pdf') ? 'pdf' : 'txt');
+          // setReportType(String(json.link).includes('.pdf') ? 'pdf' : 'txt');
           setLoading(false);
         }
       } else {

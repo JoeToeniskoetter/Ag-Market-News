@@ -1,4 +1,8 @@
 {
   "name": "Ag Market News",
-  "displayName": "Ag Market News"
+  "displayName": "Ag Market News",
+  "react-native-google-ads":{
+    "android_app_id":"ca-app-pub-8015316806136807~9514235279",
+    "ios_app_id":"ca-app-pub-8015316806136807~1418115227"
+  }
 }

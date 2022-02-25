@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
-import { Text, SearchBar, ListItem } from 'react-native-elements';
+import { Text, SearchBar, ListItem, Icon } from 'react-native-elements';
+import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 
 import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Commodity } from '../../../shared/types';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
+
+const WheatIcon = require("../../../../assets/wheat.png");
 
 interface CommoditySearchProps {
   navigation: any
@@ -38,12 +42,7 @@ export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigati
 
   if (loading && !commodities) {
     return (
-      <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
-        <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Commodity Search</Text>
-        <Center>
-          <ActivityIndicator size="large" color="#000" />
-        </Center>
-      </View>
+      <LoadingSpinner />
     )
   }
 
@@ -71,6 +70,7 @@ export const CommoditySearchScreen: React.FC<CommoditySearchProps> = ({ navigati
             }}
 
           >
+            <Avatar source={WheatIcon} />
             <ListItem.Content>
               <ListItem.Title>{item.commodity_name}</ListItem.Title>
             </ListItem.Content>

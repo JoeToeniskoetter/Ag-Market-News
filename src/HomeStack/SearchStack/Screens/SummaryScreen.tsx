@@ -5,6 +5,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Report } from '../../../shared/types';
 import { SearchNavProps } from '../SearchStackParams';
+import LottieView from 'lottie-react-native';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 
 interface SummaryScreenProps {
   report: Report
@@ -28,9 +30,7 @@ export function SummaryScreen({ navigation, route }: SearchNavProps<"Summary">) 
 
   if (loading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'white' }}>
-        <ActivityIndicator size="large" color="black" />
-      </View>
+      <LoadingSpinner />
     )
   }
 

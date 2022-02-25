@@ -8,12 +8,12 @@ import { MyReportsContext, useMyReports } from "../../../Providers/MyReportsProv
 import { Report } from '../../../shared/types';
 import { MyReportsNavProps } from "../MyReportsStackParams";
 import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
-import { BannerAd, BannerAdSize, TestIds } from '@react-native-firebase/admob';
+import { BannerAd, BannerAdSize, TestIds } from '@invertase/react-native-google-ads';
 import InAppReview from "react-native-in-app-review";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Cache } from '../../../shared/Cache';
 import analytics from '@react-native-firebase/analytics';
 import { AD_UNIT_ID, AnalyticEvents } from '../../../shared/util';
+import { StorageReference } from '../../../shared/StorageReference';
 
 export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
   const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useMyReports();
@@ -32,16 +32,16 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
   }
 
   const checkLastReviewRequest = async () => {
-    if (__DEV__) await AsyncStorage.removeItem('lastReview');
+    if (__DEV__) await AsyncStorage.removeItem(StorageReference.LAST_REVIEW);
     const newReviewEntry = {
       reviewed: 1,
       initDate: new Date()
     };
-    const review = await AsyncStorage.getItem('lastReivew');
+    const review = await AsyncStorage.getItem(StorageReference.LAST_REVIEW);
     if ((!review || (review && reviewExpired(JSON.parse(review)))) && reports.length > 0) {
       if (InAppReview.isAvailable()) {
         InAppReview.RequestInAppReview();
-        await AsyncStorage.setItem('lastReivew', JSON.stringify(newReviewEntry))
+        await AsyncStorage.setItem(StorageReference.LAST_REVIEW, JSON.stringify(newReviewEntry))
       }
     }
 
@@ -105,6 +105,17 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
     setFilteredReports(filtered);
   }
 
+  async function subscribeOrUnSubscribe(report: Report) {
+    if (report.subscribed) {
+      await analytics().logEvent(AnalyticEvents.report_unsubscribed, { slug: report.slug_name, title: report.report_title })
+      await unsubscribeToReport(report)
+    } else {
+      await analytics().logEvent(AnalyticEvents.report_subscribed, { slug: report.slug_name, title: report.report_title })
+      await subscribeToReport(report)
+      Alert.alert(`Subscribed to ${report.slug_name}`)
+    }
+  }
+
   return (
     <>
       <View style={styles.container}>
@@ -126,15 +137,8 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             renderItem={({ item, index }) => (
               <Swipeable
                 onSwipeableLeftOpen={async () => {
-                  row[index].close()
-                  if (item.subscribed) {
-                    await analytics().logEvent(AnalyticEvents.report_unsubscribed, { slug: item.slug_name, title: item.report_title })
-                    await unsubscribeToReport(item)
-                  } else {
-                    await analytics().logEvent(AnalyticEvents.report_subscribed, { slug: item.slug_name, title: item.report_title })
-                    await subscribeToReport(item)
-                    Alert.alert(`Subscribed to ${item.slug_name}`)
-                  }
+                  row[index].close();
+                  subscribeOrUnSubscribe(item);
                 }}
                 ref={ref => row[index] = ref}
                 renderRightActions={() => <LeftActionButton item={item} />}

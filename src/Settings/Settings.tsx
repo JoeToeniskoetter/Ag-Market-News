@@ -1,18 +1,17 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { StyleSheet, View, FlatList, TouchableOpacity, TouchableHighlight, Linking, Share, Alert, Platform, Modal, Pressable, Animated, EmitterSubscription, ScrollViewBase } from 'react-native';
-import { Button, ListItem, Text } from 'react-native-elements';
-import Fontawesome from 'react-native-vector-icons/FontAwesome';
-import Antdesign from 'react-native-vector-icons/AntDesign';
+import { StyleSheet, View, TouchableOpacity, TouchableHighlight, Linking, Share, Alert, Platform, Modal, Pressable, Animated, EmitterSubscription, ScrollViewBase, TextInput, FlatList, StatusBar, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Avatar, Button, ListItem, Text } from 'react-native-elements';
 import * as RNIap from 'react-native-iap';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { Product } from 'react-native-iap';
 import { ActivityIndicator } from 'react-native';
 import { Dimensions, ScrollView } from 'react-native';
 import { InstructionsScreen } from '../HomeStack/InstructionsScreen';
+import firestore from '@react-native-firebase/firestore';
+import VersionCheck from 'react-native-version-check';
 
 const GOOGLE_PLAY_URL: string = 'https://play.google.com/store/apps/details?id=com.ag_market_news.android';
 const APP_STORE_URL: string = 'https://apps.apple.com/us/app/ag-market-news/id1538518553';
-
 
 const productIds = Platform.select({
   ios: [
@@ -43,31 +42,20 @@ interface SupportSelectionProps {
   iconType: string
 }
 
-const SupportSelection: React.FC<SupportSelectionProps> = ({ onPress, color, iconName, iconType, title }) => {
-  return (
-    <TouchableOpacity onPress={() => onPress()} style={{ alignItems: 'center', width: '100%' }}>
-      <>
-        {iconType === "antdesign" ? <Antdesign name={iconName} size={40} color={color} /> : <Fontawesome name={iconName} size={40} color={color} />}
-        <Text style={{ fontSize: 18, padding: 5, fontWeight: 'bold' }}>{title}</Text>
-      </>
-    </TouchableOpacity>
-  )
-}
-
 const rateThisAppLink = async () => {
-
-  //android 
-  if (Platform.OS === 'android') {
-    return await Linking.openURL(`market://details?id=${GOOGLE_PLAY_URL}`)
-  } else {
-    //ios 
-    return await Linking.openURL(APP_STORE_URL);
-    // return await Linking.openURL(`itms-apps://itunes.apple.com/us/appapple-store/${APP_STORE_APP_ID}?mt=8`)
-  }
+  let result = await VersionCheck.needUpdate();
+  return await Linking.openURL(result.storeUrl);
 }
 
-const openEmail = async () => {
-  return await Linking.openURL('mailto:ag.market.news.app@gmail.com?subject=Ag Market News Feature Request&body=Feature Request Title:\n\nFeature Details:\n\n')
+const sendFeatureRequest = async (name: string, featureRequest: string) => {
+  try {
+    await firestore().collection("feature-requests").add({
+      name: name || "DEFAULT",
+      feature: featureRequest
+    })
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 const shareAppLink = async () => {
@@ -101,8 +89,12 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
   const [purchaseErrorListener, setPurchaseErrorListener] = useState<EmitterSubscription>();
   const [seeInstructions, setSeeInstructions] = useState<boolean>(false);
   const sheetRef = React.useRef<BottomSheet>(null);
+  const featureRequestRef = React.useRef<BottomSheet>(null);
   const bgBlur = React.useRef(new Animated.Value(1)).current;
   const { height, width } = Dimensions.get('screen');
+  const [featureRequestName, setFeatureRequestName] = useState<string>("");
+  const [featureRequest, setFeatureRequest] = useState<string>("");
+  const [sendingFeatureRequest, setSendingFeatureRequest] = useState<boolean>(false);
 
   const setupConnection = async () => {
     await RNIap.initConnection()
@@ -148,7 +140,7 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
 
   const getIAPProducts = async () => {
     try {
-      await setupConnection();
+      //await setupConnection();
       if (productIds) {
         const products: RNIap.Product[] = await RNIap.getProducts(productIds);
         products.sort((a, b) => {
@@ -190,6 +182,12 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
     })
 
   }
+
+  const openFeatureRequestSheet = async () => {
+    fadeIn();
+    featureRequestRef.current?.snapTo(0)
+  }
+
   const onSheetClose = () => {
     Animated.timing(bgBlur, {
       toValue: 1,
@@ -197,7 +195,6 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
       useNativeDriver: true
     }).start();
   }
-
 
   const data = [
     {
@@ -219,8 +216,8 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
     {
       key: 3,
       title: 'Leave a Tip',
-      iconName: 'dollar',
-      iconType: 'fontawesome',
+      iconName: 'dollar-sign',
+      iconType: 'feather',
       color: "green",
       onPress: openSheet
     },
@@ -230,14 +227,14 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
       iconName: 'message1',
       iconType: 'antdesign',
       color: "black",
-      onPress: openEmail,
+      onPress: openFeatureRequestSheet,
     },
     {
       key: 5,
       title: 'How to use this app',
-      iconName: 'question-circle-o',
-      iconType: 'fontawesome',
-      color: "black",
+      iconName: 'questioncircleo',
+      iconType: 'antdesign',
+      color: "orange",
       onPress: () => { setSeeInstructions(true) }
     }
   ];
@@ -269,6 +266,8 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
       </View>
     }
 
+
+
     if (iapError) {
       return <View
         style={{
@@ -296,9 +295,6 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
         }}
         contentContainerStyle={{ height: height }}
       >
-        {/* <View style={{ flexDirection: 'row', width: '100%', height: '5%', justifyContent: 'center', alignItems: 'center' }}>
-          <View style={{ width: 40, height: 3, backgroundColor: 'grey', borderRadius: 10 }}></View>
-        </View> */}
         <View style={{ backgroundColor: 'white', marginTop: 20, width: '25%', alignItems: 'center', justifyContent: 'center' }}>
           <Button
             title="Done"
@@ -317,7 +313,7 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
                 <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text style={{ fontSize: 20 }}>{`Developer Tip $${product.price}`}</Text>
                   <View>
-                    <Button title={`$${product.price}`} raised type={"outline"} buttonStyle={styles.tipButton} titleStyle={{ color: 'rgb(76,217,100)', fontSize: 16 }} onPress={() => requestPurchase(product.productId)} />
+                    <Button title={`$${product.price}`} type={"outline"} buttonStyle={styles.tipButton} titleStyle={{ color: 'rgb(76,217,100)', fontSize: 16 }} onPress={() => requestPurchase(product.productId)} />
                   </View>
                 </View>
               </View>
@@ -328,50 +324,126 @@ export const Settings: React.FC<SettingsProps> = ({ }) => {
     )
   }
 
+  const renderFeatureRequestSheet = () => {
+    return (
+      <View
+        style={{
+          backgroundColor: 'white',
+          height: height * .75,
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.51,
+          shadowRadius: 13.16,
+
+          elevation: 20,
+        }}
+      >
+        <TextInput
+          placeholder="Name: Optional"
+          style={{ width: '90%', height: '8%', backgroundColor: '#efefef', borderRadius: 10, paddingHorizontal: 20, marginVertical: 20 }}
+          onChangeText={setFeatureRequestName}
+          value={featureRequestName}
+        />
+        <TextInput
+          placeholder="Feature Request"
+          multiline
+          style={{ width: '90%', height: '25%', backgroundColor: '#efefef', borderRadius: 10, paddingHorizontal: 20, paddingTop: 20 }}
+          onChangeText={setFeatureRequest}
+          value={featureRequest}
+          keyboardType={'default'}
+        />
+        <View style={{ width: '90%' }}>
+          <Button
+            title="Submit"
+            disabled={featureRequest.trim() === ""}
+            containerStyle={{ borderRadius: 10, marginTop: 10 }}
+            loading={sendingFeatureRequest}
+            onPress={async () => {
+              if (sendingFeatureRequest) {
+                return
+              }
+              setSendingFeatureRequest(true)
+              await sendFeatureRequest(featureRequestName, featureRequest);
+              featureRequestRef?.current?.snapTo(1);
+              setFeatureRequest("")
+              setFeatureRequestName("")
+              setSendingFeatureRequest(false)
+            }} />
+          <Button
+            title="Cancel"
+            containerStyle={{ borderRadius: 10, marginTop: 10 }}
+            type="solid"
+            buttonStyle={{ backgroundColor: '#dd2c00' }}
+            onPress={() => {
+              Keyboard.dismiss()
+              featureRequestRef.current?.snapTo(1)
+            }}
+          />
+        </View>
+      </View>
+    )
+  }
+
   if (seeInstructions) {
     return <InstructionsScreen onInstructionsSeen={() => setSeeInstructions(false)} />
   }
 
   return (
-    <>
-      <Animated.View style={[styles.container, { opacity: bgBlur }]}>
-        <Text h2 style={styles.header}>Settings</Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <>
+        <Animated.View style={[styles.container, { opacity: bgBlur, backgroundColor: 'white', width: '100%', flex: 1 }]}>
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.title}
+            renderItem={({ item }) => {
+              return (
+                <ListItem onPress={() => item.onPress()} bottomDivider>
+                  <Avatar rounded size={50} icon={{ type: item.iconType, color: item.color, name: item.iconName, size: 40 }} />
+                  <ListItem.Title>{item.title}</ListItem.Title>
+                  <ListItem.Content>
+                  </ListItem.Content>
+                </ListItem>
+              )
+            }}
+          />
+        </Animated.View>
+        <BottomSheet
+          ref={sheetRef}
+          enabledInnerScrolling={true}
+          enabledContentGestureInteraction={true}
+          borderRadius={30}
+          snapPoints={[height * .75, 0]}
+          initialSnap={1}
+          renderContent={renderContent}
+          onCloseEnd={onSheetClose}
+        />
+        <BottomSheet
+          ref={featureRequestRef}
+          borderRadius={30}
+          snapPoints={[height * .50, 0]}
+          initialSnap={1}
+          renderContent={renderFeatureRequestSheet}
+          onCloseEnd={onSheetClose}
 
-        {data.map((item, index) => {
-          return (
-            <View key={item.key} style={styles.supportItemContainer}>
-              <SupportSelection key={item.key.toString()} title={item.title} iconName={item.iconName} iconType={item.iconType} color={item.color} onPress={item.onPress} />
-            </View>
-          )
-        })
-        }
-
-      </Animated.View>
-      <BottomSheet
-        ref={sheetRef}
-        enabledInnerScrolling={true}
-        enabledContentGestureInteraction={true}
-        borderRadius={30}
-        snapPoints={[height * .75, 0]}
-        initialSnap={1}
-        renderContent={renderContent}
-        onCloseEnd={onSheetClose}
-      />
-    </>
+        />
+      </>
+    </TouchableWithoutFeedback>
   );
 }
 
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-evenly',
-    flexWrap: 'wrap',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: 'white',
     height: '100%',
-    marginTop: '10%',
-    marginHorizontal: 15,
+    paddingTop: '10%',
   },
   supportItemContainer: {
     backgroundColor: 'white',

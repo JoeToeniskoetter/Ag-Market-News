@@ -1,8 +1,7 @@
-import React, { createContext, useState, Dispatch, SetStateAction, useContext, useEffect } from 'react';
+import React, { createContext, useState, Dispatch, SetStateAction, } from 'react';
 import { Alert } from 'react-native';
 import { Office, Commodity, MarketType, Report, ReportSummary } from '../shared/types';
-import { FirebaseAuthProviderContext, useFirebaseAuth } from './FirebaseAuthProvider';
-import { Cache } from '../shared/Cache';
+import { useFirebaseAuth } from './FirebaseAuthProvider';
 import { BASE_URI } from '../shared/util';
 
 type IGetReports = {
@@ -56,77 +55,64 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
   const [reportsForSearch, setReportsForSeach] = useState<Report[] | null>(null);
   const [loading, setLoading] = useState<Boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
-  const [cache, setCache] = useState<Cache>();
   const [reportSummary, setSummary] = useState(null);
 
-  const { state: { user } } = useFirebaseAuth();
+  const { user } = useFirebaseAuth();
 
-
-  useEffect(() => {
-    // if (!cache) {
-    // setCache(new Cache(21600, 'cache'))
-    // } else {
-    // if (__DEV__) {
-    cache?.clear();
-    // }
-    // }
-  }, [])
 
   function addReportUrlAndSubscription(rpts: Report[]): Report[] {
     return rpts.map((x: Report) => ({ ...x, report_url: '', subscribed: false }));
   }
 
-  async function makeApiRequest(path: string, cacheKey?: string) {
+  async function makeApiRequest(path: string) {
     setLoading(true);
+    let bearerToken = await user?.getIdToken().catch(e => {
+      console.log(`Error Getting Token: ${e}`)
+    });
+
+    console.log("BEARER TOKEN: ", bearerToken);
     try {
       if (!user) {
-        console.log('no user')
-        return
+        throw new Error("No User");
       };
+      const url = `${BASE_URI}${path}`
 
-      if (cacheKey) {
-        const savedResult = await cache?.get(cacheKey);
-        if (savedResult) {
-          setLoading(false)
-          return savedResult.val;
-        }
-      }
+      console.log('Requesting: ', url);
 
-      const res = await fetch(`${BASE_URI}${path}`, { headers: { Authorization: `Bearer ${await user?.getIdToken()}` } });
+      const res = await fetch(url, { headers: { Authorization: `Bearer ${bearerToken}` } });
       if (!res.ok) {
         throw new Error('Not Found');
       }
       const json = await res.json();
 
-      if (cacheKey) {
-        cache?.set(cacheKey, JSON.stringify(json))
-      }
-
       setLoading(false);
       return json;
     }
     catch (e) {
-      console.log(e)
+      console.log("MAKE API REQUEST ERROR: ", e)
       setLoading(false)
-      throw new Error(e);
+      throw new Error("An Unknown Error Occurred");
     }
   }
 
   async function getCommodities() {
     try {
-      const commodities = await makeApiRequest('/commodities', 'commodities');
+      const commodities = await makeApiRequest('/commodities');
       setCommodities(commodities);
+      console.log(commodities);
     } catch (e) {
+      console.log("ERROR FETCHING COMMODITIES: ", e)
       setLoading(false)
-      Alert.alert(e.message)
+      Alert.alert("Error Fetching Commodities")
     }
   }
 
   const getOffices = async () => {
     try {
-      const offices = await makeApiRequest('/offices', 'offices');
+      const offices = await makeApiRequest('/offices');
       setOffices(offices)
     } catch (e) {
+      console.log(e);
       setLoading(false)
       Alert.alert("Network Error. Please try again later")
     }
@@ -134,7 +120,7 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
   const getMarketTypes = async () => {
     try {
-      const marketTypes = await makeApiRequest('/markets', 'markets');
+      const marketTypes = await makeApiRequest('/markets');
       setMarketTypes(marketTypes);
     } catch (e) {
       setLoading(false)
@@ -168,11 +154,11 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
     try {
       console.log('making api request')
-      const reports = await makeApiRequest('/reports', 'reportsForSearch');
+      const reports = await makeApiRequest('/reports',);
       setReportsForSeach(reports);
 
     } catch (e) {
-      console.log(e.message)
+      console.log("Error Fetching Reports");
       Alert.alert("Network Error. Please try again later")
     }
 
@@ -180,9 +166,8 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
   async function getReports(igr: IGetReports) {
     const uri: string = buildUri(igr);
-    const cacheKey = `${igr.from}${igr.reportId}`;
     try {
-      const res = await makeApiRequest(uri, cacheKey);
+      const res = await makeApiRequest(uri);
       const reportsWithAdditionalFields = addReportUrlAndSubscription(res.results);
       setReports(reportsWithAdditionalFields);
     } catch (e) {
@@ -203,7 +188,8 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
   async function fetchSummary(slg: number) {
     try {
-      const summary = await makeApiRequest(`/report/summary/${slg}`)
+      const summary = await makeApiRequest(`/report/summary/${slg}`);
+      console.log(summary)
       setSummary(summary)
     }
     catch (e) {

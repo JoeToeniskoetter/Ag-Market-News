@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
 import { Text, SearchBar, ListItem } from 'react-native-elements';
+import { Avatar } from 'react-native-elements/dist/avatar/Avatar';
 
 import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { Office } from '../../../shared/types';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
+
+const OfficeIcon = require('../../../../assets/company.png')
 
 interface CommoditySearchProps {
   navigation: any
@@ -39,12 +43,7 @@ export function OfficeSearchScreen({ navigation, route }: SearchNavProps<"Report
 
   if (loading && !offices) {
     return (
-      <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
-        <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Office Search</Text>
-        <Center>
-          <ActivityIndicator size="large" color="#000" />
-        </Center>
-      </View>
+      <LoadingSpinner />
     )
   }
 
@@ -71,6 +70,7 @@ export function OfficeSearchScreen({ navigation, route }: SearchNavProps<"Report
               )
             }}
           >
+            <Avatar source={OfficeIcon} />
             <ListItem.Content>
               <ListItem.Title>{item.office_name}</ListItem.Title>
             </ListItem.Content>

@@ -1,24 +1,13 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-import React, { createContext, ReducerWithoutAction, useReducer, useState } from 'react'
-
-interface FirebaseAuthProviderProps {
-
-}
+import React, { createContext, ReducerWithoutAction, useReducer, useState } from 'react';
 
 interface IFirebaseAuthProviderContext {
-  state: State,
-  dispatch: React.Dispatch<Action>
+  user: FirebaseAuthTypes.User | null
 }
 
 export const FirebaseAuthProviderContext = createContext<IFirebaseAuthProviderContext>({
-  state: { user: null, initializing: false },
-  dispatch: () => { }
+  user: null,
 });
-
-type State = {
-  user: FirebaseAuthTypes.User | null,
-  initializing: boolean
-}
 
 type Action =
   | { type: ACTION_TYPES.SIGNIN; user: FirebaseAuthTypes.User }
@@ -32,58 +21,33 @@ enum ACTION_TYPES {
   DONE_INITIALIZING = 'DONE_INITIALIZING'
 }
 
+export const FirebaseAuthProvider: React.FC<{}> = ({ children }) => {
 
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case ACTION_TYPES.SIGNIN:
-      return { ...state, user: action.user };
-    case ACTION_TYPES.SIGNOUT:
-      return { ...state, user: null };
-    case ACTION_TYPES.INITIALIZING:
-      return { ...state, initializing: true }
-    case ACTION_TYPES.DONE_INITIALIZING:
-      return { ...state, initializing: false }
-    default:
-      throw new Error();
-  }
-}
-
-export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ children }) => {
-
-  const [state, dispatch] = useReducer(reducer, { user: null, initializing: false });
-
-  const onAuthStateChanged = (user: any) => {
-    dispatch({ type: ACTION_TYPES.SIGNIN, user });
-    // console.log(user)
-    if (state.initializing) dispatch({ type: ACTION_TYPES.DONE_INITIALIZING });
-  }
-
-  const signInAnnon = async () => {
-    auth()
-      .signInAnonymously()
-      .then(() => {
-        // console.log('User signed in anonymously');
-      })
-      .catch(error => {
-        if (error.code === 'auth/operation-not-allowed') {
-          console.log('Enable anonymous in your firebase console.');
-        }
-
-        console.error(error);
-      });
-  }
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   React.useEffect(() => {
-    signInAnnon();
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    const unsubscribe = auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log("USER SIGNED IN: ", user)
+        setUser(user);
+        user.getIdToken().then(token => console.log("TOKEN: ", token))
+      } else {
+        setUser(null);
+      }
+    });
+
+    if (!auth().currentUser) {
+      auth().signInAnonymously();
+    }
+
+
+    return unsubscribe();
   }, []);
 
   return (
     <FirebaseAuthProviderContext.Provider
       value={{
-        state,
-        dispatch
+        user
       }}
     >
       {children}

@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Platform, FlatList, ActivityIndicator } from 'react-native';
-import { Text, SearchBar, ListItem } from 'react-native-elements';
+import { Text, SearchBar, ListItem, Avatar } from 'react-native-elements';
 
 import { useSearch } from '../../../Providers/SearchProvider';
 import { MarketType } from '../../../shared/types';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 import { SearchNavProps } from '../SearchStackParams';
 import { Center } from './components/Center';
 import { NoResults } from './components/NoResults';
+
+const MarketTypeIcon = require("../../../../assets/market.png")
 
 export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports">) {
 
@@ -35,12 +38,7 @@ export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports"
 
   if (loading && !marketTypes) {
     return (
-      <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
-        <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Market Type Search</Text>
-        <Center>
-          <ActivityIndicator size="large" color="#000" />
-        </Center>
-      </View>
+      <LoadingSpinner />
     )
   }
 
@@ -67,6 +65,7 @@ export function MarketTypeSearch({ navigation, route }: SearchNavProps<"Reports"
               )
             }}
           >
+            <Avatar source={MarketTypeIcon} />
             <ListItem.Content>
               <ListItem.Title>{item.market_type}</ListItem.Title>
             </ListItem.Content>

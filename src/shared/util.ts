@@ -13,8 +13,9 @@ type ReportTypeCheck = {
 };
 
 export const BASE_URI: string = __DEV__
-  ? 'http://localhost:5001/ag-market-news-74525/us-central1/api'
-  : 'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
+  ? // ? 'http://192.168.1.225:5001/ag-market-news-74525/us-central1/api'
+    'https://us-central1-ag-market-news-74525.cloudfunctions.net/api'
+  : 'null';
 
 export async function getReportType(rpt: Report): Promise<ReportTypeCheck> {
   let tempUri: string = `${BASE_URI}${rpt.slug_name}.pdf`;
@@ -53,10 +54,10 @@ export async function sendShare(msg: string, url: string) {
     message: msg,
     url,
   })
-    .then((res) => {
+    .then(res => {
       console.log(res);
     })
-    .catch((e) => console.log(e));
+    .catch(e => console.log(e));
 }
 
 export const AnalyticEvents = {

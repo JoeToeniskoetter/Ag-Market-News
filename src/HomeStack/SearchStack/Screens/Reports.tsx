@@ -12,6 +12,7 @@ import { NoResults } from './components/NoResults';
 import { Report } from '../../../shared/types';
 import analytics from '@react-native-firebase/analytics';
 import { AnalyticEvents } from '../../../shared/util';
+import { LoadingSpinner } from '../../sharedComponents/LoadingSpinner';
 
 interface IReportsScreen {
 }
@@ -55,12 +56,7 @@ export function ReportScreen({ navigation, route }: SearchNavProps<"Reports">) {
 
   if (loading) {
     return (
-      <View style={{ backgroundColor: 'white', height: '100%', paddingTop: '6%' }}>
-        <Text h2 style={{ paddingBottom: '2%', paddingLeft: '2%' }}>Reports</Text>
-        <Center>
-          <ActivityIndicator size="large" color="#000" />
-        </Center>
-      </View>
+      <LoadingSpinner />
     )
   }
 

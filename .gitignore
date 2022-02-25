@@ -67,4 +67,5 @@ buck-out/
 
 #firebase secrets
 GoogleService-Info.plist
+GoogleService-Info_old.plist
 google-services.json

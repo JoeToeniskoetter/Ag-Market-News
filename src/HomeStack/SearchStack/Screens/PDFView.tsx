@@ -5,20 +5,25 @@ import PDF from 'react-native-pdf';
 import WebView from 'react-native-webview';
 import { SearchContext, useSearch } from '../../../Providers/SearchProvider';
 import { FirebaseAuthProviderContext, useFirebaseAuth } from '../../../Providers/FirebaseAuthProvider';
-import { BASE_URI } from '../../../shared/util';
+import { AD_UNIT_ID, BASE_URI } from '../../../shared/util';
+import { LoadingSpinner, LoadingView } from '../../sharedComponents/LoadingSpinner';
+import { BannerAd, BannerAdSize, TestIds } from '@invertase/react-native-google-ads';
 
 interface IPDFView { }
 
 export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
+  const { uri: preReportUri } = route.params;
   const { setCurrentReportUrl } = useSearch();
-  const { state: { user } } = useFirebaseAuth();
+  const { user } = useFirebaseAuth();
   const { slug_name, slug_id } = route.params.report
   const [error, setError] = useState<String | null>(null);
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [showAd, setShowAd] = useState<boolean>(true)
 
   async function getUri(slg: Number) {
+    console.log('getting URI')
     setLoading(true)
     let tempUri: string = `${BASE_URI}/reportLink?id=_${slg}`
     try {
@@ -27,7 +32,6 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
           Authorization: `Bearer ${await user?.getIdToken()}`
         }
       })
-      console.log(res.status)
       if (res.ok) {
         const json = await res.json();
         if (json.link) {
@@ -38,7 +42,6 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
         }
       } else {
         setLoading(false);
-        console.log(res.status)
       }
     } catch (e) {
       Alert.alert(e.message)
@@ -47,60 +50,83 @@ export function PDFView({ navigation, route }: SearchNavProps<"PDFView">) {
 
 
   useEffect(() => {
-    setUri('');
-    getUri(slug_id);
-  }, [slug_name])
+    if (preReportUri) {
+      console.log("ALREADY HAVE URI: ", preReportUri)
+
+      setUri(preReportUri);
+      setReportType(String(preReportUri).toLowerCase().includes('.pdf') ? 'pdf' : 'txt');
+      setCurrentReportUrl(preReportUri);
+      setLoading(false)
+    } else {
+      setUri('');
+      getUri(slug_id);
+    }
+  }, [slug_id, preReportUri])
 
 
-  if (loading || uri === '') {
-    return <Loading />
-  }
 
-  if (reportType === 'txt' || error) {
+  if (reportType === 'txt') {
     return (
       <WebView
-        style={{ flex: 1 }}
+        startInLoadingState={true}
+        renderLoading={() => <LoadingSpinner />}
         source={{ uri }}
       />
     )
   }
 
   return (
-    <View style={{
-      flex: 1,
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      marginTop: 0,
-    }}>
-      <PDF
-        source={{
-          uri
-        }}
-        trustAllCerts={true}
+    <LoadingView loading={loading}>
+      <View style={{
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginTop: 0
+      }}>
+        <PDF
+          source={{
+            uri
+          }}
+          trustAllCerts={true}
 
-        onError={(e) => {
-          setLoading(false)
-          setReportType('txt')
-        }}
+          onError={(e) => {
+            console.log(e)
+            setLoading(false)
+            setReportType('txt')
+          }}
 
-        activityIndicator={<Loading />}
-        onLoadComplete={() => setLoading(false)}
-        style={{
-          flex: 1,
-          width: Dimensions.get('window').width,
-          height: Dimensions.get('window').height,
-        }}
-      />
-    </View>
-  )
-}
-
-const Loading: React.FC<{}> = () => {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#000" />
+          activityIndicator={<LoadingSpinner />}
+          enableAnnotationRendering
+          onLoadComplete={() => setLoading(false)}
+          style={{
+            flex: 1,
+            width: Dimensions.get('window').width,
+            height: Dimensions.get('window').height,
+            backgroundColor: 'white'
+          }}
+        />
+        {showAd ?
+          <View style={{ backgroundColor: 'white' }}>
+            <BannerAd
+              unitId={__DEV__ ? TestIds.BANNER : AD_UNIT_ID}
+              size={BannerAdSize.FULL_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: false,
+              }}
+              onAdFailedToLoad={(e: any) => {
+                console.log(e)
+                setShowAd(false);
+              }}
+              onAdClosed={() => { }}
+              onAdLoaded={() => {
+                setShowAd(true)
+              }}
+              onAdOpened={() => { }}
+              onAdLeftApplication={() => { }}
+            />
+          </View>
+          : null}
       </View>
-    </View>
+    </LoadingView>
   )
 }

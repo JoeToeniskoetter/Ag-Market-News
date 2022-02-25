@@ -5,12 +5,20 @@ import { SearchStack } from './SearchStack/SearchStack';
 import { MyReportsStack } from './MyReportsStack/MyReportsStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Settings } from '../Settings/Settings';
+import { useFirebaseAuth } from '../Providers/FirebaseAuthProvider';
+import { LoadingSpinner } from './sharedComponents/LoadingSpinner';
 
 interface HomeStackProps { }
 
 const Tabs = createBottomTabNavigator<HomeParamList>();
 
 export const HomeStack: React.FC<HomeStackProps> = () => {
+  const { user } = useFirebaseAuth()
+
+  if (!user) {
+    return <LoadingSpinner />
+  }
+
   return (
     <Tabs.Navigator
       initialRouteName={"Search"}
@@ -27,7 +35,7 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
       })}
 
       tabBarOptions={{
-        activeTintColor: "blue",
+        activeTintColor: "green",
         inactiveTintColor: "gray"
       }}
     >
