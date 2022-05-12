@@ -12,10 +12,8 @@ type ReportTypeCheck = {
   type: ReportTypes;
 };
 
-export const BASE_URI: string = __DEV__
-  ? // ? 'http://192.168.1.225:5001/ag-market-news-74525/us-central1/api'
-    'https://us-central1-ag-market-news-74525.cloudfunctions.net/api'
-  : 'null';
+export const BASE_URI: string =
+  'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
 
 export async function getReportType(rpt: Report): Promise<ReportTypeCheck> {
   let tempUri: string = `${BASE_URI}${rpt.slug_name}.pdf`;
@@ -74,6 +72,9 @@ export const AnalyticEvents = {
   ...(__DEV__
     ? {report_name_search: 'DEV_report_name_search'}
     : {report_name_search: 'report_name_search'}),
+  ...(__DEV__
+    ? {recent_report_search: 'DEV_recent_report_search'}
+    : {recent_report_search: 'recent_report_search'}),
   ...(__DEV__
     ? {report_favorited: 'DEV_report_favorited'}
     : {report_favorited: 'report_favorited'}),

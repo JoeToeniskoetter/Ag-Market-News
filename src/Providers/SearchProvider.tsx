@@ -1,13 +1,19 @@
-import React, { createContext, useState, Dispatch, SetStateAction, } from 'react';
-import { Alert } from 'react-native';
-import { Office, Commodity, MarketType, Report, ReportSummary } from '../shared/types';
-import { useFirebaseAuth } from './FirebaseAuthProvider';
-import { BASE_URI } from '../shared/util';
+import React, {createContext, useState, Dispatch, SetStateAction} from 'react';
+import {Alert} from 'react-native';
+import {
+  Office,
+  Commodity,
+  MarketType,
+  Report,
+  ReportSummary,
+} from '../shared/types';
+import {useFirebaseAuth} from './FirebaseAuthProvider';
+import {BASE_URI} from '../shared/util';
 
 type IGetReports = {
-  from: String,
-  reportId: string
-}
+  from: String;
+  reportId: string;
+};
 
 interface ISearchProvder {
   getCommodities: () => void;
@@ -21,20 +27,20 @@ interface ISearchProvder {
   currentReportUrl: string | undefined;
   reportsForSearch: Report[] | null;
   commodities: Commodity[] | null;
-  loading: Boolean;
+  loading: boolean;
   reports: Report[] | null;
   offices: Office[] | null;
   marketTypes: MarketType[] | null;
 }
 
 export const SearchContext = createContext<ISearchProvder>({
-  getCommodities: async () => { },
-  getOffices: async () => { },
-  getReports: async (igr: IGetReports) => { },
-  getMarketTypes: async () => { },
-  getReportsForSearch: async () => { },
-  setCurrentReportUrl: () => { },
-  fetchSummary: (slg: number) => { },
+  getCommodities: async () => {},
+  getOffices: async () => {},
+  getReports: async (igr: IGetReports) => {},
+  getMarketTypes: async () => {},
+  getReportsForSearch: async () => {},
+  setCurrentReportUrl: () => {},
+  fetchSummary: (slg: number) => {},
   reportSummary: null,
   currentReportUrl: undefined,
   reportsForSearch: null,
@@ -42,44 +48,45 @@ export const SearchContext = createContext<ISearchProvder>({
   loading: false,
   reports: null,
   offices: null,
-  marketTypes: null
+  marketTypes: null,
 });
 
-
-
-export const SearchProvider: React.FC<{}> = ({ children }) => {
+export const SearchProvider: React.FC<{}> = ({children}) => {
   const [commodities, setCommodities] = useState<Commodity[] | null>(null);
   const [marketTypes, setMarketTypes] = useState<MarketType[] | null>(null);
-  const [offices, setOffices] = useState<Office[] | null>(null)
+  const [offices, setOffices] = useState<Office[] | null>(null);
   const [reports, setReports] = useState<Report[] | null>(null);
-  const [reportsForSearch, setReportsForSeach] = useState<Report[] | null>(null);
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [reportsForSearch, setReportsForSeach] = useState<Report[] | null>(
+    null,
+  );
+  const [loading, setLoading] = useState<boolean>(false);
   const [currentReportUrl, setCurrentReportUrl] = useState<string>();
   const [reportSummary, setSummary] = useState(null);
 
-  const { user } = useFirebaseAuth();
-
+  const {user} = useFirebaseAuth();
 
   function addReportUrlAndSubscription(rpts: Report[]): Report[] {
-    return rpts.map((x: Report) => ({ ...x, report_url: '', subscribed: false }));
+    return rpts.map((x: Report) => ({...x, report_url: '', subscribed: false}));
   }
 
   async function makeApiRequest(path: string) {
     setLoading(true);
     let bearerToken = await user?.getIdToken().catch(e => {
-      console.log(`Error Getting Token: ${e}`)
+      console.log(`Error Getting Token: ${e}`);
     });
 
-    console.log("BEARER TOKEN: ", bearerToken);
+    console.log('BEARER TOKEN: ', bearerToken);
     try {
       if (!user) {
-        throw new Error("No User");
-      };
-      const url = `${BASE_URI}${path}`
+        throw new Error('No User');
+      }
+      const url = `${BASE_URI}${path}`;
 
       console.log('Requesting: ', url);
 
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${bearerToken}` } });
+      const res = await fetch(url, {
+        headers: {Authorization: `Bearer ${bearerToken}`},
+      });
       if (!res.ok) {
         throw new Error('Not Found');
       }
@@ -87,11 +94,10 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
 
       setLoading(false);
       return json;
-    }
-    catch (e) {
-      console.log("MAKE API REQUEST ERROR: ", e)
-      setLoading(false)
-      throw new Error("An Unknown Error Occurred");
+    } catch (e) {
+      console.log('MAKE API REQUEST ERROR: ', e);
+      setLoading(false);
+      throw new Error('An Unknown Error Occurred');
     }
   }
 
@@ -101,45 +107,45 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
       setCommodities(commodities);
       console.log(commodities);
     } catch (e) {
-      console.log("ERROR FETCHING COMMODITIES: ", e)
-      setLoading(false)
-      Alert.alert("Error Fetching Commodities")
+      console.log('ERROR FETCHING COMMODITIES: ', e);
+      setLoading(false);
+      Alert.alert('Error Fetching Commodities');
     }
   }
 
   const getOffices = async () => {
     try {
       const offices = await makeApiRequest('/offices');
-      setOffices(offices)
+      setOffices(offices);
     } catch (e) {
       console.log(e);
-      setLoading(false)
-      Alert.alert("Network Error. Please try again later")
+      setLoading(false);
+      Alert.alert('Network Error. Please try again later');
     }
-  }
+  };
 
   const getMarketTypes = async () => {
     try {
       const marketTypes = await makeApiRequest('/markets');
       setMarketTypes(marketTypes);
     } catch (e) {
-      setLoading(false)
-      Alert.alert("Network Error. Please try again later")
+      setLoading(false);
+      Alert.alert('Network Error. Please try again later');
     }
-  }
+  };
 
   const buildUri = (igr: IGetReports): string => {
     let uri: string;
 
     switch (igr.from) {
-      case "COMMODITY":
+      case 'COMMODITY':
         uri = `/commodities?id=${igr.reportId}`;
         break;
-      case "OFFICE":
+      case 'OFFICE':
         uri = `/offices?id=${igr.reportId}`;
         break;
-      case "MARKET_TYPE":
-        uri = `/markets?id=${igr.reportId}`
+      case 'MARKET_TYPE':
+        uri = `/markets?id=${igr.reportId}`;
         break;
       default:
         uri = `/reports`;
@@ -147,78 +153,75 @@ export const SearchProvider: React.FC<{}> = ({ children }) => {
     }
 
     return uri;
-
-  }
+  };
 
   async function getReportsForSearch() {
-
     try {
-      console.log('making api request')
-      const reports = await makeApiRequest('/reports',);
+      console.log('making api request');
+      const reports = await makeApiRequest('/reports');
       setReportsForSeach(reports);
-
     } catch (e) {
-      console.log("Error Fetching Reports");
-      Alert.alert("Network Error. Please try again later")
+      console.log('Error Fetching Reports');
+      Alert.alert('Network Error. Please try again later');
     }
-
   }
 
   async function getReports(igr: IGetReports) {
     const uri: string = buildUri(igr);
     try {
       const res = await makeApiRequest(uri);
-      const reportsWithAdditionalFields = addReportUrlAndSubscription(res.results);
+      const reportsWithAdditionalFields = addReportUrlAndSubscription(
+        res.results,
+      );
       setReports(reportsWithAdditionalFields);
     } catch (e) {
       setLoading(false);
-      Alert.alert("Network Error. Please try again later")
+      Alert.alert('Network Error. Please try again later');
     }
   }
 
   async function getUri(slg: number) {
-    let tempUri: string = `/reportLink?id=_${slg}`
+    let tempUri: string = `/reportLink?id=_${slg}`;
     try {
       const res = await makeApiRequest(tempUri);
       return res.link;
     } catch (e) {
-      return false
+      return false;
     }
   }
 
   async function fetchSummary(slg: number) {
     try {
       const summary = await makeApiRequest(`/report/summary/${slg}`);
-      console.log(summary)
-      setSummary(summary)
-    }
-    catch (e) {
-      console.log(e)
+      console.log(summary);
+      setSummary(summary);
+    } catch (e) {
+      console.log(e);
     }
   }
 
-
   return (
-    <SearchContext.Provider value={{
-      getCommodities,
-      getReports,
-      getOffices,
-      getMarketTypes,
-      getReportsForSearch,
-      setCurrentReportUrl,
-      fetchSummary,
-      reportSummary,
-      currentReportUrl,
-      reportsForSearch,
-      offices,
-      marketTypes,
-      commodities,
-      reports,
-      loading
-    }}>
+    <SearchContext.Provider
+      value={{
+        getCommodities,
+        getReports,
+        getOffices,
+        getMarketTypes,
+        getReportsForSearch,
+        setCurrentReportUrl,
+        fetchSummary,
+        reportSummary,
+        currentReportUrl,
+        reportsForSearch,
+        offices,
+        marketTypes,
+        commodities,
+        reports,
+        loading,
+      }}>
       {children}
     </SearchContext.Provider>
-  )
-}
+  );
+};
 
 export const useSearch = () => React.useContext(SearchContext);

@@ -1,6 +1,4 @@
-import firestore, {
-  FirebaseFirestoreTypes,
-} from '@react-native-firebase/firestore';
+import {FirebaseFirestoreTypes} from '@react-native-firebase/firestore';
 
 export type Office = {
   office_name: string;
@@ -11,8 +9,8 @@ export type Report = {
   slug_id: number;
   slug_name: string;
   report_title: string;
-  published_date: string,
-  timestamp:FirebaseFirestoreTypes.Timestamp,
+  published_date: string;
+  timestamp: FirebaseFirestoreTypes.Timestamp;
   markets: string[];
   market_types: string[];
   offices: string[];

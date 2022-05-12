@@ -1,75 +1,93 @@
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import React, { useContext, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, TouchableOpacity, View, Platform, Alert } from "react-native";
-import { ListItem, Text, SearchBar } from "react-native-elements";
+import React, {useEffect, useState} from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Platform,
+  Alert,
+} from 'react-native';
+import {ListItem, Text, SearchBar} from '@rneui/base';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import { MyReportsContext, useMyReports } from "../../../Providers/MyReportsProvider";
-import { Report } from '../../../shared/types';
-import { MyReportsNavProps } from "../MyReportsStackParams";
-import { NoSavedReports } from "../../SearchStack/Screens/components/NoSavedReports";
-import { BannerAd, BannerAdSize, TestIds } from '@invertase/react-native-google-ads';
-import InAppReview from "react-native-in-app-review";
+import {
+  MyReportsContext,
+  useMyReports,
+} from '../../../Providers/MyReportsProvider';
+import {Report} from '../../../shared/types';
+import {MyReportsNavProps} from '../MyReportsStackParams';
+import {NoSavedReports} from '../../SearchStack/Screens/components/NoSavedReports';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from '@invertase/react-native-google-ads';
+import InAppReview from 'react-native-in-app-review';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
-import { AD_UNIT_ID, AnalyticEvents } from '../../../shared/util';
-import { StorageReference } from '../../../shared/StorageReference';
+import {AD_UNIT_ID, AnalyticEvents} from '../../../shared/util';
+import {StorageReference} from '../../../shared/StorageReference';
 
-export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports">) {
-  const { reports, removeReport, subscribeToReport, unsubscribeToReport } = useMyReports();
+export function ReportsScreen({
+  navigation,
+  route,
+}: MyReportsNavProps<'Reports'>) {
+  const {reports, removeReport, subscribeToReport, unsubscribeToReport} =
+    useMyReports();
   const [searchText, setSearchText] = useState<string>('');
   const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
   const row: Array<any> = [];
 
-
-  const reviewExpired = (review: { reviewed: number, initDate: Date }) => {
+  const reviewExpired = (review: {reviewed: number; initDate: Date}) => {
     const cachedItemTime = new Date(review.initDate);
     return (
       Math.abs((cachedItemTime.getTime() - new Date().getTime()) / 1000) >
       1209600
     );
-  }
+  };
 
   const checkLastReviewRequest = async () => {
     if (__DEV__) await AsyncStorage.removeItem(StorageReference.LAST_REVIEW);
     const newReviewEntry = {
       reviewed: 1,
-      initDate: new Date()
+      initDate: new Date(),
     };
     const review = await AsyncStorage.getItem(StorageReference.LAST_REVIEW);
-    if ((!review || (review && reviewExpired(JSON.parse(review)))) && reports.length > 0) {
+    if (
+      (!review || (review && reviewExpired(JSON.parse(review)))) &&
+      reports.length > 0
+    ) {
       if (InAppReview.isAvailable()) {
         InAppReview.RequestInAppReview();
-        await AsyncStorage.setItem(StorageReference.LAST_REVIEW, JSON.stringify(newReviewEntry))
+        await AsyncStorage.setItem(
+          StorageReference.LAST_REVIEW,
+          JSON.stringify(newReviewEntry),
+        );
       }
     }
-
   };
 
-
   useEffect(() => {
-    checkLastReviewRequest()
-  }, [])
+    checkLastReviewRequest();
+  }, []);
 
-
-  const LeftActionButton: React.FC<{ item: Report }> = ({ item }) => {
+  const LeftActionButton: React.FC<{item: Report}> = ({item}) => {
     return (
       <TouchableOpacity
         onPress={async () => {
           await removeReport(item);
-        }}
-      >
+        }}>
         <View style={styles.rightButton}>
           <FontAwesome name="trash" size={24} color="white" />
           <Text style={styles.actionText}>Remove</Text>
         </View>
       </TouchableOpacity>
-    )
-  }
+    );
+  };
 
-  const RightActionButton: React.FC<{ item: Report }> = ({ item }) => {
-
+  const RightActionButton: React.FC<{item: Report}> = ({item}) => {
     if (item.subscribed) {
       return (
         <TouchableOpacity>
@@ -78,7 +96,7 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
             <Text style={styles.actionText}>Unsubscribe</Text>
           </View>
         </TouchableOpacity>
-      )
+      );
     }
 
     return (
@@ -88,18 +106,20 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
           <Text style={styles.actionTextDark}>Subscribe</Text>
         </View>
       </TouchableOpacity>
-    )
-  }
-
+    );
+  };
 
   function filterReports(text: string) {
-    setSearchText(text)
+    setSearchText(text);
 
     if (text === '' || undefined) {
-      return setFilteredReports(null)
+      return setFilteredReports(null);
     }
     const filtered = reports?.filter((report: Report) => {
-      return report.report_title.toLowerCase().includes(searchText.toLowerCase()) || report.slug_name.toLowerCase().includes(searchText.toLowerCase())
+      return (
+        report.report_title.toLowerCase().includes(searchText.toLowerCase()) ||
+        report.slug_name.toLowerCase().includes(searchText.toLowerCase())
+      );
     });
 
     setFilteredReports(filtered);
@@ -107,65 +127,89 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
 
   async function subscribeOrUnSubscribe(report: Report) {
     if (report.subscribed) {
-      await analytics().logEvent(AnalyticEvents.report_unsubscribed, { slug: report.slug_name, title: report.report_title })
-      await unsubscribeToReport(report)
+      await analytics().logEvent(AnalyticEvents.report_unsubscribed, {
+        slug: report.slug_name,
+        title: report.report_title,
+      });
+      await unsubscribeToReport(report);
     } else {
-      await analytics().logEvent(AnalyticEvents.report_subscribed, { slug: report.slug_name, title: report.report_title })
-      await subscribeToReport(report)
-      Alert.alert(`Subscribed to ${report.slug_name}`)
+      await analytics().logEvent(AnalyticEvents.report_subscribed, {
+        slug: report.slug_name,
+        title: report.report_title,
+      });
+      await subscribeToReport(report);
+      Alert.alert(`Subscribed to ${report.slug_name}`);
     }
   }
 
   return (
     <>
       <View style={styles.container}>
-        <Text style={{ paddingLeft: '5%' }} h2>My Reports</Text>
+        <Text style={{paddingLeft: '5%'}} h2>
+          My Reports
+        </Text>
         <SearchBar
           placeholder="Search for report..."
-          platform={Platform.OS == "ios" ? "ios" : "android"}
+          platform={Platform.OS == 'ios' ? 'ios' : 'android'}
           clearIcon
-          onChangeText={(text: string) => { filterReports(text) }}
+          onChangeText={(text: string) => {
+            filterReports(text);
+          }}
           value={searchText}
-          onClear={() => { filterReports('') }}
-          onCancel={() => { filterReports('') }}
-          style={{ marginBottom: 0 }}
+          onClear={() => {
+            filterReports('');
+          }}
+          onCancel={() => {
+            filterReports('');
+          }}
+          style={{marginBottom: 0}}
         />
-        {reports?.length === 0 ? <NoSavedReports /> :
+        {reports?.length === 0 ? (
+          <NoSavedReports />
+        ) : (
           <FlatList
             data={filteredReports ? filteredReports : reports}
             keyExtractor={item => item.slug_name}
-            renderItem={({ item, index }) => (
+            renderItem={({item, index}) => (
               <Swipeable
                 onSwipeableLeftOpen={async () => {
                   row[index].close();
                   subscribeOrUnSubscribe(item);
                 }}
-                ref={ref => row[index] = ref}
+                ref={ref => (row[index] = ref)}
                 renderRightActions={() => <LeftActionButton item={item} />}
-                renderLeftActions={() => <RightActionButton item={item} />}
-              >
-                <ListItem bottomDivider
+                renderLeftActions={() => <RightActionButton item={item} />}>
+                <ListItem
+                  bottomDivider
                   onPress={async () => {
-                    await analytics().logSelectContent({ content_type: AnalyticEvents.myReports, item_id: item.slug_name })
-                    navigation.navigate("PDFView", { report: item })
-                  }}
-                >
-                  {item.report_url?.includes('pdf') ? <AntDesign name="pdffile1" size={24} color={'black'} /> : <AntDesign name="filetext1" size={24} color={'black'} />
-                  }
+                    await analytics().logSelectContent({
+                      content_type: AnalyticEvents.myReports,
+                      item_id: item.slug_name,
+                    });
+                    navigation.navigate('PDFView', {report: item});
+                  }}>
+                  {item.report_url?.includes('pdf') ? (
+                    <AntDesign name="pdffile1" size={24} color={'black'} />
+                  ) : (
+                    <AntDesign name="filetext1" size={24} color={'black'} />
+                  )}
                   <ListItem.Content>
                     {item.subscribed ? <SubscribedText /> : null}
                     <ListItem.Title>{item.report_title}</ListItem.Title>
-                    <ListItem.Subtitle style={{ fontWeight: 'bold' }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
+                    <ListItem.Subtitle
+                      style={{
+                        fontWeight: 'bold',
+                      }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
                   </ListItem.Content>
                   <ListItem.Chevron />
                 </ListItem>
               </Swipeable>
             )}
           />
-        }
+        )}
       </View>
-      {showAdd ?
-        <View style={{ backgroundColor: 'white' }}>
+      {showAdd ? (
+        <View style={{backgroundColor: 'white'}}>
           <BannerAd
             unitId={__DEV__ ? TestIds.BANNER : AD_UNIT_ID}
             size={BannerAdSize.FULL_BANNER}
@@ -173,28 +217,29 @@ export function ReportsScreen({ navigation, route }: MyReportsNavProps<"Reports"
               requestNonPersonalizedAdsOnly: true,
             }}
             onAdFailedToLoad={(e: any) => {
-              setShowAdd(false)
+              setShowAdd(false);
             }}
-            onAdClosed={() => { }}
+            onAdClosed={() => {}}
             onAdLoaded={() => {
-              setShowAdd(true)
+              setShowAdd(true);
             }}
-            onAdOpened={() => { }}
-            onAdLeftApplication={() => { }}
+            onAdOpened={() => {}}
+            onAdLeftApplication={() => {}}
           />
         </View>
-        : null}
+      ) : null}
     </>
-  )
+  );
 }
 
 const SubscribedText: React.FC<{}> = () => {
   return (
-    <Text style={styles.subscribedText}>Subscribed <AntDesign name="checkcircleo" color="green" style={{ paddingRight: 3 }} />
+    <Text style={styles.subscribedText}>
+      Subscribed{' '}
+      <AntDesign name="checkcircleo" color="green" style={{paddingRight: 3}} />
     </Text>
-  )
-}
-
+  );
+};
 
 const styles = StyleSheet.create({
   leftButton: {
@@ -202,26 +247,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#39bd28',
     height: '100%',
-    padding: 20
+    padding: 20,
   },
   unSubscribeButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#d2d6d3',
     height: '100%',
-    padding: 20
+    padding: 20,
   },
   subscribedText: {
     fontSize: 12,
     color: 'green',
-    paddingRight: 2
+    paddingRight: 2,
   },
   card: {
     height: '20%',
     width: '100%',
     borderRadius: 10,
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.25,
     shadowRadius: 2,
     elevation: 1,
@@ -236,20 +281,20 @@ const styles = StyleSheet.create({
   icon: {
     width: 70,
     height: 70,
-    marginLeft: '8%'
+    marginLeft: '8%',
   },
   container: {
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '15%',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   rightButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#dd2c00',
     height: '100%',
-    padding: 20
+    padding: 20,
   },
   actionText: {
     fontWeight: '600',
@@ -257,6 +302,6 @@ const styles = StyleSheet.create({
   },
   actionTextDark: {
     fontWeight: '600',
-    color: 'black'
-  }
-})
+    color: 'black',
+  },
+});
