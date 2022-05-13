@@ -1,15 +1,15 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Alert, FlatList, View} from 'react-native';
+import {FlatList} from 'react-native';
 import {Icon, ListItem} from '@rneui/base';
 import {
   PreviousReports,
   PreviousReportsData,
   Report,
 } from '../../../shared/types';
-import {BASE_URI} from '../../../shared/util';
 import {LoadingView} from '../../sharedComponents/LoadingSpinner';
-import auth from '@react-native-firebase/auth';
+import {useQuery} from 'react-query';
+import {fetchPreviousReleases} from '../../../queries/previousReports';
 
 interface MonthSelectionProps {
   item: any;
@@ -38,10 +38,14 @@ export const MonthSelection: React.FC<MonthSelectionProps> = ({
   year,
 }) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [previousReportData, setPreviousReportData] =
-    React.useState<PreviousReportsData | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  // const year = item.section.title;
+  const {data, isLoading, error, refetch} = useQuery<
+    PreviousReportsData,
+    Error
+  >(
+    `/previousReports/${report.slug_id}/${item.item}/${year}`,
+    () => fetchPreviousReleases(report.slug_id, month, year),
+    {enabled: expanded},
+  );
   const month = item.item;
   const navigation = useNavigation();
   // const { report, month, year } = route.params;
@@ -79,33 +83,10 @@ export const MonthSelection: React.FC<MonthSelectionProps> = ({
     );
   };
 
-  const fetchPreviousReportData = async () => {
-    setLoading(true);
-    try {
-      const data = await fetch(
-        `${BASE_URI}/report/get_previous_release/${report.slug_id}?type=month&month=${month}&year=${year}`,
-        {
-          headers: {
-            Authorization: `Bearer ${await auth().currentUser?.getIdToken()}`,
-          },
-        },
-      );
-      console.log(data);
-      setPreviousReportData((await data.json()) as PreviousReportsData);
-    } catch (e: any) {
-      Alert.alert(e.message);
-      setLoading(false);
-    }
-    setLoading(false);
-  };
-
   return (
     <ListItem.Accordion
       isExpanded={expanded}
       onPress={() => {
-        if (!previousReportData) {
-          fetchPreviousReportData();
-        }
         setExpanded(!expanded);
       }}
       content={
@@ -121,10 +102,10 @@ export const MonthSelection: React.FC<MonthSelectionProps> = ({
           </ListItem.Content>
         </>
       }>
-      <LoadingView loading={loading} width={50} height={50}>
+      <LoadingView loading={isLoading} width={50} height={50}>
         <FlatList
           keyExtractor={(item: PreviousReports) => item.document_url.toString()}
-          data={previousReportData?.data}
+          data={data?.data}
           renderItem={({item}) => <PreviousReportItem item={item} />}
         />
       </LoadingView>

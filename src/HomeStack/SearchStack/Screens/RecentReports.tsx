@@ -8,10 +8,12 @@ import {useNavigation} from '@react-navigation/native';
 import {AnalyticEvents} from '../../../shared/util';
 import analytics from '@react-native-firebase/analytics';
 import {RetryFetch} from '../../sharedComponents/RetryFetch';
+import {CustomBannerAdd} from './components/CustomBannerAd';
 
 export function RecentReports() {
-  const [recentReportsLoading, setRecentReportsLoading] =
-    useState<boolean>(false);
+  const [recentReportsLoading, setRecentReportsLoading] = useState<boolean>(
+    false,
+  );
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [recentReports, setRecentReports] = useState<Report[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -101,7 +103,9 @@ export function RecentReports() {
                 <ListItem.Content>
                   <ListItem.Title>{item.report_title}</ListItem.Title>
                   <ListItem.Subtitle
-                    style={{fontWeight: 'bold'}}>{`Updated at: ${item.timestamp
+                    style={{
+                      fontWeight: 'bold',
+                    }}>{`Updated at: ${item.timestamp
                     .toDate()
                     .toUTCString()}`}</ListItem.Subtitle>
                 </ListItem.Content>
@@ -110,6 +114,7 @@ export function RecentReports() {
             );
           }}
         />
+        <CustomBannerAdd />
       </View>
     </LoadingView>
   );

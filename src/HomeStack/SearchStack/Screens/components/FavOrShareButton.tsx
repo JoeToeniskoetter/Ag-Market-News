@@ -3,7 +3,7 @@ import {Alert, Platform, View} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useMyReports} from '../../../../Providers/MyReportsProvider';
-import {useSearch} from '../../../../Providers/SearchProvider';
+import {useCurrentReport} from '../../../../Providers/CurrentReportProvider';
 import {Report} from '../../../../shared/types';
 import {sendShare} from '../../../../shared/util';
 
@@ -13,7 +13,7 @@ interface IFavOrShareProps {
 
 export const FavOrShareButton: React.FC<IFavOrShareProps> = ({report}) => {
   const {addReport, removeReport, reports: myReports} = useMyReports();
-  const {currentReportUrl} = useSearch();
+  const {currentReportUrl} = useCurrentReport();
 
   let reportUrl = '';
   let publishedDate = '';

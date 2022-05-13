@@ -172,27 +172,6 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
   return (
     <>
       <CustomTabBarExample />
-      {showAd && (
-        <View style={{backgroundColor: 'white'}}>
-          <BannerAd
-            unitId={__DEV__ ? TestIds.BANNER : AD_UNIT_ID}
-            size={BannerAdSize.FULL_BANNER}
-            requestOptions={{
-              requestNonPersonalizedAdsOnly: false,
-            }}
-            onAdFailedToLoad={(e: any) => {
-              console.log(e);
-              setShowAd(false);
-            }}
-            onAdClosed={() => {}}
-            onAdLoaded={() => {
-              setShowAd(true);
-            }}
-            onAdOpened={() => {}}
-            onAdLeftApplication={() => {}}
-          />
-        </View>
-      )}
       {/* <BottomSheet
         callbackNode={fall}
         ref={whatsNewSheetRef}

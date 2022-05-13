@@ -1,6 +1,5 @@
 import * as React from 'react';
-import {Animated, View, Text, StyleSheet, I18nManager} from 'react-native';
-import Ionicons from 'react-native-vector-icons';
+import {Text, StyleSheet} from 'react-native';
 import {
   TabView,
   TabBar,
@@ -9,7 +8,6 @@ import {
   SceneRendererProps,
 } from 'react-native-tab-view';
 import {CommoditySearchScreen} from '../CommoditySearch';
-import {useNavigation} from '@react-navigation/native';
 import {MarketTypeSearch} from '../MarketTypeSearch';
 import {OfficeSearchScreen} from '../OfficeSearch';
 import {ReportSearchScreen} from '../ReportNameSearch';

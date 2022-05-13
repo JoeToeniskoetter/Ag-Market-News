@@ -3,45 +3,24 @@ import React, {useState, useEffect} from 'react';
 import {View, Platform, FlatList} from 'react-native';
 import {Text, SearchBar, ListItem} from '@rneui/base';
 import analytics from '@react-native-firebase/analytics';
-
-import {useSearch} from '../../../Providers/SearchProvider';
 import {MarketType} from '../../../shared/types';
-import {
-  LoadingSpinner,
-  LoadingView,
-} from '../../sharedComponents/LoadingSpinner';
-import {NoResults} from './components/NoResults';
+import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 import {AnalyticEvents} from '../../../shared/util';
 import {RetryFetch} from '../../sharedComponents/RetryFetch';
+import {useQuery} from 'react-query';
+import {fetchMarketTypes} from '../../../queries/marketTypes';
+import {CustomBannerAdd} from './components/CustomBannerAd';
 
 export function MarketTypeSearch() {
-  const {marketTypes, getMarketTypes, loading} = useSearch();
+  const {data, isLoading, error, refetch} = useQuery<MarketType[], Error>(
+    'marketTypes',
+    fetchMarketTypes,
+  );
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredMarketTypes, setFilteredMarketTypes] = useState<
-    MarketType[] | null
-  >();
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (!marketTypes) {
-      getMarketTypes();
-    }
-  }, []);
-
-  const updateList = (term: string) => {
-    setSearchText(term);
-    if (term === '') {
-      setFilteredMarketTypes(null);
-      return;
-    }
-    const filtered = marketTypes?.filter((x: MarketType) => {
-      return x.market_type.toLowerCase().includes(term.toLowerCase());
-    });
-    setFilteredMarketTypes(filtered);
-  };
-
   return (
-    <LoadingView loading={loading && !marketTypes}>
+    <LoadingView loading={isLoading}>
       <View
         style={{backgroundColor: 'white', height: '100%', paddingTop: '6%'}}>
         <Text h2 style={{paddingBottom: '2%', paddingLeft: '2%'}}>
@@ -51,17 +30,25 @@ export function MarketTypeSearch() {
           placeholder="Enter a market type..."
           platform={Platform.OS == 'ios' ? 'ios' : 'android'}
           clearIcon
-          onChangeText={(text: string) => updateList(text)}
+          onChangeText={setSearchText}
           value={searchText}
-          onClear={() => updateList('')}
-          onCancel={() => updateList('')}
+          onClear={() => setSearchText('')}
+          onCancel={() => setSearchText('')}
         />
-        {!loading && (!marketTypes || marketTypes?.length === 0) ? (
-          <RetryFetch retryFunction={getMarketTypes} />
+        {error ? (
+          <RetryFetch retryFunction={refetch} />
         ) : (
           <FlatList
             keyExtractor={(item: MarketType) => item.market_type_id}
-            data={filteredMarketTypes ? filteredMarketTypes : marketTypes}
+            data={
+              searchText.trim() !== ''
+                ? data?.filter(m =>
+                    m.market_type
+                      .toLowerCase()
+                      .includes(searchText.toLowerCase()),
+                  )
+                : data
+            }
             renderItem={({item}) => (
               <ListItem
                 bottomDivider
@@ -80,6 +67,7 @@ export function MarketTypeSearch() {
             )}
           />
         )}
+        <CustomBannerAdd />
       </View>
     </LoadingView>
   );

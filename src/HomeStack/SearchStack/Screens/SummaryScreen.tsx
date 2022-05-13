@@ -2,14 +2,11 @@ import React from 'react';
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Button} from '@rneui/base';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useSearch} from '../../../Providers/SearchProvider';
-import {Report} from '../../../shared/types';
+import {Report, ReportSummary} from '../../../shared/types';
 import {SearchNavProps} from '../SearchStackParams';
-import {LoadingSpinner} from '../../sharedComponents/LoadingSpinner';
-
-interface SummaryScreenProps {
-  report: Report;
-}
+import {LoadingView} from '../../sharedComponents/LoadingSpinner';
+import {useQuery} from 'react-query';
+import {fetchReportSummary} from '../../../queries/reportSummary';
 
 const monthNames = [
   'January',
@@ -27,70 +24,65 @@ const monthNames = [
 ];
 
 export function SummaryScreen({navigation, route}: SearchNavProps<'Summary'>) {
-  const {reportSummary, fetchSummary, loading} = useSearch();
+  const {data, isLoading, error} = useQuery<ReportSummary, Error>(
+    `/report/summary/${route.params.report.slug_id}`,
+    () => fetchReportSummary(route.params.report.slug_id),
+  );
   const {report} = route.params;
-
-  React.useEffect(() => {
-    fetchSummary(route.params.report.slug_id);
-  }, [route.params.report.slug_id]);
 
   const onCurrentReportPressed = () => {
     navigation.navigate('PDFView', {report: route.params.report});
   };
 
-  if (loading) {
-    return <LoadingSpinner />;
-  }
-
-  if (reportSummary) {
-    return (
-      <ScrollView
-        style={styles.summaryContainer}
-        contentContainerStyle={{marginTop: 10, height: '110%'}}>
-        <Text style={styles.title}>{report.report_title}</Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            paddingVertical: 5,
-          }}>
-          <Button
-            title="View Current Report"
-            buttonStyle={styles.currentReportButton}
-            onPress={onCurrentReportPressed}
-          />
-          <Button
-            title="See Previous Reports"
-            buttonStyle={styles.previousReportsButton}
-            onPress={() =>
-              navigation.navigate('PreviousReports', {
-                report,
-                summary: reportSummary,
-              })
-            }
-          />
-        </View>
-        <Text style={styles.sectionHeader}>Market Type</Text>
-        <Text style={styles.section}>{report.market_types}</Text>
-        {reportSummary.description ? (
-          <>
-            <Text style={styles.sectionHeader}>Description</Text>
-            <Text style={styles.section}>{reportSummary.description}</Text>
-            <Text style={styles.sectionHeader}>Synopsis</Text>
-            <Text style={styles.section}>{reportSummary.synopsis}</Text>
-          </>
-        ) : (
+  return (
+    <LoadingView loading={isLoading}>
+      {data ? (
+        <ScrollView
+          style={styles.summaryContainer}
+          contentContainerStyle={{marginTop: 10, height: '110%'}}>
+          <Text style={styles.title}>{report.report_title}</Text>
           <View
-            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.sectionHeader}>No Description Available</Text>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              paddingVertical: 5,
+            }}>
+            <Button
+              title="View Current Report"
+              buttonStyle={styles.currentReportButton}
+              onPress={onCurrentReportPressed}
+            />
+            <Button
+              title="See Previous Reports"
+              buttonStyle={styles.previousReportsButton}
+              onPress={() =>
+                navigation.navigate('PreviousReports', {
+                  report,
+                  summary: data,
+                })
+              }
+            />
           </View>
-        )}
-      </ScrollView>
-    );
-  }
-
-  return null;
+          <Text style={styles.sectionHeader}>Market Type</Text>
+          <Text style={styles.section}>{report.market_types}</Text>
+          {data.description ? (
+            <>
+              <Text style={styles.sectionHeader}>Description</Text>
+              <Text style={styles.section}>{data.description}</Text>
+              <Text style={styles.sectionHeader}>Synopsis</Text>
+              <Text style={styles.section}>{data.synopsis}</Text>
+            </>
+          ) : (
+            <View
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.sectionHeader}>No Description Available</Text>
+            </View>
+          )}
+        </ScrollView>
+      ) : null}
+    </LoadingView>
+  );
 }
 
 const styles = StyleSheet.create({

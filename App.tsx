@@ -3,7 +3,7 @@ import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {HomeStack} from './src/HomeStack/HomeStack';
 import {MyReportsContextProvider} from './src/Providers/MyReportsProvider';
-import {SearchProvider} from './src/Providers/SearchProvider';
+import {CurrentReportProvider} from './src/Providers/CurrentReportProvider';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import SimpleIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -18,6 +18,9 @@ import {Alert, BackHandler, Linking} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StorageReference} from './src/shared/StorageReference';
 import admob from '@invertase/react-native-google-ads';
+import {QueryClient, QueryClientProvider} from 'react-query';
+
+const queryClient = new QueryClient();
 
 const App = () => {
   const [instructionsSeen, setInstructionsSeen] = useState<boolean>(false);
@@ -74,17 +77,19 @@ const App = () => {
 
   if (instructionsSeen) {
     return (
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <FirebaseAuthProvider>
-            <MyReportsContextProvider>
-              <SearchProvider>
-                <HomeStack />
-              </SearchProvider>
-            </MyReportsContextProvider>
-          </FirebaseAuthProvider>
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <FirebaseAuthProvider>
+              <MyReportsContextProvider>
+                <CurrentReportProvider>
+                  <HomeStack />
+                </CurrentReportProvider>
+              </MyReportsContextProvider>
+            </FirebaseAuthProvider>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </QueryClientProvider>
     );
   }
 

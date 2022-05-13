@@ -3,7 +3,7 @@ import {View, Alert, Dimensions} from 'react-native';
 import {SearchNavProps} from '../SearchStackParams';
 import PDF from 'react-native-pdf';
 import WebView from 'react-native-webview';
-import {useSearch} from '../../../Providers/SearchProvider';
+import {useCurrentReport} from '../../../Providers/CurrentReportProvider';
 import {useFirebaseAuth} from '../../../Providers/FirebaseAuthProvider';
 import {AD_UNIT_ID, BASE_URI} from '../../../shared/util';
 import {
@@ -15,57 +15,36 @@ import {
   BannerAdSize,
   TestIds,
 } from '@invertase/react-native-google-ads';
+import {useQuery} from 'react-query';
+import {fetchReportUrl} from '../../../queries/reportUrl';
 
 export function PDFView({route}: SearchNavProps<'PDFView'>) {
+  const {
+    data,
+    isLoading,
+  } = useQuery(
+    `/reportUrl/${route.params.report.slug_id}`,
+    () => fetchReportUrl(route.params.report.slug_id),
+    {enabled: !route.params.uri},
+  );
   const {uri: preReportUri} = route.params;
-  const {setCurrentReportUrl} = useSearch();
+  const {setCurrentReportUrl} = useCurrentReport();
   const {user} = useFirebaseAuth();
   const {slug_name, slug_id} = route.params.report;
-  const [error, setError] = useState<String | null>(null);
+  // const [error, setError] = useState<String | null>(null);
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(true);
   const [showAd, setShowAd] = useState<boolean>(true);
-
-  async function getUri(slg: Number) {
-    console.log('getting URI');
-    setLoading(true);
-    let tempUri: string = `${BASE_URI}/reportLink?id=_${slg}`;
-    try {
-      const res = await fetch(tempUri, {
-        headers: {
-          Authorization: `Bearer ${await user?.getIdToken()}`,
-        },
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.link) {
-          setUri(json.link);
-          setReportType(String(json.link).includes('.pdf') ? 'pdf' : 'txt');
-          setLoading(false);
-          setCurrentReportUrl(json.link);
-        }
-      } else {
-        setLoading(false);
-      }
-    } catch (e) {
-      Alert.alert(e.message);
-    }
-  }
 
   useEffect(() => {
     if (preReportUri) {
-      console.log('ALREADY HAVE URI: ', preReportUri);
-
       setUri(preReportUri);
       setReportType(
         String(preReportUri).toLowerCase().includes('.pdf') ? 'pdf' : 'txt',
       );
       setCurrentReportUrl(preReportUri);
-      setLoading(false);
-    } else {
-      setUri('');
-      getUri(slug_id);
+      setPdfLoading(false);
     }
   }, [slug_id, preReportUri]);
 
@@ -80,7 +59,7 @@ export function PDFView({route}: SearchNavProps<'PDFView'>) {
   }
 
   return (
-    <LoadingView loading={loading}>
+    <LoadingView loading={isLoading}>
       <View
         style={{
           flex: 1,
@@ -90,17 +69,16 @@ export function PDFView({route}: SearchNavProps<'PDFView'>) {
         }}>
         <PDF
           source={{
-            uri,
+            uri: data?.link || uri,
           }}
           trustAllCerts={true}
           onError={e => {
-            Alert.alert('Error loading report. Please try again later');
-            setLoading(false);
+            setPdfLoading(false);
             setReportType('txt');
           }}
           activityIndicator={<LoadingSpinner />}
           enableAnnotationRendering
-          onLoadComplete={() => setLoading(false)}
+          onLoadComplete={() => setPdfLoading(false)}
           style={{
             flex: 1,
             width: Dimensions.get('window').width,

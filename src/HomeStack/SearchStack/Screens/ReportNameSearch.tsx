@@ -1,35 +1,26 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, Platform, FlatList, Alert} from 'react-native';
-
-import {useSearch} from '../../../Providers/SearchProvider';
 import {SearchBar, ListItem, Icon, Text} from '@rneui/base';
-import {NoResults} from './components/NoResults';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {Report} from '../../../shared/types';
-import {
-  LoadingSpinner,
-  LoadingView,
-} from '../../sharedComponents/LoadingSpinner';
+import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 import {useNavigation} from '@react-navigation/native';
 import {RetryFetch} from '../../sharedComponents/RetryFetch';
-
-interface ReportSearchProps {}
+import {useQuery} from 'react-query';
+import {fetchReportsByName} from '../../../queries/reportsByname';
+import {CustomBannerAdd} from './components/CustomBannerAd';
 
 export function ReportSearchScreen() {
-  const {reportsForSearch, getReportsForSearch, loading} = useSearch();
+  const {data, isLoading, error, refetch} = useQuery<Report[], Error>(
+    'reportsByName',
+    fetchReportsByName,
+  );
   const {addReport} = useMyReports();
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const navigation = useNavigation();
   const row: Array<any> = [];
-
-  useEffect(() => {
-    if (!reportsForSearch) {
-      getReportsForSearch();
-    }
-  }, []);
 
   const RenderLeftActions: React.FC<{}> = () => {
     return (
@@ -46,20 +37,8 @@ export function ReportSearchScreen() {
     );
   };
 
-  const updateList = (term: string) => {
-    setSearchText(term);
-    if (term === '') {
-      setFilteredReports(null);
-      return;
-    }
-    const filtered = reportsForSearch?.filter((x: Report) => {
-      return x.report_title.toLowerCase().includes(term.toLowerCase());
-    });
-    setFilteredReports(filtered);
-  };
-
   return (
-    <LoadingView loading={loading}>
+    <LoadingView loading={isLoading}>
       <View
         style={{backgroundColor: 'white', height: '100%', paddingTop: '6%'}}>
         <Text h2 style={{paddingBottom: '2%', paddingLeft: '2%'}}>
@@ -69,17 +48,29 @@ export function ReportSearchScreen() {
           placeholder="Enter a report name..."
           platform={Platform.OS == 'ios' ? 'ios' : 'android'}
           clearIcon
-          onChangeText={(text: string) => updateList(text)}
+          onChangeText={setSearchText}
           value={searchText}
-          onClear={() => updateList('')}
-          onCancel={() => updateList('')}
+          onClear={() => setSearchText('')}
+          onCancel={() => setSearchText('')}
         />
-        {!loading && (!reportsForSearch || reportsForSearch?.length === 0) ? (
-          <RetryFetch retryFunction={getReportsForSearch} />
+        {error ? (
+          <RetryFetch retryFunction={refetch} />
         ) : (
           <FlatList
             keyExtractor={(item: any) => item.slug_name}
-            data={filteredReports ? filteredReports : reportsForSearch}
+            data={
+              searchText.trim() !== ''
+                ? data?.filter(
+                    r =>
+                      r.report_title
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()) ||
+                      r.slug_name
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase()),
+                  )
+                : data
+            }
             renderItem={({item, index}) => (
               <Swipeable
                 ref={ref => (row[index] = ref)}
@@ -107,6 +98,7 @@ export function ReportSearchScreen() {
             )}
           />
         )}
+        <CustomBannerAdd />
       </View>
     </LoadingView>
   );
