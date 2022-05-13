@@ -9,12 +9,9 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import {ListItem, Text, SearchBar} from '@rneui/base';
+import {ListItem, Text, SearchBar, Badge, withBadge} from '@rneui/base';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import {
-  MyReportsContext,
-  useMyReports,
-} from '../../../Providers/MyReportsProvider';
+import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {Report} from '../../../shared/types';
 import {MyReportsNavProps} from '../MyReportsStackParams';
 import {NoSavedReports} from '../../SearchStack/Screens/components/NoSavedReports';
@@ -26,18 +23,19 @@ import {
 import InAppReview from 'react-native-in-app-review';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import analytics from '@react-native-firebase/analytics';
+import {SegmentedControl, Segment} from 'react-native-resegmented-control';
 import {AD_UNIT_ID, AnalyticEvents} from '../../../shared/util';
 import {StorageReference} from '../../../shared/StorageReference';
+import {FavoriteReports} from '../components/FavoriteReports';
 
 export function ReportsScreen({
   navigation,
   route,
 }: MyReportsNavProps<'Reports'>) {
-  const {reports, removeReport, subscribeToReport, unsubscribeToReport} =
-    useMyReports();
+  const {reports} = useMyReports();
   const [searchText, setSearchText] = useState<string>('');
-  const [filteredReports, setFilteredReports] = useState<Report[] | null>();
   const [showAdd, setShowAdd] = useState<boolean>(true);
+  const [selectedTab, setSelectedTab] = useState<string>('Favorites');
   const row: Array<any> = [];
 
   const reviewExpired = (review: {reviewed: number; initDate: Date}) => {
@@ -49,7 +47,7 @@ export function ReportsScreen({
   };
 
   const checkLastReviewRequest = async () => {
-    if (__DEV__) await AsyncStorage.removeItem(StorageReference.LAST_REVIEW);
+    // if (__DEV__) await AsyncStorage.removeItem(StorageReference.LAST_REVIEW);
     const newReviewEntry = {
       reviewed: 1,
       initDate: new Date(),
@@ -73,75 +71,6 @@ export function ReportsScreen({
     checkLastReviewRequest();
   }, []);
 
-  const LeftActionButton: React.FC<{item: Report}> = ({item}) => {
-    return (
-      <TouchableOpacity
-        onPress={async () => {
-          await removeReport(item);
-        }}>
-        <View style={styles.rightButton}>
-          <FontAwesome name="trash" size={24} color="white" />
-          <Text style={styles.actionText}>Remove</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const RightActionButton: React.FC<{item: Report}> = ({item}) => {
-    if (item.subscribed) {
-      return (
-        <TouchableOpacity>
-          <View style={styles.unSubscribeButton}>
-            <AntDesign name="closecircleo" size={22} color="white" />
-            <Text style={styles.actionText}>Unsubscribe</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    }
-
-    return (
-      <TouchableOpacity>
-        <View style={styles.leftButton}>
-          <AntDesign name="checkcircleo" size={22} color="black" />
-          <Text style={styles.actionTextDark}>Subscribe</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  function filterReports(text: string) {
-    setSearchText(text);
-
-    if (text === '' || undefined) {
-      return setFilteredReports(null);
-    }
-    const filtered = reports?.filter((report: Report) => {
-      return (
-        report.report_title.toLowerCase().includes(searchText.toLowerCase()) ||
-        report.slug_name.toLowerCase().includes(searchText.toLowerCase())
-      );
-    });
-
-    setFilteredReports(filtered);
-  }
-
-  async function subscribeOrUnSubscribe(report: Report) {
-    if (report.subscribed) {
-      await analytics().logEvent(AnalyticEvents.report_unsubscribed, {
-        slug: report.slug_name,
-        title: report.report_title,
-      });
-      await unsubscribeToReport(report);
-    } else {
-      await analytics().logEvent(AnalyticEvents.report_subscribed, {
-        slug: report.slug_name,
-        title: report.report_title,
-      });
-      await subscribeToReport(report);
-      Alert.alert(`Subscribed to ${report.slug_name}`);
-    }
-  }
-
   return (
     <>
       <View style={styles.container}>
@@ -153,59 +82,22 @@ export function ReportsScreen({
           platform={Platform.OS == 'ios' ? 'ios' : 'android'}
           clearIcon
           onChangeText={(text: string) => {
-            filterReports(text);
+            setSearchText(text);
           }}
           value={searchText}
           onClear={() => {
-            filterReports('');
+            setSearchText('');
           }}
           onCancel={() => {
-            filterReports('');
+            setSearchText('');
           }}
           style={{marginBottom: 0}}
         />
-        {reports?.length === 0 ? (
-          <NoSavedReports />
+        <CustomSegmentedControl setSelectedTab={setSelectedTab} />
+        {selectedTab === 'Favorites' ? (
+          <FavoriteReports searchText={searchText} />
         ) : (
-          <FlatList
-            data={filteredReports ? filteredReports : reports}
-            keyExtractor={item => item.slug_name}
-            renderItem={({item, index}) => (
-              <Swipeable
-                onSwipeableLeftOpen={async () => {
-                  row[index].close();
-                  subscribeOrUnSubscribe(item);
-                }}
-                ref={ref => (row[index] = ref)}
-                renderRightActions={() => <LeftActionButton item={item} />}
-                renderLeftActions={() => <RightActionButton item={item} />}>
-                <ListItem
-                  bottomDivider
-                  onPress={async () => {
-                    await analytics().logSelectContent({
-                      content_type: AnalyticEvents.myReports,
-                      item_id: item.slug_name,
-                    });
-                    navigation.navigate('PDFView', {report: item});
-                  }}>
-                  {item.report_url?.includes('pdf') ? (
-                    <AntDesign name="pdffile1" size={24} color={'black'} />
-                  ) : (
-                    <AntDesign name="filetext1" size={24} color={'black'} />
-                  )}
-                  <ListItem.Content>
-                    {item.subscribed ? <SubscribedText /> : null}
-                    <ListItem.Title>{item.report_title}</ListItem.Title>
-                    <ListItem.Subtitle
-                      style={{
-                        fontWeight: 'bold',
-                      }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
-                  </ListItem.Content>
-                  <ListItem.Chevron />
-                </ListItem>
-              </Swipeable>
-            )}
-          />
+          <Text>NEW</Text>
         )}
       </View>
       {showAdd ? (
@@ -231,15 +123,6 @@ export function ReportsScreen({
     </>
   );
 }
-
-const SubscribedText: React.FC<{}> = () => {
-  return (
-    <Text style={styles.subscribedText}>
-      Subscribed{' '}
-      <AntDesign name="checkcircleo" color="green" style={{paddingRight: 3}} />
-    </Text>
-  );
-};
 
 const styles = StyleSheet.create({
   leftButton: {
@@ -305,3 +188,31 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
+
+interface ICustomSegmentedControl {
+  setSelectedTab: (name: string) => void;
+}
+
+const CustomSegmentedControl: React.FC<ICustomSegmentedControl> = ({
+  setSelectedTab,
+}) => {
+  return (
+    <SegmentedControl
+      activeTintColor="black"
+      inactiveTintColor="white"
+      initialSelectedName="Favorites"
+      onChangeValue={(name: string) => setSelectedTab(name)}
+      style={{marginHorizontal: 10}}>
+      <Segment name="Favorites" content={<Text>Favorites</Text>} />
+      <Segment
+        name="New"
+        content={
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <Text style={{paddingRight: 10}}>New</Text>
+            <Badge value={3} status="error" />
+          </View>
+        }
+      />
+    </SegmentedControl>
+  );
+};
