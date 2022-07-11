@@ -1,32 +1,20 @@
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import React, {useEffect, useState} from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Platform,
-  Alert,
-} from 'react-native';
-import {ListItem, Text, SearchBar, Badge, withBadge} from '@rneui/base';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
-import {useMyReports} from '../../../Providers/MyReportsProvider';
-import {Report} from '../../../shared/types';
-import {MyReportsNavProps} from '../MyReportsStackParams';
-import {NoSavedReports} from '../../SearchStack/Screens/components/NoSavedReports';
 import {
   BannerAd,
   BannerAdSize,
   TestIds,
 } from '@invertase/react-native-google-ads';
-import InAppReview from 'react-native-in-app-review';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import analytics from '@react-native-firebase/analytics';
-import {SegmentedControl, Segment} from 'react-native-resegmented-control';
-import {AD_UNIT_ID, AnalyticEvents} from '../../../shared/util';
+import {Badge, SearchBar, Text} from '@rneui/base';
+import React, {useEffect, useState} from 'react';
+import {Platform, StyleSheet, View} from 'react-native';
+import InAppReview from 'react-native-in-app-review';
+import {Segment, SegmentedControl} from 'react-native-resegmented-control';
+import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {StorageReference} from '../../../shared/StorageReference';
+import {AD_UNIT_ID} from '../../../shared/util';
 import {FavoriteReports} from '../components/FavoriteReports';
+import {NewReports} from '../components/NewReports';
+import {MyReportsNavProps} from '../MyReportsStackParams';
 
 export function ReportsScreen({
   navigation,
@@ -36,7 +24,6 @@ export function ReportsScreen({
   const [searchText, setSearchText] = useState<string>('');
   const [showAdd, setShowAdd] = useState<boolean>(true);
   const [selectedTab, setSelectedTab] = useState<string>('Favorites');
-  const row: Array<any> = [];
 
   const reviewExpired = (review: {reviewed: number; initDate: Date}) => {
     const cachedItemTime = new Date(review.initDate);
@@ -93,11 +80,11 @@ export function ReportsScreen({
           }}
           style={{marginBottom: 0}}
         />
-        <CustomSegmentedControl setSelectedTab={setSelectedTab} />
+        {/* <CustomSegmentedControl setSelectedTab={setSelectedTab} /> */}
         {selectedTab === 'Favorites' ? (
           <FavoriteReports searchText={searchText} />
         ) : (
-          <Text>NEW</Text>
+          <NewReports searchText={searchText} />
         )}
       </View>
       {showAdd ? (
@@ -196,6 +183,7 @@ interface ICustomSegmentedControl {
 const CustomSegmentedControl: React.FC<ICustomSegmentedControl> = ({
   setSelectedTab,
 }) => {
+  const {newReports} = useMyReports();
   return (
     <SegmentedControl
       activeTintColor="black"
@@ -209,7 +197,9 @@ const CustomSegmentedControl: React.FC<ICustomSegmentedControl> = ({
         content={
           <View style={{display: 'flex', flexDirection: 'row'}}>
             <Text style={{paddingRight: 10}}>New</Text>
-            <Badge value={3} status="error" />
+            {newReports.length ? (
+              <Badge value={newReports.length} status="error" />
+            ) : null}
           </View>
         }
       />

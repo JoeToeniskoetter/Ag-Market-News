@@ -1,35 +1,73 @@
-import React, {useState, createContext, useEffect} from 'react';
+import React, {useState, createContext, useEffect, useRef} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Report} from '../shared/types';
 import {getReportType} from '../shared/util';
-import {Alert, Linking} from 'react-native';
+import {Alert, AppState, AppStateStatus, Linking} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import {StorageReference} from '../shared/StorageReference';
+import {baseFetch, basePost} from '../queries/baseFetch';
 
 interface IMyReportsContext {
   reports: Report[] | [];
+  newReports: Report[] | [];
   addReport: (rpt: Report) => void;
+  addReportToNew: (rpt: Report) => void;
+  fetchNewReports: () => Promise<void>;
+  removeReportFromNew: (rpt: Report) => void;
   removeReport: (rpt: Report) => void;
   getReports: () => void;
+  reportViewed: (rpt: Report) => void;
   subscribeToReport: (rpt: Report) => void;
   unsubscribeToReport: (rpt: Report) => void;
 }
 
 export const MyReportsContext = createContext<IMyReportsContext>({
   reports: [],
+  newReports: [],
   addReport: async (rpt: Report) => {},
+  addReportToNew: async (rpt: Report) => {},
+  fetchNewReports: async () => {},
+  removeReportFromNew: async (rpt: Report) => {},
   removeReport: async (rpt: Report) => {},
   getReports: async () => {},
+  reportViewed: async (rpt: Report) => {},
   subscribeToReport: async (rpt: Report) => {},
   unsubscribeToReport: async (rpt: Report) => {},
 });
 
 export const MyReportsContextProvider: React.FC<{}> = ({children}) => {
   const [reports, setReports] = useState<Report[] | []>([]);
+  const [newReports, setNewReports] = useState<Report[] | []>([]);
 
   useEffect(() => {
     getReports();
   }, []);
+
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+
+  useEffect(() => {
+    // fetchNewReports();
+    const subscription = AppState.addEventListener(
+      'change',
+      handleNextAppState,
+    );
+    return () => {
+      AppState.removeEventListener('change', handleNextAppState);
+    };
+  }, []);
+
+  function handleNextAppState(nextAppState: AppStateStatus) {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      // fetchNewReports();
+    }
+
+    appState.current = nextAppState;
+    setAppStateVisible(appState.current);
+  }
 
   function askToChangePermissions() {
     Alert.alert(
@@ -55,6 +93,18 @@ export const MyReportsContextProvider: React.FC<{}> = ({children}) => {
       {cancelable: true},
     );
   }
+
+  const fetchNewReports = async () => {
+    const reportsToSend = await getViewedReports();
+    if (reportsToSend.length === 0) {
+      return;
+    }
+    const payload = {
+      reports: reportsToSend,
+    };
+    const result = await basePost('/reports', {reports: reportsToSend});
+    setNewReports(await result.json());
+  };
 
   const createTopic = (rpt: Report): string => {
     return __DEV__ ? `DEV_${rpt.slug_name}` : rpt.slug_name;
@@ -149,6 +199,7 @@ export const MyReportsContextProvider: React.FC<{}> = ({children}) => {
       JSON.stringify(filtered),
     );
     setReports(filtered);
+    removeReportFromViewed(rpt);
   }
 
   async function getReports() {
@@ -161,13 +212,64 @@ export const MyReportsContextProvider: React.FC<{}> = ({children}) => {
     }
   }
 
+  async function saveViewedReports(reports: Report[]) {
+    await AsyncStorage.setItem(
+      StorageReference.REPORTS_LAST_VIEWED,
+      JSON.stringify(reports),
+    );
+  }
+
+  async function reportViewed(report: Report) {
+    let viewedReports = await getViewedReports();
+    let newRpts = viewedReports.filter(r => r.slug_id !== report.slug_id);
+    newRpts.push(report);
+    saveViewedReports(newRpts);
+  }
+
+  async function removeReportFromViewed(report: Report) {
+    let viewedReports = await getViewedReports();
+    let newRpts = viewedReports.filter(r => r.slug_id !== report.slug_id);
+    saveViewedReports(newRpts);
+  }
+
+  async function getViewedReports(): Promise<Report[]> {
+    let viewedReports = await AsyncStorage.getItem(
+      StorageReference.REPORTS_LAST_VIEWED,
+    );
+    if (!viewedReports) {
+      return [];
+    }
+    console.log('VIEWED REPORTS ', viewedReports);
+    return JSON.parse(viewedReports);
+  }
+
+  async function addReportToNew(report: Report) {
+    let filteredNewReports = newReports.filter(
+      r => r.slug_id !== report.slug_id,
+    );
+    filteredNewReports.push(report);
+    setNewReports(filteredNewReports);
+  }
+
+  async function removeReportFromNew(report: Report) {
+    let filteredNewReports = newReports.filter(
+      r => r.slug_id !== report.slug_id,
+    );
+    setNewReports(filteredNewReports);
+  }
+
   return (
     <MyReportsContext.Provider
       value={{
         reports,
+        newReports,
         addReport,
+        addReportToNew,
+        removeReportFromNew,
+        fetchNewReports,
         removeReport,
         getReports,
+        reportViewed,
         subscribeToReport,
         unsubscribeToReport,
       }}>

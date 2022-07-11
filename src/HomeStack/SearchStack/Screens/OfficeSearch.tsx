@@ -17,7 +17,6 @@ export function OfficeSearchScreen() {
     'offices',
     fetchOffices,
   );
-  console.log(data, isLoading, error);
   const [searchText, setSearchText] = useState<string>('');
   const navigation = useNavigation();
 

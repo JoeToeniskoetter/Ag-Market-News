@@ -18,6 +18,7 @@ import {Column, Row} from '../../../shared/components/Layout';
 import VersionCheck from 'react-native-version-check';
 import CustomTabBarExample from './components/TextTabBar';
 import {useNavigation} from '@react-navigation/native';
+import {useMyReports} from '../../../Providers/MyReportsProvider';
 
 export function SearchScreen({route}: SearchNavProps<'Reports'>) {
   const [showAd, setShowAd] = useState<boolean>(true);
@@ -26,6 +27,7 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
   const whatsNewSheetRef = useRef<BottomSheet>(null);
   const {height} = Dimensions.get('window');
   const navigation = useNavigation();
+  const {fetchNewReports} = useMyReports();
 
   // const sheetRef = useRef<BottomSheet>(null);
   // let fall = new Animated.Value(1);
@@ -76,6 +78,7 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
         return;
       } else {
         let report: Report = JSON.parse(remoteMessage.data.report);
+        await fetchNewReports();
         Alert.alert(
           'New Report Available!',
           `${report.report_title}`,

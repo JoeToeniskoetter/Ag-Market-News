@@ -99,10 +99,12 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
   const [products, setProducts] = useState<RNIap.Product[] | null>(null);
   const [iapLoading, setIapLoading] = useState<boolean>(false);
   const [iapError, setIapError] = useState<string>();
-  const [purchaseListener, setPurchaseListener] =
-    useState<EmitterSubscription>();
-  const [purchaseErrorListener, setPurchaseErrorListener] =
-    useState<EmitterSubscription>();
+  const [purchaseListener, setPurchaseListener] = useState<
+    EmitterSubscription
+  >();
+  const [purchaseErrorListener, setPurchaseErrorListener] = useState<
+    EmitterSubscription
+  >();
   const [seeInstructions, setSeeInstructions] = useState<boolean>(false);
   const sheetRef = React.useRef<BottomSheet>(null);
   const featureRequestRef = React.useRef<BottomSheet>(null);
@@ -110,8 +112,9 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
   const {height, width} = Dimensions.get('screen');
   const [featureRequestName, setFeatureRequestName] = useState<string>('');
   const [featureRequest, setFeatureRequest] = useState<string>('');
-  const [sendingFeatureRequest, setSendingFeatureRequest] =
-    useState<boolean>(false);
+  const [sendingFeatureRequest, setSendingFeatureRequest] = useState<boolean>(
+    false,
+  );
 
   const setupConnection = async () => {
     await RNIap.initConnection();
@@ -125,7 +128,6 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
             | RNIap.ProductPurchase,
         ) => {
           const receipt = purchase.transactionReceipt;
-          console.log('GOT RECEIPT: ', receipt);
           if (receipt) {
             if (Platform.OS === 'ios') {
               purchase.transactionId &&

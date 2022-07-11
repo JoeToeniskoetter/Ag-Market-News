@@ -13,6 +13,7 @@ type ReportTypeCheck = {
 };
 
 export const BASE_URI: string =
+  // 'http://192.168.1.68:5001/ag-market-news-74525/us-central1/api';
   'https://us-central1-ag-market-news-74525.cloudfunctions.net/api';
 
 export async function getReportType(rpt: Report): Promise<ReportTypeCheck> {
@@ -87,6 +88,9 @@ export const AnalyticEvents = {
   ...(__DEV__
     ? {report_unsubscribed: 'DEV_report_unsubscribed'}
     : {report_unsubscribed: 'report_unsubscribed'}),
+  ...(__DEV__
+    ? {new_report_click: 'DEV_new_report_click'}
+    : {new_report_click: 'new_report_click'}),
 };
 
 export const AD_UNIT_ID =

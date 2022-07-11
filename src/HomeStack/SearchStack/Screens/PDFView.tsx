@@ -17,21 +17,24 @@ import {
 } from '@invertase/react-native-google-ads';
 import {useQuery} from 'react-query';
 import {fetchReportUrl} from '../../../queries/reportUrl';
+import {WebViewErrorEvent} from 'react-native-webview/lib/WebViewTypes';
+import {RetryFetch} from '../../sharedComponents/RetryFetch';
 
 export function PDFView({route}: SearchNavProps<'PDFView'>) {
+  const {uri: preReportUri} = route.params;
   const {
     data,
     isLoading,
+    isError,
+    refetch,
   } = useQuery(
     `/reportUrl/${route.params.report.slug_id}`,
     () => fetchReportUrl(route.params.report.slug_id),
-    {enabled: !route.params.uri},
+    {enabled: preReportUri == null},
   );
-  const {uri: preReportUri} = route.params;
   const {setCurrentReportUrl} = useCurrentReport();
-  const {user} = useFirebaseAuth();
   const {slug_name, slug_id} = route.params.report;
-  // const [error, setError] = useState<String | null>(null);
+  const [error, setError] = useState<String | null>(null);
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
@@ -48,13 +51,26 @@ export function PDFView({route}: SearchNavProps<'PDFView'>) {
     }
   }, [slug_id, preReportUri]);
 
+  useEffect(() => {
+    if (data && data.link && data.link.includes('.txt')) {
+      setReportType('txt');
+    } else {
+      setReportType('pdf');
+    }
+  }, [data?.link]);
+
   if (reportType === 'txt') {
     return (
-      <WebView
-        startInLoadingState={true}
-        renderLoading={() => <LoadingSpinner />}
-        source={{uri}}
-      />
+      <LoadingView loading={isLoading}>
+        <WebView
+          startInLoadingState={true}
+          renderLoading={() => <LoadingSpinner />}
+          source={{uri: data?.link || uri}}
+          onError={(e: WebViewErrorEvent) =>
+            setError(e.nativeEvent.description)
+          }
+        />
+      </LoadingView>
     );
   }
 
@@ -67,25 +83,29 @@ export function PDFView({route}: SearchNavProps<'PDFView'>) {
           alignItems: 'center',
           marginTop: 0,
         }}>
-        <PDF
-          source={{
-            uri: data?.link || uri,
-          }}
-          trustAllCerts={true}
-          onError={e => {
-            setPdfLoading(false);
-            setReportType('txt');
-          }}
-          activityIndicator={<LoadingSpinner />}
-          enableAnnotationRendering
-          onLoadComplete={() => setPdfLoading(false)}
-          style={{
-            flex: 1,
-            width: Dimensions.get('window').width,
-            height: Dimensions.get('window').height,
-            backgroundColor: 'white',
-          }}
-        />
+        {isError ? (
+          <RetryFetch retryFunction={refetch} />
+        ) : (
+          <PDF
+            source={{
+              uri: data?.link || uri,
+            }}
+            trustAllCerts={true}
+            onError={e => {
+              setPdfLoading(false);
+              setReportType('txt');
+            }}
+            activityIndicator={<LoadingSpinner />}
+            enableAnnotationRendering
+            onLoadComplete={() => setPdfLoading(false)}
+            style={{
+              flex: 1,
+              width: Dimensions.get('window').width,
+              height: Dimensions.get('window').height,
+              backgroundColor: 'white',
+            }}
+          />
+        )}
         {showAd ? (
           <View style={{backgroundColor: 'white'}}>
             <BannerAd

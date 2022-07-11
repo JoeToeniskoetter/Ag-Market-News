@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {HomeParamList} from './HomeStackParams';
 import {SearchStack} from './SearchStack/SearchStack';
@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Settings} from '../Settings/Settings';
 import {useFirebaseAuth} from '../Providers/FirebaseAuthProvider';
 import {LoadingView} from './sharedComponents/LoadingSpinner';
+import {useMyReports} from '../Providers/MyReportsProvider';
 
 interface HomeStackProps {}
 
@@ -14,6 +15,7 @@ const Tabs = createBottomTabNavigator<HomeParamList>();
 
 export const HomeStack: React.FC<HomeStackProps> = () => {
   const {user} = useFirebaseAuth();
+  const {newReports} = useMyReports();
 
   return (
     <LoadingView loading={!user}>
@@ -40,6 +42,7 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
           component={MyReportsStack}
           options={{
             title: 'My Reports',
+            // ...(newReports.length && {tabBarBadge: newReports.length}),
           }}
         />
         <Tabs.Screen name="Settings" component={Settings} />

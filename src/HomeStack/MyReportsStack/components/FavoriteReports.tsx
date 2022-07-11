@@ -29,6 +29,7 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
     removeReport,
     unsubscribeToReport,
     subscribeToReport,
+    reportViewed,
   } = useMyReports();
   const row: Array<any> = [];
 
@@ -134,6 +135,7 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
                     item_id: item.slug_name,
                   });
                   navigation.navigate('PDFView', {report: item});
+                  reportViewed(item);
                 }}>
                 {item.report_url?.includes('pdf') ? (
                   <AntDesign name="pdffile1" size={24} color={'black'} />

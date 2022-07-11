@@ -8,3 +8,14 @@ export const baseFetch = async (path: string) => {
     },
   });
 };
+
+export const basePost = async (path: string, body: any) => {
+  return fetch(`${BASE_URI}${path}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${await auth().currentUser?.getIdToken()}`,
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+};

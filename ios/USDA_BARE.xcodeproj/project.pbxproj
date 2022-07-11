@@ -865,7 +865,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = USDA_BARE/USDA_BAREDebug.entitlements;
-				CURRENT_PROJECT_VERSION = 1.4;
+				CURRENT_PROJECT_VERSION = 1.6;
 				DEVELOPMENT_TEAM = PYGD6FCN62;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=*]" = arm64;
@@ -876,7 +876,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/swift",
 				);
-				MARKETING_VERSION = 1.7.3;
+				MARKETING_VERSION = 1.7.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -900,7 +900,7 @@
 				CODE_SIGN_ENTITLEMENTS = USDA_BARE/USDA_BARERelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.4;
+				CURRENT_PROJECT_VERSION = 1.6;
 				DEVELOPMENT_TEAM = PYGD6FCN62;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = USDA_BARE/Info.plist;
@@ -909,7 +909,7 @@
 					"$(inherited)",
 					"$(SDKROOT)/usr/lib/swift",
 				);
-				MARKETING_VERSION = 1.7.3;
+				MARKETING_VERSION = 1.7.4;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
