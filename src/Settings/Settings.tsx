@@ -23,10 +23,8 @@ import * as RNIap from 'react-native-iap';
 import {Product} from 'react-native-iap';
 import VersionCheck from 'react-native-version-check';
 import BottomSheet from 'reanimated-bottom-sheet';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {InstructionsScreen} from '../HomeStack/InstructionsScreen';
 import {Colors} from '../shared/util';
-import {useNavigation} from '@react-navigation/native';
 
 const GOOGLE_PLAY_URL: string =
   'https://play.google.com/store/apps/details?id=com.ag_market_news.android';
@@ -120,7 +118,6 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
   const [sendingFeatureRequest, setSendingFeatureRequest] = useState<boolean>(
     false,
   );
-  const navigation = useNavigation();
 
   const setupConnection = async () => {
     await RNIap.initConnection();
@@ -175,7 +172,7 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
 
   const getIAPProducts = async () => {
     try {
-      //await setupConnection();
+      await setupConnection();
       if (productIds) {
         const products: RNIap.Product[] = await RNIap.getProducts(productIds);
         products.sort((a, b) => {
@@ -230,24 +227,6 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
   };
 
   const data = [
-    // {
-    //   key: '0',
-    //   title: 'Notifications',
-    //   iconName: 'bell-o',
-    //   iconType: 'fontawesome',
-    //   icon: <Ionicons name="notifications-outline" size={40} />,
-    //   onPress: () => navigation.navigate('Notifications'),
-    // },
-    // {
-    //   key: '0',
-    //   title: 'Help and Support',
-    //   iconName: 'questioncircleo',
-    //   iconType: 'antdesign',
-    //   onPress: () => {
-    //     navigation.navigate('HelpAndSupport');
-    //     // setSeeInstructions(true);
-    //   },
-    // },
     {
       key: 1,
       title: 'Rate this app',
@@ -280,10 +259,20 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
       color: 'black',
       onPress: openFeatureRequestSheet,
     },
+    {
+      key: 5,
+      title: 'How to use this app',
+      iconName: 'questioncircleo',
+      iconType: 'antdesign',
+      color: 'orange',
+      onPress: () => {
+        setSeeInstructions(true);
+      },
+    },
   ];
 
   React.useEffect(() => {
-    setupConnection();
+    // setupConnection();
     setupErrorListener();
     return () => {
       purchaseListener?.remove();

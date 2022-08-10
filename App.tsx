@@ -42,6 +42,10 @@ const App = () => {
   };
 
   useEffect(() => {
+    codePush.sync();
+  }, []);
+
+  useEffect(() => {
     Promise.all([
       checkInstructionsSeen(),
       FontAwesome.loadFont(),

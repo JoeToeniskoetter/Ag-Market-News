@@ -5,7 +5,6 @@ import {
 } from '@react-navigation/stack';
 import React from 'react';
 import {defaultHeaderOptions} from '../shared/components/DefaultHeaderOptions';
-import {Notifications} from './screens/Notifications';
 import {Settings} from './Settings';
 
 export type SettingsParamList = {
@@ -31,11 +30,6 @@ export const SettingsStack: React.FC<SettingsStackProps> = ({}) => {
         component={Settings}
         options={{...defaultHeaderOptions('Settings')}}
       />
-      {/* <Stack.Screen
-        name="Notifications"
-        component={Notifications}
-        options={{...defaultHeaderOptions('Notifications')}}
-      /> */}
     </Stack.Navigator>
   );
 };
