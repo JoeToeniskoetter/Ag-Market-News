@@ -10,6 +10,7 @@ import {
 import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 import {useQuery} from 'react-query';
 import {fetchPreviousReleases} from '../../../queries/previousReports';
+import {StyledText, TextType} from '../../../shared/components/Text';
 
 interface MonthSelectionProps {
   item: any;
@@ -73,7 +74,13 @@ export const MonthSelection: React.FC<MonthSelectionProps> = ({
         }}
         containerStyle={{paddingLeft: 25}}>
         <ListItem.Content>
-          <ListItem.Title>{`Date: ${item.report_date}`}</ListItem.Title>
+          <ListItem.Title>
+            <StyledText
+              type={TextType.SUB_HEADING}
+              style={{fontSize: 14}}
+              value={`Date: ${item.report_date}`}
+            />
+          </ListItem.Title>
           <ListItem.Subtitle style={{fontWeight: 'bold', color: 'green'}}>
             {item.file_extension}
           </ListItem.Subtitle>
@@ -98,7 +105,12 @@ export const MonthSelection: React.FC<MonthSelectionProps> = ({
             style={{paddingRight: 20}}
           />
           <ListItem.Content>
-            <ListItem.Title>{monthNames[Number(item.item) - 1]}</ListItem.Title>
+            <ListItem.Title>
+              <StyledText
+                value={monthNames[Number(item.item) - 1]}
+                type={TextType.SMALL_HEADING}
+              />
+            </ListItem.Title>
           </ListItem.Content>
         </>
       }>

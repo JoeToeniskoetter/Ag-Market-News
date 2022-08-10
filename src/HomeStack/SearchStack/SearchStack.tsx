@@ -4,11 +4,7 @@ import {
 } from '@react-navigation/stack';
 import React from 'react';
 import {Text} from '@rneui/base';
-import {CommoditySearchScreen} from './Screens/CommoditySearch';
-import {MarketTypeSearch} from './Screens/MarketTypeSearch';
-import {OfficeSearchScreen} from './Screens/OfficeSearch';
 import {PDFView} from './Screens/PDFView';
-import {ReportSearchScreen} from './Screens/ReportNameSearch';
 import {ReportScreen} from './Screens/Reports';
 import {SearchScreen} from './Screens/SearchScreen';
 import {SearchParamList} from './SearchStackParams';
@@ -16,6 +12,8 @@ import {FavOrShareButton} from './Screens/components/FavOrShareButton';
 import {SummaryScreen} from './Screens/SummaryScreen';
 import {PreviousReportsScreen} from './Screens/PreviousReportsScreen';
 import {RecentReports} from './Screens/RecentReports';
+import {defaultHeaderOptions} from '../../shared/components/DefaultHeaderOptions';
+import {ListScreen} from './Screens/ListScreen';
 
 interface SearchStackProps {}
 
@@ -28,81 +26,46 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
         name="SearchType"
         component={SearchScreen}
         options={{
-          header: () => null,
-          title: 'Search By',
+          title: 'Browse',
+          ...defaultHeaderOptions('Browse'),
         }}
       />
+
       <Stack.Screen
-        name="CommoditySearch"
-        component={CommoditySearchScreen}
+        name="Reports"
+        component={ReportScreen}
         options={{
-          title: 'Commodity',
-          headerStyle: {
-            backgroundColor: '#FFEC9E',
-          },
-          headerTintColor: '#000',
+          title: 'Reports',
+          ...defaultHeaderOptions('Reports'),
         }}
       />
-      <Stack.Screen
-        name="MartketTypeSearch"
-        component={MarketTypeSearch}
-        options={{
-          title: 'Market Type',
-          headerStyle: {
-            backgroundColor: '#92DD91',
-          },
-          headerTintColor: '#000',
-        }}
-      />
-      <Stack.Screen name="Reports" component={ReportScreen} />
       <Stack.Screen
         name="PDFView"
         component={PDFView}
         options={({route}) => ({
-          headerTitle: () => {
-            return (
-              <Text style={[{fontWeight: 'bold', fontSize: 18}]}>
-                {route.params.report.slug_name}
-              </Text>
-            );
-          },
+          ...defaultHeaderOptions(route.params.report.slug_name),
           headerRight: () => {
             return <FavOrShareButton report={route.params.report} />;
           },
-          headerBackTitle: null,
         })}
       />
       <Stack.Screen
-        name="OfficeSearch"
-        component={OfficeSearchScreen}
+        name="Summary"
+        component={SummaryScreen}
         options={{
-          title: 'Office Search',
-          headerStyle: {
-            backgroundColor: '#F3B983',
-          },
-          headerTintColor: '#000',
+          title: 'Summary',
+          ...defaultHeaderOptions('Summary'),
         }}
       />
-      <Stack.Screen
-        name="ReportNameSearch"
-        component={ReportSearchScreen}
-        options={{
-          title: 'Report Search',
-          headerStyle: {
-            backgroundColor: '#F1A2A2',
-          },
-          headerTintColor: '#000',
-        }}
-      />
-      <Stack.Screen name="Summary" component={SummaryScreen} />
 
       <Stack.Screen
         name="PreviousReports"
         component={PreviousReportsScreen}
-        options={() => {
-          return {
-            title: 'Previous Reports',
-          };
+        options={{
+          headerBackAllowFontScaling: true,
+          headerTitleAllowFontScaling: true,
+          title: 'Previous Reports',
+          ...defaultHeaderOptions('Previous Reports'),
         }}
       />
 
@@ -114,6 +77,17 @@ export const SearchStack: React.FC<SearchStackProps> = () => {
             title: 'Recent Reports',
           };
         }}
+      />
+
+      <Stack.Screen
+        name="ListScreen"
+        component={ListScreen}
+        options={({route}) => ({
+          title: route.params.category.replace(/\b(\w)/g, k => k.toUpperCase()),
+          ...defaultHeaderOptions(
+            route.params.category.replace(/\b(\w)/g, k => k.toUpperCase()),
+          ),
+        })}
       />
     </Stack.Navigator>
   );

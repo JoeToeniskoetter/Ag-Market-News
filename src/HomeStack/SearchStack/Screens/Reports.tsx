@@ -7,12 +7,15 @@ import {SearchNavProps} from '../SearchStackParams';
 import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {Report} from '../../../shared/types';
 import analytics from '@react-native-firebase/analytics';
-import {AnalyticEvents} from '../../../shared/util';
+import Toast from 'react-native-toast-message';
+import {AnalyticEvents, Colors} from '../../../shared/util';
 import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 import {useNavigation} from '@react-navigation/native';
 import {useQuery} from 'react-query';
 import {RetryFetch} from '../../sharedComponents/RetryFetch';
 import {fetchReports} from '../../../queries/reports';
+import {SearchInput} from '../components/SearchInput';
+import {StyledText, TextType} from '../../../shared/components/Text';
 
 export function ReportScreen({route}: SearchNavProps<'Reports'>) {
   const {data, isLoading, isError, refetch} = useQuery<Report[], Error>(
@@ -34,6 +37,9 @@ export function ReportScreen({route}: SearchNavProps<'Reports'>) {
           justifyContent: 'center',
           padding: 20,
           backgroundColor: '#39bd28',
+          marginHorizontal: 10,
+          marginBottom: 5,
+          borderRadius: 10,
         }}>
         <FontAwesome name="star" size={24} color={'black'} />
         <Text>Favorite</Text>
@@ -44,17 +50,14 @@ export function ReportScreen({route}: SearchNavProps<'Reports'>) {
   return (
     <LoadingView loading={isLoading}>
       <View
-        style={{backgroundColor: 'white', height: '100%', paddingTop: '6%'}}>
-        <Text h2 style={{paddingBottom: '2%', paddingLeft: '2%'}}>
-          Reports
-        </Text>
-        <SearchBar
+        style={{
+          backgroundColor: Colors.BACKGROUND,
+          height: '100%',
+        }}>
+        <SearchInput
           placeholder="Enter a report name or slug..."
-          platform={Platform.OS == 'ios' ? 'ios' : 'android'}
-          onChangeText={setSearchText}
+          onChange={setSearchText}
           onClear={() => setSearchText('')}
-          onCancel={() => setSearchText('')}
-          clearIcon
           value={searchText ? searchText : ''}
         />
         {isError ? (
@@ -82,13 +85,20 @@ export function ReportScreen({route}: SearchNavProps<'Reports'>) {
                 onSwipeableOpen={async () => {
                   row[index].close();
                   await addReport(item);
-                  await Alert.alert('Saved to Favorites');
+                  Toast.show({
+                    visibilityTime: 1500,
+                    type: 'success',
+                    text1: 'Favorited',
+                    text2: `Saved ${item.slug_name} to favorites`,
+                  });
                   await analytics().logEvent(AnalyticEvents.report_favorited, {
                     slug: item.slug_name,
                     title: item.report_title,
                   });
                 }}>
                 <ListItem
+                  style={{paddingHorizontal: 10, marginBottom: 5}}
+                  containerStyle={{borderRadius: 10}}
                   bottomDivider
                   onPress={async () => {
                     navigation.navigate('Summary', {report: item});
@@ -99,10 +109,18 @@ export function ReportScreen({route}: SearchNavProps<'Reports'>) {
                     });
                   }}>
                   <ListItem.Content>
-                    <ListItem.Title style={{fontWeight: 'bold'}}>
-                      {item.report_title}
+                    <ListItem.Title>
+                      <StyledText
+                        type={TextType.SMALL_HEADING}
+                        value={item.report_title}
+                      />
                     </ListItem.Title>
-                    <ListItem.Subtitle>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
+                    <ListItem.Subtitle>
+                      <StyledText
+                        type={TextType.SUB_HEADING}
+                        value={`Report ID: ${item.slug_name}`}
+                      />
+                    </ListItem.Subtitle>
                   </ListItem.Content>
                   <ListItem.Chevron />
                 </ListItem>

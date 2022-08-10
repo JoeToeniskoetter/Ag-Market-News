@@ -1,8 +1,9 @@
+import {SearchCategory} from '../HomeStack/SearchStack/SearchStackParams';
 import {Report} from '../shared/types';
 import {baseFetch} from './baseFetch';
 
 type IGetReports = {
-  from: String;
+  from: SearchCategory;
   reportId: string;
 };
 
@@ -10,13 +11,13 @@ const buildUri = (igr: IGetReports): string => {
   let uri: string;
 
   switch (igr.from) {
-    case 'COMMODITY':
+    case 'commodities':
       uri = `/commodities?id=${igr.reportId}`;
       break;
-    case 'OFFICE':
+    case 'offices':
       uri = `/offices?id=${igr.reportId}`;
       break;
-    case 'MARKET_TYPE':
+    case 'markets':
       uri = `/markets?id=${igr.reportId}`;
       break;
     default:

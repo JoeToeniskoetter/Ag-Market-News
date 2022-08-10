@@ -8,12 +8,15 @@ import React, {
 
 interface IFirebaseAuthProviderContext {
   user: FirebaseAuthTypes.User | null;
+  initializing: boolean;
 }
 
-export const FirebaseAuthProviderContext =
-  createContext<IFirebaseAuthProviderContext>({
-    user: null,
-  });
+export const FirebaseAuthProviderContext = createContext<
+  IFirebaseAuthProviderContext
+>({
+  user: null,
+  initializing: true,
+});
 
 type Action =
   | {type: ACTION_TYPES.SIGNIN; user: FirebaseAuthTypes.User}
@@ -30,24 +33,17 @@ enum ACTION_TYPES {
 
 export const FirebaseAuthProvider: React.FC<{}> = ({children}) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [initializing, setInitializing] = useState<boolean>(true);
 
   React.useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
         setUser(user);
-        // user
-        //   .getIdToken()
-        //   .then(token => console.log(token))
-        //   .catch(e => {
-        //     auth()
-        //       .signOut()
-        //       .then(() => {
-        //         auth().signInAnonymously();
-        //       });
-        //   });
       } else {
         setUser(null);
       }
+
+      setInitializing(false);
     });
 
     if (!auth().currentUser) {
@@ -61,6 +57,7 @@ export const FirebaseAuthProvider: React.FC<{}> = ({children}) => {
     <FirebaseAuthProviderContext.Provider
       value={{
         user,
+        initializing,
       }}>
       {children}
     </FirebaseAuthProviderContext.Provider>

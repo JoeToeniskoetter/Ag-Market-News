@@ -97,3 +97,8 @@ export const AD_UNIT_ID =
   Platform.OS == 'ios'
     ? 'ca-app-pub-8015316806136807/9105033552'
     : 'ca-app-pub-8015316806136807/4483084657';
+
+export const Colors = {
+  PRIMARY: '#C6950D',
+  BACKGROUND: '#F5F5F5',
+};

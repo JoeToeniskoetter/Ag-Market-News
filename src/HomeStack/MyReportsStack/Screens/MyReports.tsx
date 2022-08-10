@@ -11,7 +11,8 @@ import InAppReview from 'react-native-in-app-review';
 import {Segment, SegmentedControl} from 'react-native-resegmented-control';
 import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {StorageReference} from '../../../shared/StorageReference';
-import {AD_UNIT_ID} from '../../../shared/util';
+import {AD_UNIT_ID, Colors} from '../../../shared/util';
+import {SearchInput} from '../../SearchStack/components/SearchInput';
 import {FavoriteReports} from '../components/FavoriteReports';
 import {NewReports} from '../components/NewReports';
 import {MyReportsNavProps} from '../MyReportsStackParams';
@@ -61,24 +62,15 @@ export function ReportsScreen({
   return (
     <>
       <View style={styles.container}>
-        <Text style={{paddingLeft: '5%'}} h2>
-          My Reports
-        </Text>
-        <SearchBar
+        <SearchInput
           placeholder="Search for report..."
-          platform={Platform.OS == 'ios' ? 'ios' : 'android'}
-          clearIcon
-          onChangeText={(text: string) => {
+          onChange={(text: string) => {
             setSearchText(text);
           }}
-          value={searchText}
           onClear={() => {
             setSearchText('');
           }}
-          onCancel={() => {
-            setSearchText('');
-          }}
-          style={{marginBottom: 0}}
+          value={searchText}
         />
         {/* <CustomSegmentedControl setSelectedTab={setSelectedTab} /> */}
         {selectedTab === 'Favorites' ? (
@@ -156,8 +148,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-start',
-    paddingTop: '15%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.BACKGROUND,
   },
   rightButton: {
     alignItems: 'center',

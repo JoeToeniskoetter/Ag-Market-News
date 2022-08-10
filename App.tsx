@@ -1,30 +1,31 @@
-import React, {useEffect, useState} from 'react';
-import 'react-native-gesture-handler';
+import {PortalProvider} from '@gorhom/portal';
+import admob from '@invertase/react-native-google-ads';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
-import {HomeStack} from './src/HomeStack/HomeStack';
-import {MyReportsContextProvider} from './src/Providers/MyReportsProvider';
-import {CurrentReportProvider} from './src/Providers/CurrentReportProvider';
+import React, {useEffect, useState} from 'react';
+import RNBootSplash from 'react-native-bootsplash';
+import 'react-native-gesture-handler';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
-import SimpleIcons from 'react-native-vector-icons/SimpleLineIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import RNBootSplash from 'react-native-bootsplash';
-import {InstructionsScreen} from './src/HomeStack/InstructionsScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {FirebaseAuthProvider} from './src/Providers/FirebaseAuthProvider';
-import VersionCheck from 'react-native-version-check';
-import {Alert, BackHandler, Linking} from 'react-native';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {StorageReference} from './src/shared/StorageReference';
-import admob from '@invertase/react-native-google-ads';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import SimpleIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {QueryClient, QueryClientProvider} from 'react-query';
+import codePush from 'react-native-code-push';
+
+import {HomeStack} from './src/HomeStack/HomeStack';
+import {InstructionsScreen} from './src/HomeStack/InstructionsScreen';
+import {CurrentReportProvider} from './src/Providers/CurrentReportProvider';
+import {FirebaseAuthProvider} from './src/Providers/FirebaseAuthProvider';
+import {MyReportsContextProvider} from './src/Providers/MyReportsProvider';
+import {StorageReference} from './src/shared/StorageReference';
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [instructionsSeen, setInstructionsSeen] = useState<boolean>(false);
-  const [needsUpdate, setNeedsUpdate] = useState<boolean>(false);
 
   const checkInstructionsSeen = async () => {
     const seen = await AsyncStorage.getItem(StorageReference.INSTRUCTIONS_SEEN);
@@ -33,27 +34,6 @@ const App = () => {
     }
     return setInstructionsSeen(true);
   };
-
-  // const checkNeedsUpdate = async () => {
-  //   const {storeUrl, isNeeded} = await VersionCheck.needUpdate();
-  //   if (isNeeded) {
-  //     setNeedsUpdate(true);
-  //     Alert.alert(
-  //       'Please Update',
-  //       'You will need to update this app to continue using',
-  //       [
-  //         {
-  //           text: 'Update',
-  //           onPress: () => {
-  //             BackHandler.exitApp();
-  //             Linking.openURL(storeUrl);
-  //           },
-  //         },
-  //       ],
-  //       {cancelable: false},
-  //     );
-  //   }
-  // };
 
   const onInstructionsSeen = async () => {
     //1 for seen, 0 for not seen
@@ -79,16 +59,19 @@ const App = () => {
     return (
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
-          <NavigationContainer>
-            <FirebaseAuthProvider>
-              <MyReportsContextProvider>
-                <CurrentReportProvider>
-                  <HomeStack />
-                </CurrentReportProvider>
-              </MyReportsContextProvider>
-            </FirebaseAuthProvider>
-          </NavigationContainer>
+          <PortalProvider>
+            <NavigationContainer>
+              <FirebaseAuthProvider>
+                <MyReportsContextProvider>
+                  <CurrentReportProvider>
+                    <HomeStack />
+                  </CurrentReportProvider>
+                </MyReportsContextProvider>
+              </FirebaseAuthProvider>
+            </NavigationContainer>
+          </PortalProvider>
         </SafeAreaProvider>
+        <Toast />
       </QueryClientProvider>
     );
   }
@@ -96,4 +79,6 @@ const App = () => {
   return <InstructionsScreen onInstructionsSeen={onInstructionsSeen} />;
 };
 
-export default App;
+export default codePush({
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+})(App);

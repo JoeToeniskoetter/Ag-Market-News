@@ -3,6 +3,7 @@ import {Icon, ListItem} from '@rneui/base';
 import {FlatList} from 'react-native';
 import {Report} from '../../../shared/types';
 import {MonthSelection} from './MonthSelection';
+import {StyledText, TextType} from '../../../shared/components/Text';
 
 interface YearSelectionProps {
   item: {
@@ -32,7 +33,9 @@ export const YearSelection: React.FC<YearSelectionProps> = ({item, report}) => {
             style={{paddingRight: 25}}
           />
           <ListItem.Content>
-            <ListItem.Title style={{fontSize: 36}}>{item.title}</ListItem.Title>
+            <ListItem.Title>
+              <StyledText value={item.title} type={TextType.HEADING} />
+            </ListItem.Title>
           </ListItem.Content>
         </>
       }>

@@ -7,18 +7,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Settings} from '../Settings/Settings';
 import {useFirebaseAuth} from '../Providers/FirebaseAuthProvider';
 import {LoadingView} from './sharedComponents/LoadingSpinner';
-import {useMyReports} from '../Providers/MyReportsProvider';
+import {Colors} from '../shared/util';
+import {defaultHeaderOptions} from '../shared/components/DefaultHeaderOptions';
+import {SettingsStack} from '../Settings/SettingsStack';
 
 interface HomeStackProps {}
 
 const Tabs = createBottomTabNavigator<HomeParamList>();
 
 export const HomeStack: React.FC<HomeStackProps> = () => {
-  const {user} = useFirebaseAuth();
-  const {newReports} = useMyReports();
+  const {initializing} = useFirebaseAuth();
 
   return (
-    <LoadingView loading={!user}>
+    <LoadingView loading={initializing}>
       <Tabs.Navigator
         initialRouteName={'Search'}
         screenOptions={({route}) => ({
@@ -33,19 +34,21 @@ export const HomeStack: React.FC<HomeStackProps> = () => {
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'blue',
-          inactiveTintColor: 'gray',
+          activeTintColor: 'black',
+          inactiveTintColor: 'white',
+          style: {backgroundColor: Colors.PRIMARY},
         }}>
         <Tabs.Screen name="Search" component={SearchStack} />
         <Tabs.Screen
           name="MyReports"
           component={MyReportsStack}
-          options={{
-            title: 'My Reports',
-            // ...(newReports.length && {tabBarBadge: newReports.length}),
-          }}
+          options={{title: 'My Reports'}}
         />
-        <Tabs.Screen name="Settings" component={Settings} />
+        <Tabs.Screen
+          name="Settings"
+          component={SettingsStack}
+          options={{...defaultHeaderOptions('Settings')}}
+        />
       </Tabs.Navigator>
     </LoadingView>
   );

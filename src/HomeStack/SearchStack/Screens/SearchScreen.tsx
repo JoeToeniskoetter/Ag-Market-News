@@ -1,40 +1,73 @@
+import Toast from 'react-native-toast-message';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchNavProps} from '../SearchStackParams';
-import {View, StyleSheet, Dimensions, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Alert,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import {Button, Text} from '@rneui/base';
 import {
   BannerAd,
   BannerAdSize,
   TestIds,
 } from '@invertase/react-native-google-ads';
+import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 import {Report} from '../../../shared/types';
-import {AD_UNIT_ID} from '../../../shared/util';
-import {StorageReference} from '../../../shared/StorageReference';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AD_UNIT_ID, Colors} from '../../../shared/util';
 import BottomSheet from 'reanimated-bottom-sheet';
-import Animated from 'react-native-reanimated';
-import {Column, Row} from '../../../shared/components/Layout';
-import VersionCheck from 'react-native-version-check';
-import CustomTabBarExample from './components/TextTabBar';
 import {useNavigation} from '@react-navigation/native';
 import {useMyReports} from '../../../Providers/MyReportsProvider';
+import {SearchInput} from '../components/SearchInput';
+import {Divider} from '../components/Divider';
+import {Icon} from '@rneui/themed';
+import {StyledText, TextType} from '../../../shared/components/Text';
+import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {useRecentReports} from '../../../hooks/useRecentReports';
+import {useQuery} from 'react-query';
+import {fetchReports} from '../../../queries/reports';
+import {fetchCategoryItems} from '../../../queries/categoryItems';
+import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 
-export function SearchScreen({route}: SearchNavProps<'Reports'>) {
-  const [showAd, setShowAd] = useState<boolean>(true);
-  // const [whatsNewSeen, setWhatsNewSeen] = useState<boolean>(true);
-  const [currentVersion, setCurrentVersion] = useState<string>();
-  const whatsNewSheetRef = useRef<BottomSheet>(null);
-  const {height} = Dimensions.get('window');
+export function SearchScreen({route}: SearchNavProps<'SearchType'>) {
   const navigation = useNavigation();
   const {fetchNewReports} = useMyReports();
+  const [searchText, setSearchText] = useState<string>('');
+  const {
+    recentReports,
+    recentReportsLoading,
+    refreshing,
+    getRecentReports,
+  } = useRecentReports();
+  const {data, isLoading} = useQuery<{name: string; id: string}[]>(
+    'reports',
+    () => fetchCategoryItems('reports'),
+  );
+  console.log(data);
 
-  // const sheetRef = useRef<BottomSheet>(null);
-  // let fall = new Animated.Value(1);
-  // const animatedShadowOpacity = Animated.interpolate(fall, {
-  //   inputRange: [0, 1],
-  //   outputRange: [0.5, 0],
-  // });
+  const searchSelections = [
+    {
+      name: 'Commodity',
+      icon: require('../../../../assets/icons/Commodity.png'),
+      key: 'commodities',
+    },
+    {
+      name: 'Market',
+      icon: require('../../../../assets/icons/Market.png'),
+      key: 'markets',
+    },
+    {
+      name: 'Location',
+      icon: require('../../../../assets/icons/Location.png'),
+      key: 'offices',
+    },
+  ];
 
   const goToReportOnNotification = async () => {
     const notif = await messaging().getInitialNotification();
@@ -42,31 +75,6 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
       navigation.navigate('PDFView', {report: JSON.parse(notif.data.report)});
     }
   };
-
-  // const checkWhatsNewSeen = async () => {
-  //   if (__DEV__) {
-  //     await AsyncStorage.removeItem(StorageReference.WHATS_NEW_SEEN);
-  //   }
-  //   const {currentVersion} = await VersionCheck.needUpdate();
-  //   setCurrentVersion(currentVersion);
-  //   const seen = await AsyncStorage.getItem(StorageReference.WHATS_NEW_SEEN);
-  //   console.log(
-  //     seen,
-  //     currentVersion === JSON.parse(seen || '{}').currentVersion,
-  //   );
-  //   if (!seen || JSON.parse(seen).currentVersion !== currentVersion) {
-  //     setWhatsNewSeen(false);
-  //     return;
-  //   }
-  // };
-
-  // const saveWhatsNewSeen = async () => {
-  //   const {currentVersion} = await VersionCheck.needUpdate();
-  //   await AsyncStorage.setItem(
-  //     StorageReference.WHATS_NEW_SEEN,
-  //     JSON.stringify({currentVersion, seen: true}),
-  //   );
-  // };
 
   useEffect(() => {
     goToReportOnNotification();
@@ -78,19 +86,13 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
         return;
       } else {
         let report: Report = JSON.parse(remoteMessage.data.report);
-        await fetchNewReports();
-        Alert.alert(
-          'New Report Available!',
-          `${report.report_title}`,
-          [
-            {
-              text: 'Open Report',
-              onPress: () => navigation.navigate('PDFView', {report}),
-            },
-            {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-          ],
-          {cancelable: true},
-        );
+        // await fetchNewReports();
+        Toast.show({
+          text1: 'New Report Available',
+          text2: `${report.report_title} Saved to Favorites`,
+          visibilityTime: 1500,
+          onPress: () => navigation.navigate('PDFView', {report}),
+        });
       }
     });
     return unsubscribe;
@@ -109,119 +111,189 @@ export function SearchScreen({route}: SearchNavProps<'Reports'>) {
     return unsubscribe;
   }, []);
 
-  // useEffect(() => {
-  //   checkWhatsNewSeen().then(() => {
-  //     if (!whatsNewSeen) {
-  //       whatsNewSheetRef.current?.snapTo(0);
-  //     } else {
-  //       whatsNewSheetRef.current?.snapTo(1);
-  //     }
-  //   });
-  // }, [whatsNewSeen]);
-
-  // const renderWhatsNewSheet = () => {
-  //   return (
-  //     <View
-  //       style={{
-  //         backgroundColor: 'white',
-  //         height: height * 0.75,
-  //         alignItems: 'center',
-  //         justifyContent: 'flex-start',
-  //         shadowColor: '#000',
-  //         shadowOffset: {
-  //           width: 0,
-  //           height: 10,
-  //         },
-  //         zIndex: 1,
-  //         shadowOpacity: 0.51,
-  //         shadowRadius: 13.16,
-  //         paddingTop: 20,
-  //         elevation: 20,
-  //       }}>
-  //       <Column alignItems="center" justifyContent="flex-start">
-  //         <Row alignItems="flex-end" justifyContent="flex-end">
-  //           <Button
-  //             style={{paddingRight: 40}}
-  //             title="X Close"
-  //             type="clear"
-  //             onPress={() => whatsNewSheetRef.current?.snapTo(1)}
-  //           />
-  //         </Row>
-  //         <Row alignItems="flex-start" justifyContent="flex-start">
-  //           <Text h3 style={{paddingHorizontal: 15}}>
-  //             What's new {currentVersion}
-  //           </Text>
-  //         </Row>
-  //         <Row alignItems="center" justifyContent="flex-start">
-  //           <Text h4 style={{marginHorizontal: 25}}>
-  //             {`\u2022 Annonymous feature requests`}
-  //           </Text>
-  //         </Row>
-  //         <Row alignItems="center" justifyContent="flex-start">
-  //           <Text h4 style={{marginHorizontal: 25}}>
-  //             {`\u2022 View report descriptions`}
-  //           </Text>
-  //         </Row>
-  //         <Row alignItems="center" justifyContent="flex-start">
-  //           <Text h4 style={{marginHorizontal: 25}}>
-  //             {`\u2022 Search for previously released reports`}
-  //           </Text>
-  //         </Row>
-  //       </Column>
-  //     </View>
-  //   );
-  // };
-
   return (
-    <>
-      <CustomTabBarExample />
-      {/* <BottomSheet
-        callbackNode={fall}
-        ref={whatsNewSheetRef}
-        borderRadius={30}
-        snapPoints={[height * 0.75, 0]}
-        initialSnap={1}
-        renderContent={renderWhatsNewSheet}
-        onCloseEnd={saveWhatsNewSeen}
-      /> */}
-    </>
+    <View style={styles.container}>
+      <SearchInput
+        onChange={setSearchText}
+        onClear={() => {}}
+        value={searchText}
+      />
+      {searchText && data ? (
+        <View
+          style={{
+            zIndex: 1,
+            flex: 1,
+            maxHeight: 400,
+            shadowColor: '#000000',
+            shadowOffset: {width: 0, height: 4},
+            shadowOpacity: 0.4,
+            shadowRadius: 2,
+            elevation: 1,
+            position: 'absolute',
+            top: 70,
+            alignSelf: 'center',
+            width: '92%',
+          }}>
+          <FlatList
+            style={{
+              padding: 10,
+              backgroundColor: 'white',
+            }}
+            data={data.filter((i: {name: string; id: string}) =>
+              i.name.toLowerCase().includes(searchText.toLowerCase()),
+            )}
+            keyExtractor={item => item.id}
+            renderItem={({item}) => {
+              return (
+                <View>
+                  <TouchableOpacity
+                    style={{padding: 5}}
+                    onPress={() =>
+                      navigation.navigate('PDFView', {report: item})
+                    }>
+                    <StyledText value={item.name} type={TextType.HEADING} />
+                  </TouchableOpacity>
+                  <Divider />
+                </View>
+              );
+            }}
+            ListEmptyComponent={
+              <StyledText
+                value={'No Results Found'}
+                type={TextType.SMALL_HEADING}
+              />
+            }
+          />
+        </View>
+      ) : null}
+      <Divider />
+      <View style={styles.row}>
+        <Icon
+          name="grid"
+          type="feather"
+          color={Colors.PRIMARY}
+          size={18}
+          style={{paddingRight: 10}}
+        />
+        <StyledText value="Browse By Category" type={TextType.HEADING} />
+      </View>
+      <View
+        style={[
+          styles.row,
+          {justifyContent: 'space-evenly', marginBottom: 10},
+        ]}>
+        {searchSelections.map(selection => {
+          return (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ListScreen', {category: selection.key})
+              }
+              style={styles.searchSelection}
+              key={selection.name}>
+              <Image source={selection.icon} />
+              <StyledText
+                type={TextType.SMALL_HEADING}
+                value={selection.name}
+                style={{marginTop: 10}}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+      <Divider />
+      <View style={styles.row}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icon
+            name="signal-variant"
+            type="material-community"
+            color={Colors.PRIMARY}
+            size={20}
+            style={{paddingRight: 10}}
+          />
+          <StyledText value="Latest Reports" type={TextType.HEADING} />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            flex: 1,
+            justifyContent: 'flex-end',
+          }}>
+          <StyledText
+            value="View All"
+            type={TextType.SUB_HEADING}
+            style={{textDecorationLine: 'underline', paddingRight: 12}}
+            onPress={() => {
+              navigation.navigate('ListScreen', {category: 'reports'});
+            }}
+          />
+        </View>
+      </View>
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal: 10}}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => getRecentReports(true)}
+          />
+        }>
+        <LoadingView loading={recentReportsLoading}>
+          {recentReports.slice(0, 3).map(report => (
+            <TouchableOpacity
+              style={styles.latestReportSelection}
+              key={report.slug_id}
+              onPress={() => navigation.navigate('PDFView', {report})}>
+              <StyledText
+                type={TextType.SMALL_HEADING}
+                value={report.report_title}
+              />
+              <StyledText
+                type={TextType.SUB_HEADING}
+                value={`Last Updated: ${report.published_date}`}
+              />
+            </TouchableOpacity>
+          ))}
+        </LoadingView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: {
-    minHeight: 75,
-    height: '15%',
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
     width: '100%',
+    padding: 10,
+  },
+  container: {
+    backgroundColor: '#F5F5F5',
+    flex: 1,
+  },
+  searchSelection: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '30%',
+    backgroundColor: 'white',
+    paddingVertical: 30,
     borderRadius: 10,
     shadowColor: '#000000',
     shadowOffset: {width: 0, height: 4},
-    shadowOpacity: 0.25,
+    shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
   },
-  gradient: {
-    height: '100%',
-    borderRadius: 10,
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 70,
-    height: 70,
-    marginLeft: '8%',
-  },
-  container: {
-    flex: 1,
-    alignItems: 'flex-start',
-    paddingTop: '10%',
+  latestReportSelection: {
     backgroundColor: 'white',
-    padding: 15,
-    height: Dimensions.get('screen').height,
-  },
-  searchCategoryText: {
-    fontSize: Dimensions.get('window').width / 10,
-    fontWeight: 'bold',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+    padding: 30,
+    borderRadius: 20,
+    margin: 5,
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
   },
 });

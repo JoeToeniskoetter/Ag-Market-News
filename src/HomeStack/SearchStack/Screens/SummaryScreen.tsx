@@ -2,26 +2,13 @@ import React from 'react';
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import {Button} from '@rneui/base';
 import {ScrollView} from 'react-native-gesture-handler';
-import {Report, ReportSummary} from '../../../shared/types';
+import {ReportSummary} from '../../../shared/types';
 import {SearchNavProps} from '../SearchStackParams';
 import {LoadingView} from '../../sharedComponents/LoadingSpinner';
 import {useQuery} from 'react-query';
 import {fetchReportSummary} from '../../../queries/reportSummary';
-
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
+import {StyledText, TextType} from '../../../shared/components/Text';
+import {Colors} from '../../../shared/util';
 
 export function SummaryScreen({navigation, route}: SearchNavProps<'Summary'>) {
   const {data, isLoading, error} = useQuery<ReportSummary, Error>(
@@ -38,23 +25,25 @@ export function SummaryScreen({navigation, route}: SearchNavProps<'Summary'>) {
     <LoadingView loading={isLoading}>
       {data ? (
         <ScrollView
-          style={styles.summaryContainer}
-          contentContainerStyle={{marginTop: 10, height: '110%'}}>
-          <Text style={styles.title}>{report.report_title}</Text>
+          contentContainerStyle={{marginTop: 10, flexGrow: 1, padding: 10}}>
+          <StyledText type={TextType.HEADING} value={data.title} />
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-around',
-              paddingVertical: 5,
+              justifyContent: 'space-evenly',
+              paddingVertical: 15,
+              width: '100%',
             }}>
             <Button
               title="View Current Report"
+              titleStyle={{fontFamily: 'DM Sans'}}
               buttonStyle={styles.currentReportButton}
               onPress={onCurrentReportPressed}
             />
             <Button
               title="See Previous Reports"
+              titleStyle={{color: 'black', fontFamily: 'DM Sans'}}
               buttonStyle={styles.previousReportsButton}
               onPress={() =>
                 navigation.navigate('PreviousReports', {
@@ -64,18 +53,46 @@ export function SummaryScreen({navigation, route}: SearchNavProps<'Summary'>) {
               }
             />
           </View>
-          <Text style={styles.sectionHeader}>Market Type</Text>
-          <Text style={styles.section}>{report.market_types}</Text>
+          <StyledText
+            value="Market Type"
+            type={TextType.SMALL_HEADING}
+            style={{fontWeight: 'bold'}}
+          />
+          <StyledText
+            type={TextType.SUB_HEADING}
+            style={styles.section}
+            value={report.market_types.toString()}
+          />
           {data.description ? (
             <>
-              <Text style={styles.sectionHeader}>Description</Text>
-              <Text style={styles.section}>{data.description}</Text>
-              <Text style={styles.sectionHeader}>Synopsis</Text>
-              <Text style={styles.section}>{data.synopsis}</Text>
+              <StyledText
+                type={TextType.SMALL_HEADING}
+                style={{fontWeight: 'bold'}}
+                value={'Description'}
+              />
+              <StyledText
+                style={styles.section}
+                value={data.description}
+                type={TextType.SUB_HEADING}
+              />
+              <StyledText
+                type={TextType.SMALL_HEADING}
+                style={{fontWeight: 'bold'}}
+                value={'Synopsis'}
+              />
+              <StyledText
+                style={styles.section}
+                value={data.synopsis}
+                type={TextType.SUB_HEADING}
+              />
             </>
           ) : (
             <View
-              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
               <Text style={styles.sectionHeader}>No Description Available</Text>
             </View>
           )}
@@ -86,11 +103,6 @@ export function SummaryScreen({navigation, route}: SearchNavProps<'Summary'>) {
 }
 
 const styles = StyleSheet.create({
-  summaryContainer: {
-    padding: 10,
-    flex: 1,
-    backgroundColor: 'white',
-  },
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
@@ -119,15 +131,24 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   section: {
-    fontSize: 16,
+    fontSize: 18,
+    margin: 10,
+    padding: 5,
   },
   currentReportButton: {
-    backgroundColor: 'green',
+    backgroundColor: Colors.PRIMARY,
     borderRadius: 10,
     padding: 10,
+    borderColor: Colors.PRIMARY,
+    borderWidth: 2,
+    margin: 5,
   },
   previousReportsButton: {
     borderRadius: 10,
     padding: 10,
+    backgroundColor: Colors.BACKGROUND,
+    borderColor: Colors.PRIMARY,
+    borderWidth: 2,
+    margin: 5,
   },
 });

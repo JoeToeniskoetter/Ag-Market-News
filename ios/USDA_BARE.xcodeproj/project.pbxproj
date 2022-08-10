@@ -25,6 +25,12 @@
 		4D1E6570281C275800496A9D /* libswiftWebKit.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D1E656E281C272000496A9D /* libswiftWebKit.tbd */; };
 		4D1E6574281C27A700496A9D /* blank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1E6573281C27A700496A9D /* blank.swift */; };
 		4D1E6575281C27A700496A9D /* blank.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1E6573281C27A700496A9D /* blank.swift */; };
+		4D79B2DA287C8992005E620E /* DMSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D4287C8992005E620E /* DMSans-Regular.ttf */; };
+		4D79B2DB287C8992005E620E /* DMSans-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D5287C8992005E620E /* DMSans-MediumItalic.ttf */; };
+		4D79B2DC287C8992005E620E /* DMSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D6287C8992005E620E /* DMSans-BoldItalic.ttf */; };
+		4D79B2DD287C8992005E620E /* DMSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D7287C8992005E620E /* DMSans-Italic.ttf */; };
+		4D79B2DE287C8992005E620E /* DMSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D8287C8992005E620E /* DMSans-Medium.ttf */; };
+		4D79B2DF287C8992005E620E /* DMSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D79B2D9287C8992005E620E /* DMSans-Bold.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,9 +79,17 @@
 		4D1E6571281C27A600496A9D /* USDA_BARE-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "USDA_BARE-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D1E6572281C27A600496A9D /* USDA_BARE-tvOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "USDA_BARE-tvOS-Bridging-Header.h"; sourceTree = "<group>"; };
 		4D1E6573281C27A700496A9D /* blank.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blank.swift; sourceTree = "<group>"; };
+		4D79B2D4287C8992005E620E /* DMSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-Regular.ttf"; path = "../assets/fonts/DMSans-Regular.ttf"; sourceTree = "<group>"; };
+		4D79B2D5287C8992005E620E /* DMSans-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-MediumItalic.ttf"; path = "../assets/fonts/DMSans-MediumItalic.ttf"; sourceTree = "<group>"; };
+		4D79B2D6287C8992005E620E /* DMSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-BoldItalic.ttf"; path = "../assets/fonts/DMSans-BoldItalic.ttf"; sourceTree = "<group>"; };
+		4D79B2D7287C8992005E620E /* DMSans-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-Italic.ttf"; path = "../assets/fonts/DMSans-Italic.ttf"; sourceTree = "<group>"; };
+		4D79B2D8287C8992005E620E /* DMSans-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-Medium.ttf"; path = "../assets/fonts/DMSans-Medium.ttf"; sourceTree = "<group>"; };
+		4D79B2D9287C8992005E620E /* DMSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "DMSans-Bold.ttf"; path = "../assets/fonts/DMSans-Bold.ttf"; sourceTree = "<group>"; };
 		5508721E8D6446E1A3FBC5FD /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
+		56899DD947024A1C23265E29 /* Pods-USDA_BARE-tvOSTests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-tvOSTests.staging.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-tvOSTests/Pods-USDA_BARE-tvOSTests.staging.xcconfig"; sourceTree = "<group>"; };
 		57B0B524BF9B6578D6F2421B /* libPods-USDA_BARE-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-USDA_BARE-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7585D8D0A304E27606FF9949 /* Pods-USDA_BARE-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-tvOS.release.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-tvOS/Pods-USDA_BARE-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		7EAAF206052E6BDDDB21F1EC /* Pods-USDA_BARE-tvOS.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-tvOS.staging.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-tvOS/Pods-USDA_BARE-tvOS.staging.xcconfig"; sourceTree = "<group>"; };
 		7FD1A1991735839B8445C182 /* Pods-USDA_BARE.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE.release.xcconfig"; path = "Target Support Files/Pods-USDA_BARE/Pods-USDA_BARE.release.xcconfig"; sourceTree = "<group>"; };
 		7FF8144794F2118E2420393F /* Pods-USDA_BARE.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE.debug.xcconfig"; path = "Target Support Files/Pods-USDA_BARE/Pods-USDA_BARE.debug.xcconfig"; sourceTree = "<group>"; };
 		821A0CEBAF1A4B3EA63D5FF7 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -85,6 +99,8 @@
 		8FBF77740A6D4E1F981F5A57 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		919B88A3AF87FA917503DA9C /* Pods-USDA_BARE-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-tvOSTests/Pods-USDA_BARE-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A24891901D42C4096168895E /* Pods-USDA_BARE-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-tvOS/Pods-USDA_BARE-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		A3F41C1997DE6CBF335202F8 /* Pods-USDA_BARE.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE.staging.xcconfig"; path = "Target Support Files/Pods-USDA_BARE/Pods-USDA_BARE.staging.xcconfig"; sourceTree = "<group>"; };
+		A6E8A345EE74654E07C1844C /* Pods-USDA_BARE-USDA_BARETests.staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-USDA_BARE-USDA_BARETests.staging.xcconfig"; path = "Target Support Files/Pods-USDA_BARE-USDA_BARETests/Pods-USDA_BARE-USDA_BARETests.staging.xcconfig"; sourceTree = "<group>"; };
 		ABBDE25291080B9804A06066 /* libPods-USDA_BARE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-USDA_BARE.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC5811BD6B684768B879C3CC /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		BF07497645444391923BA5AA /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -197,6 +213,12 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				4D79B2D9287C8992005E620E /* DMSans-Bold.ttf */,
+				4D79B2D6287C8992005E620E /* DMSans-BoldItalic.ttf */,
+				4D79B2D7287C8992005E620E /* DMSans-Italic.ttf */,
+				4D79B2D8287C8992005E620E /* DMSans-Medium.ttf */,
+				4D79B2D5287C8992005E620E /* DMSans-MediumItalic.ttf */,
+				4D79B2D4287C8992005E620E /* DMSans-Regular.ttf */,
 				253745DC2558B3BE003142F8 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* USDA_BARE */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -256,6 +278,10 @@
 				7585D8D0A304E27606FF9949 /* Pods-USDA_BARE-tvOS.release.xcconfig */,
 				919B88A3AF87FA917503DA9C /* Pods-USDA_BARE-tvOSTests.debug.xcconfig */,
 				8D39D07FA15C122CCBBECA3C /* Pods-USDA_BARE-tvOSTests.release.xcconfig */,
+				A3F41C1997DE6CBF335202F8 /* Pods-USDA_BARE.staging.xcconfig */,
+				A6E8A345EE74654E07C1844C /* Pods-USDA_BARE-USDA_BARETests.staging.xcconfig */,
+				7EAAF206052E6BDDDB21F1EC /* Pods-USDA_BARE-tvOS.staging.xcconfig */,
+				56899DD947024A1C23265E29 /* Pods-USDA_BARE-tvOSTests.staging.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -408,6 +434,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D79B2DA287C8992005E620E /* DMSans-Regular.ttf in Resources */,
+				4D79B2DB287C8992005E620E /* DMSans-MediumItalic.ttf in Resources */,
+				4D79B2DC287C8992005E620E /* DMSans-BoldItalic.ttf in Resources */,
+				4D79B2DD287C8992005E620E /* DMSans-Italic.ttf in Resources */,
+				4D79B2DE287C8992005E620E /* DMSans-Medium.ttf in Resources */,
+				4D79B2DF287C8992005E620E /* DMSans-Bold.ttf in Resources */,
 				258893EC2560B67000C0E58D /* BootSplash.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				253745DD2558B3BE003142F8 /* GoogleService-Info.plist in Resources */,
@@ -444,7 +476,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		13D27D9E6A05D94D822DD1BE /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -902,6 +934,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.6;
 				DEVELOPMENT_TEAM = PYGD6FCN62;
+				"EXCLUDED_ARCHS[sdk=*]" = arm64;
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = USDA_BARE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1047,6 +1080,179 @@
 			};
 			name = Release;
 		};
+		4D72CD2928A2F5D2000DA972 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = _hY4RZjqJtX15mqkKTLYO7fqNX6PwM9VmfIsf;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)\"",
+					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
+					"\"$(inherited)\"",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				Multi_Deployment_Config = "$(BUILD_DIR)/Release$(EFFECTIVE_PLATFORM_NAME)";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Staging;
+		};
+		4D72CD2A28A2F5D2000DA972 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A3F41C1997DE6CBF335202F8 /* Pods-USDA_BARE.staging.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = USDA_BARE/USDA_BARERelease.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.6;
+				DEVELOPMENT_TEAM = PYGD6FCN62;
+				"EXCLUDED_ARCHS[sdk=*]" = arm64;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = USDA_BARE/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
+				);
+				MARKETING_VERSION = 1.7.4;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.joetoeniskoetter.ag-market-news";
+				PRODUCT_NAME = USDA_BARE;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "USDA_BARE-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Staging;
+		};
+		4D72CD2B28A2F5D2000DA972 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A6E8A345EE74654E07C1844C /* Pods-USDA_BARE-USDA_BARETests.staging.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COPY_PHASE_STRIP = NO;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = USDA_BARETests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-lc++",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/USDA_BARE.app/USDA_BARE";
+			};
+			name = Staging;
+		};
+		4D72CD2C28A2F5D2000DA972 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7EAAF206052E6BDDDB21F1EC /* Pods-USDA_BARE-tvOS.staging.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "USDA_BARE-tvOS/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.USDA_BARE-tvOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_OBJC_BRIDGING_HEADER = "USDA_BARE-tvOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+			};
+			name = Staging;
+		};
+		4D72CD2D28A2F5D2000DA972 /* Staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 56899DD947024A1C23265E29 /* Pods-USDA_BARE-tvOSTests.staging.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = "USDA_BARE-tvOSTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.USDA_BARE-tvOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/USDA_BARE-tvOS.app/USDA_BARE-tvOS";
+				TVOS_DEPLOYMENT_TARGET = 12.0;
+			};
+			name = Staging;
+		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1076,6 +1282,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1103,6 +1310,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
+				Multi_Deployment_Config = "";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -1137,6 +1345,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODEPUSH_KEY = sEoKo4Oszi5YY9oJ6tchKbINnXMOSE0HL2ek0;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1157,6 +1366,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				Multi_Deployment_Config = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1170,6 +1380,7 @@
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
 				00E356F71AD99517003FC87E /* Release */,
+				4D72CD2B28A2F5D2000DA972 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1179,6 +1390,7 @@
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
 				13B07F951A680F5B00A75B9A /* Release */,
+				4D72CD2A28A2F5D2000DA972 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1188,6 +1400,7 @@
 			buildConfigurations = (
 				2D02E4971E0B4A5E006451C7 /* Debug */,
 				2D02E4981E0B4A5E006451C7 /* Release */,
+				4D72CD2C28A2F5D2000DA972 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1197,6 +1410,7 @@
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
 				2D02E49A1E0B4A5E006451C7 /* Release */,
+				4D72CD2D28A2F5D2000DA972 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1206,6 +1420,7 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+				4D72CD2928A2F5D2000DA972 /* Staging */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

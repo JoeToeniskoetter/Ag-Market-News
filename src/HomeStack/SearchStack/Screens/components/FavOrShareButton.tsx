@@ -2,6 +2,7 @@ import React from 'react';
 import {Alert, Platform, View} from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Toast from 'react-native-toast-message';
 import {useMyReports} from '../../../../Providers/MyReportsProvider';
 import {useCurrentReport} from '../../../../Providers/CurrentReportProvider';
 import {Report} from '../../../../shared/types';
@@ -43,12 +44,17 @@ export const FavOrShareButton: React.FC<IFavOrShareProps> = ({report}) => {
           let reportCopy = Object.assign({}, report);
           reportCopy.report_url = currentReportUrl;
           await addReport(reportCopy);
-          await Alert.alert(`${reportCopy.slug_name} Saved to Favorites`);
+          Toast;
+          await Toast.show({
+            text1: 'Saved',
+            text2: `${reportCopy.slug_name} Saved to Favorites`,
+            visibilityTime: 1500,
+          });
         }}
       />
       <Icon
         name={Platform.OS == 'ios' ? 'share-apple' : 'share-google'}
-        color={Platform.OS == 'ios' ? 'rgb(0, 122, 255)' : 'black'}
+        color={'white'}
         size={38}
         style={{paddingRight: 20}}
         onPress={() =>

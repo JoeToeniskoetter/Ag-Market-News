@@ -1,7 +1,8 @@
 import auth from '@react-native-firebase/auth';
 import {BASE_URI} from '../shared/util';
 
-export const baseFetch = async (path: string) => {
+export const baseFetch = async (path: string): Promise<Response> => {
+  console.log('Fetching ', path);
   return fetch(`${BASE_URI}${path}`, {
     headers: {
       Authorization: `Bearer ${await auth().currentUser?.getIdToken()}`,

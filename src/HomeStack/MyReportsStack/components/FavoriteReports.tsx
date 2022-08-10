@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import {AnalyticEvents} from '../../../shared/util';
+import Toast from 'react-native-toast-message';
+import {AnalyticEvents, Colors} from '../../../shared/util';
 import analytics from '@react-native-firebase/analytics';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -17,6 +18,7 @@ import {Report} from '../../../shared/types';
 import {useNavigation} from '@react-navigation/native';
 import {useMyReports} from '../../../Providers/MyReportsProvider';
 import {NoSavedReports} from '../../SearchStack/Screens/components/NoSavedReports';
+import {StyledText, TextType} from '../../../shared/components/Text';
 
 interface IFavoriteReports {
   searchText: string;
@@ -40,21 +42,39 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
         title: report.report_title,
       });
       await unsubscribeToReport(report);
+      Toast.show({
+        visibilityTime: 1000,
+        type: 'info',
+        text1: 'Unsubscribed',
+        text2: `Successfully Unsubscribed to ${report.slug_name}`,
+      });
     } else {
       await analytics().logEvent(AnalyticEvents.report_subscribed, {
         slug: report.slug_name,
         title: report.report_title,
       });
       await subscribeToReport(report);
-      Alert.alert(`Subscribed to ${report.slug_name}`);
+      Toast.show({
+        visibilityTime: 1000,
+        type: 'success',
+        text1: 'Subscribed',
+        text2: `Successfully Subscribed to ${report.slug_name}`,
+      });
     }
   }
 
   const LeftActionButton: React.FC<{item: Report}> = ({item}) => {
     return (
       <TouchableOpacity
+        style={{paddingHorizontal: 10, paddingVertical: 3}}
         onPress={async () => {
           await removeReport(item);
+          Toast.show({
+            visibilityTime: 1000,
+            type: 'error',
+            text1: 'Removed',
+            text2: `Successfully Removed to ${item.slug_name}`,
+          });
         }}>
         <View style={styles.rightButton}>
           <FontAwesome name="trash" size={24} color="white" />
@@ -67,7 +87,8 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
   const RightActionButton: React.FC<{item: Report}> = ({item}) => {
     if (item.subscribed) {
       return (
-        <TouchableOpacity>
+        <TouchableOpacity
+          style={{paddingHorizontal: 10, borderRadius: 10, paddingVertical: 3}}>
           <View style={styles.unSubscribeButton}>
             <AntDesign name="closecircleo" size={22} color="white" />
             <Text style={styles.actionText}>Unsubscribe</Text>
@@ -77,7 +98,8 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
     }
 
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        style={{paddingHorizontal: 10, borderRadius: 10, paddingVertical: 3}}>
         <View style={styles.leftButton}>
           <AntDesign name="checkcircleo" size={22} color="black" />
           <Text style={styles.actionTextDark}>Subscribe</Text>
@@ -129,6 +151,8 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
               renderLeftActions={() => <RightActionButton item={item} />}>
               <ListItem
                 bottomDivider
+                style={{paddingHorizontal: 10, paddingVertical: 3}}
+                containerStyle={{borderRadius: 10}}
                 onPress={async () => {
                   await analytics().logSelectContent({
                     content_type: AnalyticEvents.myReports,
@@ -144,11 +168,18 @@ export const FavoriteReports: React.FC<IFavoriteReports> = ({searchText}) => {
                 )}
                 <ListItem.Content>
                   {item.subscribed ? <SubscribedText /> : null}
-                  <ListItem.Title>{item.report_title}</ListItem.Title>
-                  <ListItem.Subtitle
-                    style={{
-                      fontWeight: 'bold',
-                    }}>{`Report ID: ${item.slug_name}`}</ListItem.Subtitle>
+                  <ListItem.Title>
+                    <StyledText
+                      type={TextType.SMALL_HEADING}
+                      value={item.report_title}
+                    />
+                  </ListItem.Title>
+                  <ListItem.Subtitle>
+                    <StyledText
+                      type={TextType.SUB_HEADING}
+                      value={`Report ID: ${item.slug_name}`}
+                    />
+                  </ListItem.Subtitle>
                 </ListItem.Content>
                 <ListItem.Chevron />
               </ListItem>
@@ -165,6 +196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#39bd28',
+    borderRadius: 10,
     height: '100%',
     padding: 20,
   },
@@ -172,6 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#d2d6d3',
+    borderRadius: 10,
     height: '100%',
     padding: 20,
   },
@@ -206,12 +239,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '15%',
-    backgroundColor: 'white',
+    backgroundColor: Colors.BACKGROUND,
   },
   rightButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#dd2c00',
+    borderRadius: 10,
     height: '100%',
     padding: 20,
   },
