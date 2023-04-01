@@ -38,7 +38,7 @@ export function PDFView({route}: SearchNavProps<'PDFView'>) {
   const [uri, setUri] = useState<string>('');
   const [reportType, setReportType] = useState<string>();
   const [pdfLoading, setPdfLoading] = useState<boolean>(true);
-  const [showAd, setShowAd] = useState<boolean>(true);
+  const [showAd, setShowAd] = useState<boolean>(false);
 
   useEffect(() => {
     if (preReportUri) {

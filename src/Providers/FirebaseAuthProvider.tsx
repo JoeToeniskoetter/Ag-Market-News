@@ -2,6 +2,7 @@ import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import React, {
   createContext,
   ReducerWithoutAction,
+  useEffect,
   useReducer,
   useState,
 } from 'react';
@@ -18,12 +19,6 @@ export const FirebaseAuthProviderContext = createContext<
   initializing: true,
 });
 
-type Action =
-  | {type: ACTION_TYPES.SIGNIN; user: FirebaseAuthTypes.User}
-  | {type: ACTION_TYPES.SIGNOUT}
-  | {type: ACTION_TYPES.INITIALIZING}
-  | {type: ACTION_TYPES.DONE_INITIALIZING};
-
 enum ACTION_TYPES {
   SIGNIN = 'SIGNIN',
   SIGNOUT = 'SIGNOUT',
@@ -35,22 +30,14 @@ export const FirebaseAuthProvider: React.FC<{}> = ({children}) => {
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [initializing, setInitializing] = useState<boolean>(true);
 
-  React.useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(user => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
+  function onAuthStateChanged(user: FirebaseAuthTypes.User | null) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
 
-      setInitializing(false);
-    });
-
-    if (!auth().currentUser) {
-      auth().signInAnonymously();
-    }
-
-    return unsubscribe();
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
   }, []);
 
   return (

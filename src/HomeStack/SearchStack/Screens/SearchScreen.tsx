@@ -34,6 +34,9 @@ import {useQuery} from 'react-query';
 import {fetchReports} from '../../../queries/reports';
 import {fetchCategoryItems} from '../../../queries/categoryItems';
 import {LoadingView} from '../../sharedComponents/LoadingSpinner';
+import CommodityIcon from '../../../../assets/icons/Commodity.svg';
+import MarketIcon from '../../../../assets/icons/Market.svg';
+import LocationIcon from '../../../../assets/icons/Location.svg';
 
 export function SearchScreen({route}: SearchNavProps<'SearchType'>) {
   const navigation = useNavigation();
@@ -49,22 +52,21 @@ export function SearchScreen({route}: SearchNavProps<'SearchType'>) {
     'reports',
     () => fetchCategoryItems('reports'),
   );
-  console.log(data);
 
   const searchSelections = [
     {
       name: 'Commodity',
-      icon: require('../../../../assets/icons/Commodity.png'),
+      icon: () => <CommodityIcon />,
       key: 'commodities',
     },
     {
       name: 'Market',
-      icon: require('../../../../assets/icons/Market.png'),
+      icon: () => <MarketIcon />,
       key: 'markets',
     },
     {
       name: 'Location',
-      icon: require('../../../../assets/icons/Location.png'),
+      icon: () => <LocationIcon />,
       key: 'offices',
     },
   ];
@@ -190,7 +192,7 @@ export function SearchScreen({route}: SearchNavProps<'SearchType'>) {
               }
               style={styles.searchSelection}
               key={selection.name}>
-              <Image source={selection.icon} />
+              {selection.icon()}
               <StyledText
                 type={TextType.SMALL_HEADING}
                 value={selection.name}
@@ -229,14 +231,20 @@ export function SearchScreen({route}: SearchNavProps<'SearchType'>) {
         </View>
       </View>
       <ScrollView
-        contentContainerStyle={{paddingHorizontal: 10}}
+        contentContainerStyle={{
+          paddingHorizontal: 10,
+          width: '100%',
+          flex: 1,
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => getRecentReports(true)}
           />
         }>
-        <LoadingView loading={recentReportsLoading}>
+        <LoadingView
+          loading={recentReportsLoading}
+          backgrounColor={Colors.BACKGROUND}>
           {recentReports.slice(0, 3).map(report => (
             <TouchableOpacity
               style={styles.latestReportSelection}

@@ -23,7 +23,7 @@ export function ReportsScreen({
 }: MyReportsNavProps<'Reports'>) {
   const {reports} = useMyReports();
   const [searchText, setSearchText] = useState<string>('');
-  const [showAdd, setShowAdd] = useState<boolean>(true);
+  const [showAdd, setShowAdd] = useState<boolean>(false);
   const [selectedTab, setSelectedTab] = useState<string>('Favorites');
 
   const reviewExpired = (review: {reviewed: number; initDate: Date}) => {

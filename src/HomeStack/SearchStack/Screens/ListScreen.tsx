@@ -22,7 +22,6 @@ type Category = {
 };
 
 export function ListScreen({route}: SearchNavProps<'ListScreen'>) {
-  console.log('This is the list screen');
   const {data, isLoading, error, refetch} = useQuery<Category[]>(
     route.params.category,
     () => fetchCategoryItems(route.params.category),
